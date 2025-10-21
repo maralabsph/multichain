@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "chainparams/chainparamsbase.h"
 
@@ -59,13 +59,13 @@ static CBaseRegTestParams regTestParams;
 
 /* MCHN START */      
 
-class CBaseMultiChainParams : public CBaseTestNetParams
+class CBaseAksyonChainParams : public CBaseTestNetParams
 {
 public:
-    CBaseMultiChainParams()
+    CBaseAksyonChainParams()
     {
-        networkID = CBaseChainParams::MULTICHAIN;
-        strDataDir = "multichain";
+        networkID = CBaseChainParams::AKSYONCHAIN;
+        strDataDir = "aksyonchain";
     }
     void setDataDir(std::string NetworkName)
     {
@@ -76,7 +76,7 @@ public:
         nRPCPort=port;
     }
 };
-static CBaseMultiChainParams multiChainParams;
+static CBaseAksyonChainParams aksyonChainParams;
 /* MCHN END */      
 
 
@@ -150,11 +150,11 @@ bool SelectBaseParamsFromCommandLine()
 
 /* MCHN START */
 
-bool SelectMultiChainBaseParams(const char *NetworkName,int RPCPort)
+bool SelectAksyonChainBaseParams(const char *NetworkName,int RPCPort)
 {
-    multiChainParams.setDataDir(std::string(NetworkName));
-    multiChainParams.setRPCPort(RPCPort);
-    pCurrentBaseParams = &multiChainParams;
+    aksyonChainParams.setDataDir(std::string(NetworkName));
+    aksyonChainParams.setRPCPort(RPCPort);
+    pCurrentBaseParams = &aksyonChainParams;
     
     return true;
 }

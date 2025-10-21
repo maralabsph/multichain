@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 
 #include "rpc/rpcwallet.h"
@@ -81,7 +81,7 @@ int GetInputOffer(const CWalletTx& wtx, const set<CTxDestination>* addresses,con
             if(IsTxOutMineAndInList(pwalletMain,prevout,addresses,filter))
             {
                 string strFailReason;
-                if(ParseMultichainTxOutToBuffer(txin.prevout.hash,prevout,amounts,lpScript,NULL,NULL,strFailReason))
+                if(ParseAksyonchainTxOutToBuffer(txin.prevout.hash,prevout,amounts,lpScript,NULL,NULL,strFailReason))
                 {
                     nAmount+=prevout.nValue;
                     nIsMineCount++;
@@ -216,7 +216,7 @@ Object ListWalletTransactions(const CWalletTx& wtx, bool fLong, const isminefilt
             {
                 fIsMine=true;
                 nIsToMeCount++;
-                ParseMultichainTxOutToBuffer(wtx.GetHash(),txout,amounts,lpScript,NULL,&required,strFailReason);
+                ParseAksyonchainTxOutToBuffer(wtx.GetHash(),txout,amounts,lpScript,NULL,&required,strFailReason);
 //                CreateAssetBalanceList(txout,amounts,lpScript,&required);
                 nAmount+=txout.nValue;
             }
@@ -318,7 +318,7 @@ Object ListWalletTransactions(const CWalletTx& wtx, bool fLong, const isminefilt
             string strFailReason;
             int required=0;
             amounts->Clear();
-//            ParseMultichainTxOutToBuffer(wtx.GetHash(),txout,amounts,lpScript,NULL,&required,strFailReason);
+//            ParseAksyonchainTxOutToBuffer(wtx.GetHash(),txout,amounts,lpScript,NULL,&required,strFailReason);
             CreateAssetBalanceList(txout,amounts,lpScript,&required);
             if(required & (MC_PTP_ADMIN | MC_PTP_ACTIVATE))
             {

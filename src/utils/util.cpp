@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #if defined(HAVE_CONFIG_H)
 #include "config/bitcoin-config.h"
@@ -17,7 +17,7 @@
 #include "utils/utilstrencodings.h"
 #include "utils/utiltime.h"
 
-#include "multichain/multichain.h"                                              // MCHN
+#include "aksyonchain/aksyonchain.h"                                              // MCHN
 
 #include <stdarg.h>
 
@@ -391,8 +391,8 @@ void PrintExceptionContinue(std::exception* pex, const char* pszThread)
 }
 
 /* MCHN START */
-static boost::filesystem::path pathCachedMultiChain;
-static boost::filesystem::path pathCachedMultiChainLog;
+static boost::filesystem::path pathCachedAksyonChain;
+static boost::filesystem::path pathCachedAksyonChainLog;
 static CCriticalSection csPathCached;
 /* MCHN END */
 
@@ -406,14 +406,14 @@ boost::filesystem::path GetDefaultDataDir()
 /* MCHN START */
     LOCK(csPathCached);
     
-    pathCachedMultiChain=fs::path(string(mc_gState->m_Params->DataDir()));
-    fs::path &path =pathCachedMultiChain;
+    pathCachedAksyonChain=fs::path(string(mc_gState->m_Params->DataDir()));
+    fs::path &path =pathCachedAksyonChain;
     return path;
 //    fs::path &path = fNetSpecific ? pathCachedNetSpecific : pathCached;
 /* MCHN END */
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "MultiChain";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "AksyonChain";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -425,10 +425,10 @@ boost::filesystem::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     TryCreateDirectory(pathRet);
-    return pathRet / "MultiChain";
+    return pathRet / "AksyonChain";
 #else
     // Unix
-    return pathRet / ".multichain";
+    return pathRet / ".aksyonchain";
 #endif
 #endif
 }
@@ -444,11 +444,11 @@ const boost::filesystem::path &GetLogDir(bool fNetSpecific)
     LOCK(csPathCached);
 
 /* MCHN START */
-    fs::path &path =pathCachedMultiChainLog;
+    fs::path &path =pathCachedAksyonChainLog;
     if (!path.empty())
         return path;
     path=fs::path(string(mc_gState->m_Params->DataDir(2,1)));
-    return pathCachedMultiChainLog;
+    return pathCachedAksyonChainLog;
 }
 
 const boost::filesystem::path &GetDataDir(bool fNetSpecific)
@@ -458,13 +458,13 @@ const boost::filesystem::path &GetDataDir(bool fNetSpecific)
     LOCK(csPathCached);
 
 /* MCHN START */
-    fs::path &path =pathCachedMultiChain;
+    fs::path &path =pathCachedAksyonChain;
     if (!path.empty())
         return path;
     path=fs::path(string(mc_gState->m_Params->DataDir()));
-    return pathCachedMultiChain;
-//    pathCachedMultiChain=fs::path(string(mc_gState->m_Params->DataDir()));
-//    fs::path &path =pathCachedMultiChain;
+    return pathCachedAksyonChain;
+//    pathCachedAksyonChain=fs::path(string(mc_gState->m_Params->DataDir()));
+//    fs::path &path =pathCachedAksyonChain;
 //    return path;
 //    fs::path &path = fNetSpecific ? pathCachedNetSpecific : pathCached;
 /* MCHN END */
@@ -547,7 +547,7 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
 //#ifndef WIN32
 boost::filesystem::path GetPidFile()
 {
-    boost::filesystem::path pathPidFile(GetArg("-pid", "multichain.pid"));
+    boost::filesystem::path pathPidFile(GetArg("-pid", "aksyonchain.pid"));
     if (!pathPidFile.is_complete()) pathPidFile = GetDataDir() / pathPidFile;
     return pathPidFile;
 }

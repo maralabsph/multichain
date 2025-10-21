@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "structs/amount.h"
 #include "chainparams/chainparams.h"
@@ -182,7 +182,7 @@ Value setgenerate(const Array& params, bool fHelp)
 //            auto_ptr<CBlockTemplate> pblocktemplate(CreateNewBlockWithKey(reservekey));
             if (!pblocktemplate.get())
             {
-                if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+                if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
                 {
                     if(nGenerate > 1)
                     {
@@ -292,7 +292,7 @@ Value prioritisetransaction(const Array& params, bool fHelp)
     if (fHelp || params.size() != 3)
         throw runtime_error("Help message not found\n");
 
-    throw JSONRPCError(RPC_NOT_SUPPORTED, "Transaction prioritization is not supported in this version of MultiChain");        
+    throw JSONRPCError(RPC_NOT_SUPPORTED, "Transaction prioritization is not supported in this version of AksyonChain");
     
 /* MCHN START */    
 //    uint256 hash = ParseHashStr(params[0].get_str(), "txid");
@@ -330,7 +330,7 @@ Value getblocktemplate(const Array& params, bool fHelp)
     if (fHelp || params.size() > 1)
         throw runtime_error("Help message not found\n");
 
-    throw JSONRPCError(RPC_NOT_SUPPORTED, "getblocktemplate is not supported in this version of MultiChain");        
+    throw JSONRPCError(RPC_NOT_SUPPORTED, "getblocktemplate is not supported in this version of AksyonChain");
     
     std::string strMode = "template";
     Value lpval = Value::null;
@@ -383,10 +383,10 @@ Value getblocktemplate(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid mode");
 
     if (vNodes.empty())
-        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "MultiChain is not connected!");
+        throw JSONRPCError(RPC_CLIENT_NOT_CONNECTED, "AksyonChain is not connected!");
 
     if (IsInitialBlockDownload())
-        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "MultiChain is downloading blocks...");
+        throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "AksyonChain is downloading blocks...");
 
     static unsigned int nTransactionsUpdatedLast;
 

@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "script/standard.h"
 
@@ -11,7 +11,7 @@
 #include "utils/util.h"
 #include "utils/utilstrencodings.h"
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 #include <boost/foreach.hpp>
 
@@ -62,7 +62,7 @@ bool Solver(const CScript& scriptPubKey, txnouttype& typeRet, vector<vector<unsi
         mTemplates.insert(make_pair(TX_NULL_DATA, CScript() << OP_RETURN));
         
 /* MCHN START*/    
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             mTemplates.insert(make_pair(TX_NULL_DATA, CScript() << OP_DROPDATA << OP_DROP << OP_RETURN));            
             mTemplates.insert(make_pair(TX_NULL_DATA, CScript() << OP_DROPDATA << OP_DROP << OP_RETURN << OP_SMALLDATA));            
@@ -252,7 +252,7 @@ bool IsStandardFull(const CScript& scriptPubKey, txnouttype& whichType)
 bool ExtractDestinationScriptValid(const CScript& scriptPubKey, CTxDestination& addressRet)
 {
 /*    
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return ExtractDestination(scriptPubKey, addressRet);
     }

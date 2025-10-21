@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "miner/miner.h"
 
@@ -21,7 +21,7 @@
 #include "wallet/wallet.h"
 #endif
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 #include <boost/thread.hpp>
 #include <boost/tuple/tuple.hpp>
@@ -145,7 +145,7 @@ bool CreateBlockSignature(CBlock *block,uint32_t hash_type,CWallet *pwallet,uint
     block->nSigHashType=BLOCKSIGHASH_NONE;
     
     
-    if(!mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(!mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         block->hashMerkleRoot=block->BuildMerkleTree();
         return true;
@@ -672,7 +672,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn,CWallet *pwallet,CP
         bool testValidity=true;
         
 // If this node cannot mine for some reason (permission or diversity, block is not tested for validity to avoid exception        
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             if(canMine)
             {
@@ -684,7 +684,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn,CWallet *pwallet,CP
                 {
                     if(prevCanMine & MC_PTP_MINE)
                     {
-                        LogPrintf("mchn: MultiChainMiner: cannot mine now, waiting...\n");
+                        LogPrintf("mchn: AksyonChainMiner: cannot mine now, waiting...\n");
                     }
                     testValidity=false;
                 }
@@ -693,7 +693,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn,CWallet *pwallet,CP
                     if((prevCanMine & MC_PTP_MINE) == 0)
                     {
                         LogPrintf("CreateNewBlock(): total size %u\n", nBlockSize);
-                        LogPrintf("mchn: MultiChainMiner: Starting mining...\n");
+                        LogPrintf("mchn: AksyonChainMiner: Starting mining...\n");
                     }                    
                 }
             }            
@@ -885,11 +885,11 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
         LOCK(cs_main);
         if(mc_gState->m_NodePausedState & MC_NPS_MINING)
         {
-            return error("MultiChainMiner : mining is paused, generated block is dropped");            
+            return error("AksyonChainMiner : mining is paused, generated block is dropped");
         }
         if (pblock->hashPrevBlock != chainActive.Tip()->GetBlockHash())
         {
-            return error("MultiChainMiner : generated block is stale");
+            return error("AksyonChainMiner : generated block is stale");
         }
     }
 
@@ -905,7 +905,7 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, CReserveKey& reservekey)
     // Process this block the same as if we had received it from another node
     CValidationState state;
     if (!ProcessNewBlock(state, NULL, pblock))
-        return error("MultiChainMiner : ProcessNewBlock, block not accepted");
+        return error("AksyonChainMiner : ProcessNewBlock, block not accepted");
 
     return true;
 }
@@ -921,7 +921,7 @@ set <CTxDestination> LastActiveMiners(CBlockIndex* pindexTip, CPubKey *kLastMine
     CBlockIndex* pindex;
     set <CTxDestination> sMiners;   
             
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return sMiners;
     }
@@ -977,7 +977,7 @@ set <CTxDestination> LastActiveMiners(CBlockIndex* pindexTip, CPubKey *kLastMine
 
 int GetMaxActiveMinersCount()
 {
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         if(MCP_ANYONE_CAN_MINE)
         {
@@ -1147,7 +1147,7 @@ double GetMinerAndExpectedMiningStartTime(CWallet *pwallet,CPubKey *lpkMiner,set
     }
        
     fInMinerPool=false;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         sPrevMinerPool=*lpsMinerPool;
         nStdMinerPoolSize=(int)(dRelativeMinerPoolSize * dSpread / dAverageCreateBlockTime);
@@ -1288,7 +1288,7 @@ uint32_t mc_GetMiningStatus(CPubKey &miner)
 
 void static BitcoinMiner(CWallet *pwallet)
 {
-    LogPrintf("MultiChainMiner started\n");
+    LogPrintf("AksyonChainMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("bitcoin-miner");
 
@@ -1356,7 +1356,7 @@ void static BitcoinMiner(CWallet *pwallet)
             
             nMiningStatus=nLastStatus;
             
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 if((canMine & MC_PTP_MINE) == 0)
                 {
@@ -1380,7 +1380,7 @@ void static BitcoinMiner(CWallet *pwallet)
                     && not_setup_period
                     && ( (mc_gState->m_Permissions->GetMinerCount() > 1)
                     || (MCP_ANYONE_CAN_MINE != 0)
-                    || (mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+                    || (mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
                     )
                     ) {
 
@@ -1394,7 +1394,7 @@ void static BitcoinMiner(CWallet *pwallet)
                     while ((active_nodes == 0) && 
                            ( (mc_gState->m_Permissions->GetMinerCount() > 1)
                           || (MCP_ANYONE_CAN_MINE != 0)
-                          || (mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+                          || (mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
                            ) && Params().MiningRequiresPeers())
                     {
                         {
@@ -1436,7 +1436,7 @@ void static BitcoinMiner(CWallet *pwallet)
 
                 nMaxEmptyBlocks=0;
                 nEmptyBlocks=0;
-                if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+                if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
                 {
                     nMinerCount=1;
                     if(MCP_ANYONE_CAN_MINE == 0)
@@ -1571,13 +1571,13 @@ void static BitcoinMiner(CWallet *pwallet)
 /* MCHN END */    
             if (!pblocktemplate.get())
             {
-                LogPrintf("Error in MultiChainMiner: Keypool ran out, please call keypoolrefill before restarting the mining thread\n");
+                LogPrintf("Error in AksyonChainMiner: Keypool ran out, please call keypoolrefill before restarting the mining thread\n");
                 return;
             }
             CBlock *pblock = &pblocktemplate->block;
             IncrementExtraNonce(pblock, pindexPrev, nExtraNonce,pwallet);
 
-            LogPrint("mcminer","mchn-miner: Running MultiChainMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
+            LogPrint("mcminer","mchn-miner: Running AksyonChainMiner with %u transactions in block (%u bytes)\n", pblock->vtx.size(),
                 ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
             //
@@ -1624,17 +1624,17 @@ void static BitcoinMiner(CWallet *pwallet)
                             wBlockTime[wPos]=wBlockTimeNow-wStartTime;
                             wBlockTimePos=(wBlockTimePos+1)%wSize;
                         }
-                        LogPrintf("MultiChainMiner: Block Found - %s, prev: %s, height: %d, txs: %d\n",
+                        LogPrintf("AksyonChainMiner: Block Found - %s, prev: %s, height: %d, txs: %d\n",
                                 hash.GetHex(),pblock->hashPrevBlock.ToString().c_str(),mc_gState->m_Permissions->m_Block+1,(int)pblock->vtx.size());
 /*                        
-                        LogPrintf("MultiChainMiner:\n");
+                        LogPrintf("AksyonChainMiner:\n");
                         LogPrintf("proof-of-work found  \n  hash: %s  \ntarget: %s\n", hash.GetHex(), hashTarget.GetHex());
 */                     
 /* MCHN START */                        
 //                        if(mc_gState->m_ProtocolVersionToUpgrade > mc_gState->m_NetworkParams->ProtocolVersion())
                         if( (mc_gState->m_ProtocolVersionToUpgrade > 0) && (mc_gState->IsSupported(mc_gState->m_ProtocolVersionToUpgrade) == 0) )
                         {
-                            LogPrintf("MultiChainMiner: Waiting for upgrade, block is dropped\n");
+                            LogPrintf("AksyonChainMiner: Waiting for upgrade, block is dropped\n");
                         }
                         else
                         {
@@ -1696,7 +1696,7 @@ void static BitcoinMiner(CWallet *pwallet)
                         && not_setup_period
                         && ( (mc_gState->m_Permissions->GetMinerCount() > 1)
                         || (MCP_ANYONE_CAN_MINE != 0)
-                        || (mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+                        || (mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
                         )
                         ) 
                 {
@@ -1749,7 +1749,7 @@ void static BitcoinMiner(CWallet *pwallet)
     }
     catch (boost::thread_interrupted)
     {
-        LogPrintf("MultiChainMiner terminated\n");
+        LogPrintf("AksyonChainMiner terminated\n");
         throw;
     }
 }

@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 
 #include "core/main.h"
@@ -36,7 +36,7 @@ std::string mc_RPCHelpString(std::string strMethod)
 
 void mc_ThrowHelpMessage(std::string strMethod)
 {
-    if(pMultiChainFilterEngine->InFilter())
+    if(pAksyonChainFilterEngine->InFilter())
     {
         throw JSONRPCError(RPC_INVALID_PARAMS, "Wrong number of parameters");          
         //throw JSONRPCError(RPC_MISC_ERROR, mc_RPCHelpString(strMethod));
@@ -98,9 +98,9 @@ void mc_InitRPCHelpMap01()
             "\nResult:\n"
             "{\n"
             "  \"chain\": \"xxxx\",                  (string) current network name as defined in BIP70 (main, test, regtest)\n"
-            "  \"chainname\": \"xxxx\",              (string) multichain network name\n"
+            "  \"chainname\": \"xxxx\",              (string) aksyonchain network name\n"
             "  \"description\": \"xxxx\",            (string) network desctription\n"
-            "  \"protocol\": \"xxxx\",               (string) protocol - multichain or bitcoin\n"
+            "  \"protocol\": \"xxxx\",               (string) protocol - aksyonchain or bitcoin\n"
             "  \"setupblocks\": \"xxxx\",            (string) number of network setup blocks\n"
             "  \"blocks\": xxxxxx,                 (numeric) the current number of blocks processed in the server\n"
             "  \"headers\": xxxxxx,                (numeric) the current number of headers we have validated\n"
@@ -375,9 +375,9 @@ void mc_InitRPCHelpMap02()
             "{\n"
             "  \"version\": xxxxx,                 (numeric) the server version\n"
             "  \"protocolversion\": xxxxx,         (numeric) the protocol version\n"
-            "  \"chainname\": \"xxxx\",              (string) multichain network name\n"
+            "  \"chainname\": \"xxxx\",              (string) aksyonchain network name\n"
             "  \"description\": \"xxxx\",            (string) network desctription\n"
-            "  \"protocol\": \"xxxx\",               (string) protocol - multichain or bitcoin\n"
+            "  \"protocol\": \"xxxx\",               (string) protocol - aksyonchain or bitcoin\n"
             "  \"port\": xxxx,                     (numeric) network port\n"
             "  \"setupblocks\": \"xxxx\",            (string) number of network setup blocks\n"
             "  \"walletversion\": xxxxx,           (numeric) the wallet version\n"
@@ -451,7 +451,7 @@ void mc_InitRPCHelpMap03()
     
     mapHelpStrings.insert(std::make_pair("stop",
              "stop\n"
-            "\nShuts down the this blockchain node. Sends stop signal to MultiChain server."
+            "\nShuts down the this blockchain node. Sends stop signal to AksyonChain server."
         ));
     
     mapHelpStrings.insert(std::make_pair("getgenerate",
@@ -665,7 +665,7 @@ void mc_InitRPCHelpMap04()
             "    \"connected\" : true|false,               (boolean) If connected\n"
             "    \"addresses\" : [\n"
             "       {\n"
-            "         \"address\" : \"192.168.0.201:8333\",  (string) The MultiChain server host and port\n"
+            "         \"address\" : \"192.168.0.201:8333\",  (string) The AksyonChain server host and port\n"
             "         \"connected\" : \"outbound\"           (string) connection, inbound or outbound\n"
             "       }\n"
             "       ,...\n"
@@ -758,8 +758,8 @@ void mc_InitRPCHelpMap04()
             "    \"pingwait\": n,                  (numeric) ping wait\n"
             "    \"version\": v,                   (numeric) The peer version, such as 7001\n"
             "    \"subver\": \"/Satoshi:0.8.5/\",    (string) The string version\n"
-            "    \"handshakelocal\": n,            (string) If protocol is Multichain. Address used by local node for handshake.\n"
-            "    \"handshake\": n,                 (string) If protocol is Multichain. Address used by remote node for handshake.\n"
+            "    \"handshakelocal\": n,            (string) If protocol is Aksyonchain. Address used by local node for handshake.\n"
+            "    \"handshake\": n,                 (string) If protocol is Aksyonchain. Address used by remote node for handshake.\n"
             "    \"inbound\": true|false,          (boolean) Inbound (true) or Outbound (false)\n"
             "    \"startingheight\": n,            (numeric) The starting height (block) of the peer\n"
             "    \"banscore\": n,                  (numeric) The ban score\n"
@@ -1704,7 +1704,7 @@ void mc_InitRPCHelpMap07()
             "\nReveals the private key corresponding to 'address'.\n"
             "Then the importprivkey can be used with this output\n"
             "\nArguments:\n"
-            "1. \"address\"                        (string, required) The MultiChain address for the private key\n"
+            "1. \"address\"                        (string, required) The AksyonChain address for the private key\n"
             "\nResult:\n"
             "\"key\"                               (string) The private key\n"
             "\nExamples:\n"
@@ -2190,7 +2190,7 @@ void mc_InitRPCHelpMap09()
             "\nGrant permission(s) to a given address. \n"
             + HelpRequiringPassphraseWrapper() +
             "\nArguments:\n"
-            "1. \"address(es)\"                    (string, required)  The multichain addresses to send to (comma delimited)\n"
+            "1. \"address(es)\"                    (string, required)  The aksyonchain addresses to send to (comma delimited)\n"
             "2. \"permission(s)\"                  (string, required)  Permission strings, comma delimited. \n"
             "                                                        Global: " + AllowedPermissions() + " \n"
             "                                                        or per-asset: asset-identifier.issue,admin,activate,send,receive \n"
@@ -2221,7 +2221,7 @@ void mc_InitRPCHelpMap09()
             + HelpRequiringPassphraseWrapper() +
             "\nArguments:\n"
             "1. \"from-address\"                   (string, required) Address used for grant.\n"
-            "2. \"to-address(es)\"                 (string, required) The multichain addresses to grant permissions to\n"
+            "2. \"to-address(es)\"                 (string, required) The aksyonchain addresses to grant permissions to\n"
             "3. \"permission(s)\"                  (string, required)  Permission strings, comma delimited. \n"
             "                                                        Global: " + AllowedPermissions() + " \n"
             "                                                        or per-asset: asset-identifier.issue,admin,activate,send,receive \n"
@@ -2249,7 +2249,7 @@ void mc_InitRPCHelpMap09()
             "grantwithdata \"address(es)\" \"permission(s)\" data|publish-new-stream-item ( native-amount startblock endblock )\n"
             "\nGrant permission(s) with metadata to a given address. \n"
             "\nArguments:\n"
-            "1. \"address(es)\"                    (string, required) The multichain addresses to send to (comma delimited)\n"
+            "1. \"address(es)\"                    (string, required) The aksyonchain addresses to send to (comma delimited)\n"
             "2. \"permission(s)\"                  (string, required) Permission strings, comma delimited. \n"
             "                                                       Global: " + AllowedPermissions() + " \n"
             "                                                       or per-asset: asset-identifier.issue,admin,activate,send,receive \n"
@@ -2277,7 +2277,7 @@ void mc_InitRPCHelpMap10()
             "grantwithdata \"address(es)\" \"permission(s)\" data|publish-new-stream-item ( native-amount startblock endblock )\n"
             "\nGrant permission(s) with metadata to a given address. \n"
             "\nArguments:\n"
-            "1. \"address(es)\"                    (string, required) The multichain addresses to send to (comma delimited)\n"
+            "1. \"address(es)\"                    (string, required) The aksyonchain addresses to send to (comma delimited)\n"
             "2. \"permission(s)\"                  (string, required)  Permission strings, comma delimited. \n"
             "                                                        Global: " + AllowedPermissions() + " \n"
             "                                                        or per-asset: asset-identifier.issue,admin,activate,send,receive \n"
@@ -2303,7 +2303,7 @@ void mc_InitRPCHelpMap10()
             + HelpRequiringPassphraseWrapper() +
             "\nArguments:\n"
             "1. \"from-address\"                   (string, required) Address used for grant.\n"
-            "2. \"address(es)\"                    (string, required) The multichain addresses to send to (comma delimited)\n"
+            "2. \"address(es)\"                    (string, required) The aksyonchain addresses to send to (comma delimited)\n"
             "3. \"permission(s)\"                  (string, required) Permission strings, comma delimited. \n"
             "                                                       Global: " + AllowedPermissions() + " \n"
             "                                                       or per-asset: asset-identifier.issue,admin,activate,send,receive \n"
@@ -2329,7 +2329,7 @@ void mc_InitRPCHelpMap10()
             + HelpRequiringPassphraseWrapper() +
             "\nArguments:\n"
             "1. \"from-address\"                   (string, required) Address used for grant.\n"
-            "2. \"address(es)\"                    (string, required) The multichain addresses to send to (comma delimited)\n"
+            "2. \"address(es)\"                    (string, required) The aksyonchain addresses to send to (comma delimited)\n"
             "3. \"permission(s)\"                  (string, required) Permission strings, comma delimited. \n"
             "                                                       Global: " + AllowedPermissions() + " \n"
             "                                                       or per-asset: asset-identifier.issue,admin,activate,send,receive \n"
@@ -5166,7 +5166,7 @@ void mc_InitRPCHelpMap21()
             "\nArguments:\n"
             "1. \"feed-name\"                      (string, required) Feed name\n"
             "2. parameters                       (object, optional) Feed parameters. Supported parameters: \n"
-            "                                                         directory - feed output directory, MultiChain will attempt to create it.\n"
+            "                                                         directory - feed output directory, AksyonChain will attempt to create it.\n"
             "\nExamples:\n"
             + HelpExampleCli("createfeed", "feed1")
             + HelpExampleRpc("createfeed", "feed1")

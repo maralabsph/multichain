@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(multichain-v8)
+project(aksyonchain-v8)
 
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_STATIC_RUNTIME ON)
@@ -44,7 +44,7 @@ set(SOURCES
     v8ubjson.cpp
     v8utils.cpp
     v8_win.cpp
-    multichain-v8.rc
+    aksyonchain-v8.rc
     )
 
 string(REPLACE "/MD" "/MT" CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE})

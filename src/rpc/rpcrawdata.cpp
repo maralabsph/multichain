@@ -2,10 +2,10 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "rpc/rpcutils.h"
-#include "filters/multichainfilter.h"
+#include "filters/aksyonchainfilter.h"
 #include "filters/filter.h"
 #include "community/community.h"
 
@@ -1381,7 +1381,7 @@ bool AddParamNameValueToScript(const string  param_name,const Value param_value,
     int64_t value;
     string name=param_name;   
     name.erase(std::remove(name.begin(), name.end(), '-'), name.end());
-    const mc_OneMultichainParam *param=mc_gState->m_NetworkParams->FindParam(name.c_str());
+    const mc_OneAksyonchainParam *param=mc_gState->m_NetworkParams->FindParam(name.c_str());
             
     if(param == NULL)
     {
@@ -1821,7 +1821,7 @@ CScript RawDataScriptCreateFilter(Value *param,mc_Script *lpDetails,mc_Script *l
             {
                 test_code=library_code + MC_FLT_LIBRARY_GLUE + filter_code;
             }
-            int err=pFilterEngine->CreateFilter(test_code.c_str(),filter_main_name,pMultiChainFilterEngine->m_CallbackNames[filter_type],worker,strFilterError);
+            int err=pFilterEngine->CreateFilter(test_code.c_str(),filter_main_name,pAksyonChainFilterEngine->m_CallbackNames[filter_type],worker,strFilterError);
             delete worker;
             if(err)
             {

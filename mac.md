@@ -16,33 +16,33 @@
 
 -   Install brew (follow instructions on [brew.sh](https://brew.sh/))
 
-## Clone MultiChain
+## Clone AksyonChain
 Install git from git-scm, then
 
-    git clone https://github.com/MultiChain/multichain.git
+    git clone https://github.com/AksyonChain/aksyonchain.git
 
 
 ## Prepare to download or build V8
 
-    cd multichain
-    set MULTICHAIN_HOME=$(pwd)
+    cd aksyonchain
+    set AKSYONCHAIN_HOME=$(pwd)
     mkdir v8build
     cd v8build
 
     
-You can use the pre-built headers and binaries of Google's V8 JavaScript engine by downloading and expanding [macos-v8.tar.gz](https://github.com/MultiChain/multichain-binaries/raw/master/macos-v8.tar.gz) in the current directory. If, on the other hand, you prefer to build the V8 component yourself, please follow the instructions in [V8_mac.md](/V8_mac.md/).
+You can use the pre-built headers and binaries of Google's V8 JavaScript engine by downloading and expanding [macos-v8.tar.gz](https://github.com/AksyonChain/aksyonchain-binaries/raw/master/macos-v8.tar.gz) in the current directory. If, on the other hand, you prefer to build the V8 component yourself, please follow the instructions in [V8_mac.md](/V8_mac.md/).
 
 ## Install dependencies
 
     brew install autoconf automake libevent libtool boost pkg-config rename nasm
 
-## Compile MultiChain for Mac (64-bit)
+## Compile AksyonChain for Mac (64-bit)
 
-    cd $MULTICHAIN_HOME
+    cd $AKSYONCHAIN_HOME
     ./autogen.sh
     ./configure --with-gui=no --with-libs=no --with-miniupnpc=no
     make
 
 ## Notes
 
-* This will build `multichaind`, `multichain-cli` and `multichain-util` in the `src` directory.
+* This will build `aksyonchaind`, `aksyonchain-cli` and `aksyonchain-util` in the `src` directory.

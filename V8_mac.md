@@ -1,8 +1,8 @@
 # Fetching, Building and Installing V8 (on MacOS Sierra)
 
-The following instructions fetch the Google V8 JavaScript engine to your local machine and configure it to create static libraries in the location where the MultiChain build system expects to find them.
+The following instructions fetch the Google V8 JavaScript engine to your local machine and configure it to create static libraries in the location where the AksyonChain build system expects to find them.
 
-MultiChain uses V8 version 6.8, and requires at least 4 GB of RAM to build in a reasonable time. It will not build at all with less than 2 GB RAM.
+AksyonChain uses V8 version 6.8, and requires at least 4 GB of RAM to build in a reasonable time. It will not build at all with less than 2 GB RAM.
 
 ## Clone Google's depot_tools
 
@@ -16,7 +16,7 @@ Google's [depot_tools](https://commondatastorage.googleapis.com/chrome-infra-doc
 
 ## Fetch V8
 
-The following commands check out V8 and select the branch used by MultiChain. Please note that this step downloads about 2 GB of data, and can take a long time (30 minutes or more).
+The following commands check out V8 and select the branch used by AksyonChain. Please note that this step downloads about 2 GB of data, and can take a long time (30 minutes or more).
 
     gclient
     fetch v8
@@ -58,8 +58,8 @@ Create an additional library embedding the V8 initial snapshot blobs:
     brew install python@2
     pip install pathlib2
     cd $RELEASE
-    python $MULTICHAIN_HOME/depends/v8_data_lib.py
+    python $AKSYONCHAIN_HOME/depends/v8_data_lib.py
     
 ### Note
 
-The environment variable `$MULTICHAIN_HOME` should point to the parent of the V8 build folder (see [mac.md](mac.md) for details).
+The environment variable `$AKSYONCHAIN_HOME` should point to the parent of the V8 build folder (see [mac.md](mac.md) for details).

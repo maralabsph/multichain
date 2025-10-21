@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_PERMISSION_H
-#define	MULTICHAIN_PERMISSION_H
+#ifndef AKSYONCHAIN_PERMISSION_H
+#define	AKSYONCHAIN_PERMISSION_H
 
 #include "utils/declare.h"
 #include "utils/dbwrapper.h"
@@ -442,5 +442,5 @@ typedef struct mc_Permissions
 
 
 
-#endif	/* MULTICHAIN_PERMISSION_H */
+#endif	/* AKSYONCHAIN_PERMISSION_H */
 

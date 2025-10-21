@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef BITCOIN_TXMEMPOOL_H
 #define BITCOIN_TXMEMPOOL_H
@@ -14,7 +14,7 @@
 #include "primitives/transaction.h"
 #include "utils/sync.h"
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 class CAutoFile;
 

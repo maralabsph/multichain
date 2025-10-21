@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "wallet/chunkcollector.h"
 
 #define MC_IMPOSSIBLE_NEXT_ATTEMPT 0xFFFFFFFF
@@ -1048,7 +1048,7 @@ int mc_ChunkCollector::CommitInternal(int fill_mempool)
     return err;
 }
 
-uint32_t MultichainNextChunkQueryAttempt(uint32_t attempts)
+uint32_t AksyonchainNextChunkQueryAttempt(uint32_t attempts)
 {
     if(attempts <  2)return 0;
     return (uint32_t)(int64_t)(pow(1.5,attempts-1)-1);
@@ -1121,7 +1121,7 @@ int mc_IsReadPermissionedStream(mc_ChunkEntityKey* chunk,map<uint160,int>& cache
     return result;    
 }
 
-bool MultichainProcessChunkResponse(const CRelayResponsePair *response_pair,map <int,int>* request_pairs,mc_ChunkCollector* collector)
+bool AksyonchainProcessChunkResponse(const CRelayResponsePair *response_pair,map <int,int>* request_pairs,mc_ChunkCollector* collector)
 {
     mc_RelayRequest *request;
     mc_RelayResponse *response;
@@ -1306,7 +1306,7 @@ exitlbl:
     return result;
 }
 
-int MultichainResponseScore(mc_RelayResponse *response,mc_ChunkCollectorRow *collect_row,map<int64_t,int64_t>& destination_loads,uint32_t max_total_size)
+int AksyonchainResponseScore(mc_RelayResponse *response,mc_ChunkCollectorRow *collect_row,map<int64_t,int64_t>& destination_loads,uint32_t max_total_size)
 {
     unsigned char *ptr;
     unsigned char *ptrEnd;
@@ -1382,7 +1382,7 @@ int MultichainResponseScore(mc_RelayResponse *response,mc_ChunkCollectorRow *col
     return (response->m_TryCount+response->m_HopCount)*1024*1024+total_size/1024;
 }
 
-int MultichainCollectChunks(mc_ChunkCollector* collector)
+int AksyonchainCollectChunks(mc_ChunkCollector* collector)
 {
     uint32_t time_now,expiration,dest_expiration;    
     vector <mc_ChunkEntityKey> vChunkDefs;
@@ -1466,7 +1466,7 @@ int MultichainCollectChunks(mc_ChunkCollector* collector)
 
     BOOST_FOREACH(PAIRTYPE(const CRelayResponsePair, CRelayRequestPairs)& item, responses_to_process)    
     {
-        MultichainProcessChunkResponse(&(item.first),&(item.second.m_Pairs),collector);
+        AksyonchainProcessChunkResponse(&(item.first),&(item.second.m_Pairs),collector);
         pRelayManager->DeleteRequest(item.first.request_id);
     }
 
@@ -1552,7 +1552,7 @@ int MultichainCollectChunks(mc_ChunkCollector* collector)
                     if(query == NULL)
                     {
                         collect_row->m_State.m_Query=0;
-                        collect_row->m_State.m_QueryNextAttempt=time_now+MultichainNextChunkQueryAttempt(collect_row->m_State.m_QueryAttempts);                                                
+                        collect_row->m_State.m_QueryNextAttempt=time_now+AksyonchainNextChunkQueryAttempt(collect_row->m_State.m_QueryAttempts);
                         collect_row->m_State.m_Status |= MC_CCF_UPDATED;
                         for(int k=0;k<2;k++)collector->m_StatTotal[k].m_Unresponded+=k ? collect_row->m_ChunkDef.m_Size : 1;                
                     }
@@ -1563,7 +1563,7 @@ int MultichainCollectChunks(mc_ChunkCollector* collector)
                     best_score=MC_CCW_WORST_RESPONSE_SCORE;
                     for(int i=0;i<(int)query->m_Responses.size();i++)
                     {
-                        this_score=MultichainResponseScore(&(query->m_Responses[i]),collect_row,destination_loads,max_total_destination_size);
+                        this_score=AksyonchainResponseScore(&(query->m_Responses[i]),collect_row,destination_loads,max_total_destination_size);
                         if(this_score < best_score)
                         {
                             best_score=this_score;
@@ -1842,7 +1842,7 @@ int MultichainCollectChunks(mc_ChunkCollector* collector)
                             query_to_delete.insert(make_pair(collect_row->m_State.m_Query,true));
                         }       
                         collect_row->m_State.m_Query=0;
-                        collect_row->m_State.m_QueryNextAttempt=time_now+MultichainNextChunkQueryAttempt(collect_row->m_State.m_QueryAttempts);      
+                        collect_row->m_State.m_QueryNextAttempt=time_now+AksyonchainNextChunkQueryAttempt(collect_row->m_State.m_QueryAttempts);
                         collect_row->m_State.m_Status |= MC_CCF_UPDATED;
                         for(int k=0;k<2;k++)collector->m_StatTotal[k].m_Unresponded+=k ? collect_row->m_ChunkDef.m_Size : 1;                
                     }
@@ -1958,7 +1958,7 @@ int MultichainCollectChunks(mc_ChunkCollector* collector)
     return not_processed;
 }
 
-int MultichainCollectChunksQueueStats(mc_ChunkCollector* collector)
+int AksyonchainCollectChunksQueueStats(mc_ChunkCollector* collector)
 {
     int row;
     int delay;

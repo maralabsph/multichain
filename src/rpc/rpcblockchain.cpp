@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "chain/checkpoints.h"
 #include "core/main.h"
@@ -25,7 +25,7 @@ using namespace std;
 extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry);
 
 /* MCHN START */
-bool ParseMultichainTxOutToBuffer(uint256 hash,const CTxOut& txout,mc_Buffer *amounts,mc_Script *lpScript,int *allowed,int *required,string& strFailReason);
+bool ParseAksyonchainTxOutToBuffer(uint256 hash,const CTxOut& txout,mc_Buffer *amounts,mc_Script *lpScript,int *allowed,int *required,string& strFailReason);
 vector<int> ParseBlockSetIdentifier(Value blockset_identifier);
 bool CreateAssetBalanceList(const CTxOut& out,mc_Buffer *amounts,mc_Script *lpScript);
 Object AssetEntry(const unsigned char *txid,int64_t quantity,uint32_t output_level);
@@ -78,7 +78,7 @@ Object blockToJSONForListBlocks(CBlock& block, const CBlockIndex* blockindex, bo
 /* MCHN START */    
     CKeyID keyID;
     Value miner;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         if (chainActive.Contains(blockindex))
         {
@@ -139,7 +139,7 @@ Object blockToJSON(CBlock& block, const CBlockIndex* blockindex, bool txDetails 
 /* MCHN START */    
     CKeyID keyID;
     Value miner;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         if (chainActive.Contains(blockindex))
         {
@@ -446,7 +446,7 @@ Value getlastblockinfo(const Array& params, bool fHelp)
     
     CKeyID keyID;
     Value miner;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         if(mc_gState->m_Permissions->GetBlockMiner(pblockindex->nHeight,(unsigned char*)&keyID) == MC_ERR_NOERROR)
         {
@@ -530,8 +530,8 @@ Value getblock(const Array& params, bool fHelp)
     CBlock block;
     CBlockIndex* pblockindex = mapBlockIndex[hash];
 
-//    if(pMultiChainFilterEngine->m_TxID != 0)
-    if(pMultiChainFilterEngine->InFilter())
+//    if(pAksyonChainFilterEngine->m_TxID != 0)
+    if(pAksyonChainFilterEngine->InFilter())
     {
         if (!chainActive.Contains(pblockindex))
         {
@@ -583,20 +583,20 @@ Value getfiltertxinput(const Array& params, bool fHelp)
     
     int64_t vin = params[0].get_int64();                                          
     
-    if(pMultiChainFilterEngine->m_Vout >= 0)
+    if(pAksyonChainFilterEngine->m_Vout >= 0)
     {
         throw JSONRPCError(RPC_NOT_SUPPORTED, "This callback cannot be used in stream filters");                            
     }
     
-    if( (vin < 0) || (vin >= (unsigned int)pMultiChainFilterEngine->m_Tx.vin.size()) )
+    if( (vin < 0) || (vin >= (unsigned int)pAksyonChainFilterEngine->m_Tx.vin.size()) )
     {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "vin out of range");                    
     }
     
     
     Array getxoutparams;
-    getxoutparams.push_back(pMultiChainFilterEngine->m_Tx.vin[vin].prevout.hash.ToString());
-    getxoutparams.push_back((int64_t)pMultiChainFilterEngine->m_Tx.vin[vin].prevout.n);
+    getxoutparams.push_back(pAksyonChainFilterEngine->m_Tx.vin[vin].prevout.hash.ToString());
+    getxoutparams.push_back((int64_t)pAksyonChainFilterEngine->m_Tx.vin[vin].prevout.n);
         
     return gettxout(getxoutparams,false);
 }
@@ -616,9 +616,9 @@ Value gettxout(const Array& params, bool fHelp)
         fMempool = params[2].get_bool();
 
     CCoins coins;
-    if(pMultiChainFilterEngine->m_CoinsCache)
+    if(pAksyonChainFilterEngine->m_CoinsCache)
     {
-        if (!((CCoinsViewCache*)(pMultiChainFilterEngine->m_CoinsCache))->GetCoins(hash, coins))
+        if (!((CCoinsViewCache*)(pAksyonChainFilterEngine->m_CoinsCache))->GetCoins(hash, coins))
             return Value::null;        
     }
     else
@@ -628,7 +628,7 @@ Value gettxout(const Array& params, bool fHelp)
             CCoinsViewMemPool view(pcoinsTip, mempool);
             if (!view.GetCoins(hash, coins))
                 return Value::null;
-            if(pMultiChainFilterEngine->InFilter() == 0)                                // In filter we already checked this input exists, but mempool is dirty
+            if(pAksyonChainFilterEngine->InFilter() == 0)                                // In filter we already checked this input exists, but mempool is dirty
             {
                 mempool.pruneSpent(hash, coins); // TODO: this should be done by the CCoinsViewMemPool
             }

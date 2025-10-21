@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 
 #include "rpc/rpcwallet.h"
@@ -1768,7 +1768,7 @@ Value getassetbalances(const Array& params, bool fHelp)
             {
                 if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
                 {
-                    throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need getassetbalances, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+                    throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need getassetbalances, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
                 }            
             }
             BOOST_FOREACH(const PAIRTYPE(CBitcoinAddress, CAddressBookData)& item, pwalletMain->mapAddressBook)
@@ -2481,14 +2481,14 @@ Value getfilterassetbalances_operation(const Array& params, bool fHelp,bool aggr
     mc_Script *lpScript=mc_gState->m_TmpBuffers->m_RpcScript3;
     lpScript->Clear();    
     
-    for(int j=0;j<(int)pMultiChainFilterEngine->m_Tx.vin.size();j++)
+    for(int j=0;j<(int)pAksyonChainFilterEngine->m_Tx.vin.size();j++)
     {
-        int n=pMultiChainFilterEngine->m_Tx.vin[j].prevout.n;
+        int n=pAksyonChainFilterEngine->m_Tx.vin[j].prevout.n;
         CCoins coins;
         {
-            if(pMultiChainFilterEngine->m_CoinsCache)
+            if(pAksyonChainFilterEngine->m_CoinsCache)
             {
-                if (!((CCoinsViewCache*)(pMultiChainFilterEngine->m_CoinsCache))->GetCoins(pMultiChainFilterEngine->m_Tx.vin[j].prevout.hash, coins))
+                if (!((CCoinsViewCache*)(pAksyonChainFilterEngine->m_CoinsCache))->GetCoins(pAksyonChainFilterEngine->m_Tx.vin[j].prevout.hash, coins))
                     return Value::null;        
             }
             else
@@ -2496,7 +2496,7 @@ Value getfilterassetbalances_operation(const Array& params, bool fHelp,bool aggr
                 LOCK(mempool.cs);
 
                 CCoinsViewMemPool view(pcoinsTip, mempool);
-                if (!view.GetCoins(pMultiChainFilterEngine->m_Tx.vin[j].prevout.hash, coins))
+                if (!view.GetCoins(pAksyonChainFilterEngine->m_Tx.vin[j].prevout.hash, coins))
                 {
                     return Value::null;                                                                 
                 }
@@ -2530,7 +2530,7 @@ Value getfilterassetbalances_operation(const Array& params, bool fHelp,bool aggr
                                 {
                                     gin=i;
                                 }
-                                if(memcmp(lpAsset->GetTxID(),&(pMultiChainFilterEngine->m_Tx.vin[gin].prevout.hash),sizeof(uint256)) == 0)
+                                if(memcmp(lpAsset->GetTxID(),&(pAksyonChainFilterEngine->m_Tx.vin[gin].prevout.hash),sizeof(uint256)) == 0)
                                 {
                                     if( mc_GetABRefType(asset_amounts->GetRow(i)) == MC_AST_ASSET_REF_TYPE_GENESIS )                    
                                     {
@@ -2601,9 +2601,9 @@ Value getfilterassetbalances_operation(const Array& params, bool fHelp,bool aggr
             }
         }        
     }
-    for (int j = 0; j < (int)pMultiChainFilterEngine->m_Tx.vout.size(); ++j)
+    for (int j = 0; j < (int)pAksyonChainFilterEngine->m_Tx.vout.size(); ++j)
     {
-        const CTxOut& txout = pMultiChainFilterEngine->m_Tx.vout[j];
+        const CTxOut& txout = pAksyonChainFilterEngine->m_Tx.vout[j];
         if(!txout.scriptPubKey.IsUnspendable())
         {
             CTxDestination address;
@@ -2627,7 +2627,7 @@ Value getfilterassetbalances_operation(const Array& params, bool fHelp,bool aggr
                             }
                             else
                             {
-                                if(memcmp(lpAsset->GetTxID(),&(pMultiChainFilterEngine->m_TxID),sizeof(uint256)) == 0)
+                                if(memcmp(lpAsset->GetTxID(),&(pAksyonChainFilterEngine->m_TxID),sizeof(uint256)) == 0)
                                 {
                                     if( mc_GetABRefType(asset_amounts->GetRow(i)) == MC_AST_ASSET_REF_TYPE_GENESIS )                    
                                     {
@@ -2779,7 +2779,7 @@ Value getassettransaction(const Array& params, bool fHelp)
     
     if((mc_gState->m_WalletMode & MC_WMD_TXS) == 0)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"multichaind -walletdbversion=2 -rescan\" ");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"aksyonchaind -walletdbversion=2 -rescan\" ");
     }   
            
     mc_EntityDetails asset_entity;
@@ -2831,7 +2831,7 @@ Value listassettransactions(const Array& params, bool fHelp)
 
     if((mc_gState->m_WalletMode & MC_WMD_TXS) == 0)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"multichaind -walletdbversion=2 -rescan\" ");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"aksyonchaind -walletdbversion=2 -rescan\" ");
     }   
 
     Array retArray;
@@ -3041,7 +3041,7 @@ Value gettokeninfo(const Array& params, bool fHelp)
     
     if(mc_gState->m_Assets->m_Version < 1)
     {
-         throw JSONRPCError(RPC_NOT_SUPPORTED, "The node was created with previous version of MultiChain. To use this API, please restart multichaind with -reindex.");                       
+         throw JSONRPCError(RPC_NOT_SUPPORTED, "The node was created with previous version of AksyonChain. To use this API, please restart aksyonchaind with -reindex.");
     }
    
     mc_EntityDetails asset_entity;

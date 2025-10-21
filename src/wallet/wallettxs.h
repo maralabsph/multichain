@@ -1,16 +1,16 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_WALLETTXS_H
-#define	MULTICHAIN_WALLETTXS_H
+#ifndef AKSYONCHAIN_WALLETTXS_H
+#define	AKSYONCHAIN_WALLETTXS_H
 
 #include "core/main.h"
 #include "utils/util.h"
 #include "structs/base58.h"
 #include "wallet/wallet.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "wallet/wallettxdb.h"
 #include "wallet/chunkdb.h"
 #include "wallet/chunkcollector.h"
@@ -295,5 +295,5 @@ typedef struct mc_WalletTxs
 
 
 
-#endif	/* MULTICHAIN_WALLETTXS_H */
+#endif	/* AKSYONCHAIN_WALLETTXS_H */
 

@@ -1,15 +1,15 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAINPARAMLIST_H
-#define MULTICHAINPARAMLIST_H
+#ifndef AKSYONCHAINPARAMLIST_H
+#define AKSYONCHAINPARAMLIST_H
 
-static const mc_OneMultichainParam MultichainParamArray[] =
+static const mc_OneAksyonchainParam AksyonchainParamArray[] =
 {
     { "chainprotocol"                          , "chain-protocol"                          ,
                    MC_PRM_STRING  | MC_PRM_USER | MC_PRM_CLONE | MC_PRM_SPECIAL , 16,         0,          0,         0, 0.0, 10001, 0, "-mc-chainprotocol",
                    "chaindescription","Basic chain parameters",
-                   "Chain protocol: multichain (permissions, native assets) or bitcoin"},
+                   "Chain protocol: aksyonchain (permissions, native assets) or bitcoin"},
     { "chaindescription"                       , "chain-description"                       ,
                    MC_PRM_STRING  | MC_PRM_USER | MC_PRM_CLONE | MC_PRM_SPECIAL ,256,         0,          0,         0, 0.0, 10001, 0, "-mc-chaindescription",
                    "rootstreamname","",
@@ -254,7 +254,7 @@ static const mc_OneMultichainParam MultichainParamArray[] =
     { "chainname"                              , "chain-name"                              ,
                    MC_PRM_STRING  | MC_PRM_GENERATED | MC_PRM_MINIMAL           , MC_PRM_NETWORK_NAME_MAX_SIZE,         0,          0,         0, 0.0, 10001, 0, "",
                    "protocolversion","",
-                   "Chain name, used as first argument for multichaind and multichain-cli."},                   
+                   "Chain name, used as first argument for aksyonchaind and aksyonchain-cli."},
     { "protocolversion"                   , "protocol-version"                  ,
                    MC_PRM_UINT32  | MC_PRM_GENERATED                            , -1,         0,          0,         0, 0.0, 10001, 0, "",
                    "networkmessagestart","",
@@ -322,5 +322,5 @@ static const mc_OneMultichainParam MultichainParamArray[] =
 };
 
 
-#endif  /* MULTICHAINPARAMLIST_H */
+#endif  /* AKSYONCHAINPARAMLIST_H */
 

@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_CHUNKDB_H
-#define MULTICHAIN_CHUNKDB_H
+#ifndef AKSYONCHAIN_CHUNKDB_H
+#define AKSYONCHAIN_CHUNKDB_H
 
 #include "utils/declare.h"
 #include "wallet/wallettxdb.h"
@@ -276,5 +276,5 @@ typedef struct mc_ChunkDB
     
 } mc_ChunkDB;
 
-#endif /* MULTICHAIN_CHUNKDB_H */
+#endif /* AKSYONCHAIN_CHUNKDB_H */
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 
 #define MC_PRM_DAT_FILE_LINE_SIZE 39
@@ -14,7 +14,7 @@ const unsigned char c_DefaultMessageStart[4]={0xfb,0xb4,0xc7,0xde};
 #include "chainparams/paramlist.h"
 
 
-int mc_OneMultichainParam::IsRelevant(int version)
+int mc_OneAksyonchainParam::IsRelevant(int version)
 {
     int ret=1;
     
@@ -40,7 +40,7 @@ int mc_OneMultichainParam::IsRelevant(int version)
     return ret;
 }
 
-void mc_MultichainParams::Zero()
+void mc_AksyonchainParams::Zero()
 {
     m_lpData = NULL;
     m_lpParams = NULL;        
@@ -48,14 +48,14 @@ void mc_MultichainParams::Zero()
     m_lpCoord=NULL;
     m_Status=MC_PRM_STATUS_EMPTY;
     m_Size=0;
-    m_IsProtocolMultiChain=1;
+    m_IsProtocolAksyonChain=1;
     m_ProtocolVersion=0;
     m_RelevantProtocolVersion=0;
     
     m_AssetRefSize=MC_AST_SHORT_TXID_SIZE;
 }
 
-void mc_MultichainParams::Destroy()
+void mc_AksyonchainParams::Destroy()
 {
     if(m_lpData)
     {
@@ -80,7 +80,7 @@ void mc_MultichainParams::Destroy()
 }
 
 
-int64_t mc_MultichainParams::GetInt64Param(const char *param)
+int64_t mc_AksyonchainParams::GetInt64Param(const char *param)
 {
     int size;
     void* ptr=GetParam(param,&size);
@@ -102,7 +102,7 @@ int64_t mc_MultichainParams::GetInt64Param(const char *param)
     return mc_GetLE(ptr,size);
 }
 
-double mc_MultichainParams::Int64ToDecimal(int64_t value)
+double mc_AksyonchainParams::Int64ToDecimal(int64_t value)
 {
     if(value < 0)
     {
@@ -111,12 +111,12 @@ double mc_MultichainParams::Int64ToDecimal(int64_t value)
     return (double)value / MC_PRM_DECIMAL_GRANULARITY;    
 }
 
-int64_t mc_MultichainParams::DecimalToInt64(double value)
+int64_t mc_AksyonchainParams::DecimalToInt64(double value)
 {
     return (int64_t)(value*MC_PRM_DECIMAL_GRANULARITY+mc_gState->m_NetworkParams->ParamAccuracy());    
 }
 
-int mc_MultichainParams::GetParamFromScript(char* script,int64_t *value,int *size)
+int mc_AksyonchainParams::GetParamFromScript(char* script,int64_t *value,int *size)
 {
     char *ptr;    
     ptr=script;
@@ -128,7 +128,7 @@ int mc_MultichainParams::GetParamFromScript(char* script,int64_t *value,int *siz
     return ptr-script; 
 }
 
-double mc_MultichainParams::GetDoubleParam(const char *param)
+double mc_AksyonchainParams::GetDoubleParam(const char *param)
 {
     int n=(int)mc_gState->m_NetworkParams->GetInt64Param(param);
     if(n < 0)
@@ -139,7 +139,7 @@ double mc_MultichainParams::GetDoubleParam(const char *param)
 }
 
 
-void* mc_MultichainParams::GetParam(const char *param,int* size)
+void* mc_AksyonchainParams::GetParam(const char *param,int* size)
 {
     if(m_lpIndex == NULL)
     {
@@ -163,7 +163,7 @@ void* mc_MultichainParams::GetParam(const char *param,int* size)
     return m_lpData+offset;
 }
 
-int mc_MultichainParams::IsParamUpgradeValueInRange(const mc_OneMultichainParam *param,int version,int64_t value)
+int mc_AksyonchainParams::IsParamUpgradeValueInRange(const mc_OneAksyonchainParam *param,int version,int64_t value)
 {
     if((param->m_Type & MC_PRM_DATA_TYPE_MASK) == MC_PRM_BOOLEAN)
     {
@@ -180,7 +180,7 @@ int mc_MultichainParams::IsParamUpgradeValueInRange(const mc_OneMultichainParam 
     return 0;
 }
 
-int mc_MultichainParams::CanBeUpgradedByVersion(const char *param,int version,int size)
+int mc_AksyonchainParams::CanBeUpgradedByVersion(const char *param,int version,int size)
 {
     if(m_lpIndex == NULL)
     {
@@ -305,7 +305,7 @@ int mc_MultichainParams::CanBeUpgradedByVersion(const char *param,int version,in
 }
 
 
-int mc_MultichainParams::SetParam(const char *param,const char* value,int size)
+int mc_AksyonchainParams::SetParam(const char *param,const char* value,int size)
 {
     int offset;
     if(m_lpIndex == NULL)
@@ -353,7 +353,7 @@ int mc_MultichainParams::SetParam(const char *param,const char* value,int size)
     return MC_ERR_NOERROR;    
 }
 
-int mc_MultichainParams::SetParam(const char *param,int64_t value)
+int mc_AksyonchainParams::SetParam(const char *param,int64_t value)
 {
     int size;
     char buf[8];
@@ -389,7 +389,7 @@ int mc_MultichainParams::SetParam(const char *param,int64_t value)
 }
 
 
-void mc_MultichainParams::Init()
+void mc_AksyonchainParams::Init()
 {
     int size,max_size,i;
     
@@ -397,16 +397,16 @@ void mc_MultichainParams::Init()
     
     m_lpIndex=new mc_MapStringIndex;            
     
-    m_Count=sizeof(MultichainParamArray)/sizeof(mc_OneMultichainParam);
+    m_Count=sizeof(AksyonchainParamArray)/sizeof(mc_OneAksyonchainParam);
     max_size=0;
     
     for(i=0;i<m_Count;i++)
     {
         size=0;
-        switch((MultichainParamArray+i)->m_Type & MC_PRM_DATA_TYPE_MASK)
+        switch((AksyonchainParamArray+i)->m_Type & MC_PRM_DATA_TYPE_MASK)
         {
-            case MC_PRM_BINARY  : size=(MultichainParamArray+i)->m_MaxStringSize;   break;
-            case MC_PRM_STRING  : size=(MultichainParamArray+i)->m_MaxStringSize+1; break;
+            case MC_PRM_BINARY  : size=(AksyonchainParamArray+i)->m_MaxStringSize;   break;
+            case MC_PRM_STRING  : size=(AksyonchainParamArray+i)->m_MaxStringSize+1; break;
             case MC_PRM_BOOLEAN : size=1;                                           break;
             case MC_PRM_INT32   : size=4;                                           break;
             case MC_PRM_INT64   : size=8;                                           break;
@@ -417,11 +417,11 @@ void mc_MultichainParams::Init()
         max_size+=MC_PRM_MAX_PARAM_NAME_SIZE+1+MC_PRM_PARAM_SIZE_BYTES+size;
     }
     
-    m_lpParams=(mc_OneMultichainParam*)mc_New(sizeof(MultichainParamArray));
+    m_lpParams=(mc_OneAksyonchainParam*)mc_New(sizeof(AksyonchainParamArray));
     m_lpData=(char*)mc_New(max_size);
     m_lpCoord=(int*)mc_New(2*m_Count*sizeof(int));
     
-    memcpy(m_lpParams,MultichainParamArray,sizeof(MultichainParamArray));
+    memcpy(m_lpParams,AksyonchainParamArray,sizeof(AksyonchainParamArray));
     for(i=0;i<m_Count;i++)
     {
         m_lpIndex->Add((m_lpParams+i)->m_Name,i);
@@ -431,10 +431,10 @@ void mc_MultichainParams::Init()
     
 }
 
-int mc_MultichainParams::Create(const char* name,int version)
+int mc_AksyonchainParams::Create(const char* name,int version)
 {
     int size,offset,i,set;
-    mc_OneMultichainParam *param;
+    mc_OneAksyonchainParam *param;
     char *ptrData;
     int num_sets;
     int64_t override_int64;
@@ -467,20 +467,20 @@ int mc_MultichainParams::Create(const char* name,int version)
                 {
                     case MC_PRM_COMMENT:
                     case MC_PRM_USER:
-                        switch((MultichainParamArray+i)->m_Type & MC_PRM_DATA_TYPE_MASK)
+                        switch((AksyonchainParamArray+i)->m_Type & MC_PRM_DATA_TYPE_MASK)
                         {
                             case MC_PRM_BINARY  : 
                                 size=0;   
                                 break;
                             case MC_PRM_STRING  : 
                                 size=1;   
-                                if((MultichainParamArray+i)->m_Type & MC_PRM_SPECIAL)
+                                if((AksyonchainParamArray+i)->m_Type & MC_PRM_SPECIAL)
                                 {
                                     if(strcmp(param->m_Name,"chaindescription") == 0)
                                     {
                                         if(strlen(name)+19<=(size_t)(param->m_MaxStringSize))
                                         {
-                                            sprintf(ptrData,"MultiChain %s",name);
+                                            sprintf(ptrData,"AksyonChain %s",name);
                                         }
                                         size=strlen(ptrData)+1;
                                     }                                   
@@ -495,7 +495,7 @@ int mc_MultichainParams::Create(const char* name,int version)
                                     }                                   
                                     if(strcmp(param->m_Name,"chainprotocol") == 0)
                                     {
-                                        sprintf(ptrData,"multichain");
+                                        sprintf(ptrData,"aksyonchain");
                                         size=strlen(ptrData)+1;
                                     }                                   
                                 }
@@ -624,36 +624,36 @@ int mc_MultichainParams::Create(const char* name,int version)
     return MC_ERR_NOERROR;
 }
 
-double mc_MultichainParams::ParamAccuracy()
+double mc_AksyonchainParams::ParamAccuracy()
 {
     return 1./(double)MC_PRM_DECIMAL_GRANULARITY;
 }
 
 
-const mc_OneMultichainParam *mc_MultichainParams::FindParam(const char* param)
+const mc_OneAksyonchainParam *mc_AksyonchainParams::FindParam(const char* param)
 {
     int i;
     for(i=0;i<m_Count;i++)
     {
-        if(strcmp((MultichainParamArray+i)->m_Name,param) == 0)
+        if(strcmp((AksyonchainParamArray+i)->m_Name,param) == 0)
         {
-            return MultichainParamArray+i;
+            return AksyonchainParamArray+i;
         }        
     }    
     return NULL;
 }
 
-int mc_MultichainParams::Read(const char* name)
+int mc_AksyonchainParams::Read(const char* name)
 {
     return Read(name,0,NULL,0);
 }
 
-int mc_MultichainParams::Read(const char* name,int argc, char* argv[],int create_version)
+int mc_AksyonchainParams::Read(const char* name,int argc, char* argv[],int create_version)
 {
     mc_MapStringString *mapConfig;
     int err;
     int size,offset,i,version,len0,len1,len2;
-    mc_OneMultichainParam *param;
+    mc_OneAksyonchainParam *param;
     char *ptrData;
     const char *ptr;
     unsigned char custom_param[8];
@@ -666,7 +666,7 @@ int mc_MultichainParams::Read(const char* name,int argc, char* argv[],int create
     err=MC_ERR_NOERROR;
     offset=0;
     
-    mc_MultichainParams *lpDefaultParams;
+    mc_AksyonchainParams *lpDefaultParams;
     
     lpDefaultParams=NULL;
     mapConfig=new mc_MapStringString;
@@ -718,7 +718,7 @@ int mc_MultichainParams::Read(const char* name,int argc, char* argv[],int create
         }
     }
 
-    lpDefaultParams = new mc_MultichainParams;
+    lpDefaultParams = new mc_AksyonchainParams;
     
     err=lpDefaultParams->Create(name,version);
  
@@ -747,7 +747,7 @@ int mc_MultichainParams::Read(const char* name,int argc, char* argv[],int create
 
             ptrData=m_lpData+offset+MC_PRM_PARAM_SIZE_BYTES;
             
-            switch((MultichainParamArray+i)->m_Type & MC_PRM_DATA_TYPE_MASK)
+            switch((AksyonchainParamArray+i)->m_Type & MC_PRM_DATA_TYPE_MASK)
             {
                 case MC_PRM_BINARY  : 
                     if(strlen(ptr) % 2)
@@ -791,20 +791,20 @@ int mc_MultichainParams::Read(const char* name,int argc, char* argv[],int create
                     break;
                 case MC_PRM_INT32:
                     size=4;
-                    if(((MultichainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) == MC_PRM_USER)
+                    if(((AksyonchainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) == MC_PRM_USER)
                     {
-                        if(atoll(ptr) > (MultichainParamArray+i)->m_MaxIntegerValue)
+                        if(atoll(ptr) > (AksyonchainParamArray+i)->m_MaxIntegerValue)
                         {
                             printf("Invalid parameter value for %s - too high: %s\n",param->m_DisplayName,ptr);                        
                             return MC_ERR_INVALID_PARAMETER_VALUE;                                                
                         }
-                        if(atoll(ptr) < (MultichainParamArray+i)->m_MinIntegerValue)
+                        if(atoll(ptr) < (AksyonchainParamArray+i)->m_MinIntegerValue)
                         {
                             printf("Invalid parameter value for %s - too low: %s\n",param->m_DisplayName,ptr);                        
                             return MC_ERR_INVALID_PARAMETER_VALUE;                                                
                         }
                     }
-                    if((MultichainParamArray+i)->m_Type & MC_PRM_DECIMAL)
+                    if((AksyonchainParamArray+i)->m_Type & MC_PRM_DECIMAL)
                     {
                         double d=atof(ptr);
                         if(d >= 0)
@@ -823,20 +823,20 @@ int mc_MultichainParams::Read(const char* name,int argc, char* argv[],int create
                     break;
                 case MC_PRM_UINT32:
                     size=4;
-                    if(((MultichainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) == MC_PRM_USER)
+                    if(((AksyonchainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) == MC_PRM_USER)
                     {
-                        if(atoll(ptr) > (MultichainParamArray+i)->m_MaxIntegerValue)
+                        if(atoll(ptr) > (AksyonchainParamArray+i)->m_MaxIntegerValue)
                         {
                             printf("Invalid parameter value for %s - too high: %s\n",param->m_DisplayName,ptr);                        
                             return MC_ERR_INVALID_PARAMETER_VALUE;                                                
                         }
-                        if(atoll(ptr) < (MultichainParamArray+i)->m_MinIntegerValue)
+                        if(atoll(ptr) < (AksyonchainParamArray+i)->m_MinIntegerValue)
                         {
                             printf("Invalid parameter value for %s - too low: %s\n",param->m_DisplayName,ptr);                        
                             return MC_ERR_INVALID_PARAMETER_VALUE;                                                
                         }
                     }
-                    if((MultichainParamArray+i)->m_Type & MC_PRM_DECIMAL)
+                    if((AksyonchainParamArray+i)->m_Type & MC_PRM_DECIMAL)
                     {
                         *(int32_t*)ptrData=(int32_t)(atof(ptr)*MC_PRM_DECIMAL_GRANULARITY+ParamAccuracy());
                     }
@@ -851,14 +851,14 @@ int mc_MultichainParams::Read(const char* name,int argc, char* argv[],int create
                     }
                     break;
                 case MC_PRM_INT64:
-                    if(((MultichainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) == MC_PRM_USER)
+                    if(((AksyonchainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) == MC_PRM_USER)
                     {
-                        if(atoll(ptr) > (MultichainParamArray+i)->m_MaxIntegerValue)
+                        if(atoll(ptr) > (AksyonchainParamArray+i)->m_MaxIntegerValue)
                         {
                             printf("Invalid parameter value for %s - too high: %s\n",param->m_DisplayName,ptr);                        
                             return MC_ERR_INVALID_PARAMETER_VALUE;                                                
                         }
-                        if(atoll(ptr) < (MultichainParamArray+i)->m_MinIntegerValue)
+                        if(atoll(ptr) < (AksyonchainParamArray+i)->m_MinIntegerValue)
                         {
                             printf("Invalid parameter value for %s - too low: %s\n",param->m_DisplayName,ptr);                        
                             return MC_ERR_INVALID_PARAMETER_VALUE;                                                
@@ -881,8 +881,8 @@ int mc_MultichainParams::Read(const char* name,int argc, char* argv[],int create
         }
         else
         {
-            if( ((((MultichainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) != MC_PRM_CALCULATED) && 
-               (((MultichainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) != MC_PRM_GENERATED)) ||
+            if( ((((AksyonchainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) != MC_PRM_CALCULATED) &&
+               (((AksyonchainParamArray+i)->m_Type & MC_PRM_SOURCE_MASK) != MC_PRM_GENERATED)) ||
                (argc > 0) )     
             {
                 strcpy(m_lpData+offset,param->m_Name);
@@ -942,7 +942,7 @@ exitlbl:
     return err;
 }
 
-int mc_MultichainParams::Set(const char *name,const char *source,int source_size)
+int mc_AksyonchainParams::Set(const char *name,const char *source,int source_size)
 {
     int size,offset,i,j,n;
     char *ptrData;
@@ -990,11 +990,11 @@ int mc_MultichainParams::Set(const char *name,const char *source,int source_size
     return MC_ERR_NOERROR;    
 }
 
-int mc_MultichainParams::Clone(const char* name, mc_MultichainParams* source)
+int mc_AksyonchainParams::Clone(const char* name, mc_AksyonchainParams* source)
 {
     int err;
     int size,offset,i,version;
-    mc_OneMultichainParam *param;
+    mc_OneAksyonchainParam *param;
     char *ptrData;
     void *ptr;
     
@@ -1004,8 +1004,8 @@ int mc_MultichainParams::Clone(const char* name, mc_MultichainParams* source)
         version=mc_gState->GetProtocolVersion();
     }
     
-    mc_MultichainParams *lpDefaultParams;
-    lpDefaultParams = new mc_MultichainParams;
+    mc_AksyonchainParams *lpDefaultParams;
+    lpDefaultParams = new mc_AksyonchainParams;
     
     err=lpDefaultParams->Create(name,version);
  
@@ -1055,7 +1055,7 @@ int mc_MultichainParams::Clone(const char* name, mc_MultichainParams* source)
     return MC_ERR_NOERROR;
 }
 
-int mc_MultichainParams::CalculateHash(unsigned char *hash)
+int mc_AksyonchainParams::CalculateHash(unsigned char *hash)
 {
     int i;
     int take_it;
@@ -1137,7 +1137,7 @@ int mc_MultichainParams::CalculateHash(unsigned char *hash)
 }
 
 
-int mc_MultichainParams::Validate()
+int mc_AksyonchainParams::Validate()
 {
     int i,size,offset;
     int isGenerated;
@@ -1275,7 +1275,7 @@ int mc_MultichainParams::Validate()
         else
         {
             protocol_name=GetParam("chainprotocol",NULL);
-            if(strcmp((char*)protocol_name,"multichain") == 0)
+            if(strcmp((char*)protocol_name,"aksyonchain") == 0)
             {
                 if(memcmp(hash,stored_hash,32))
                 {
@@ -1326,7 +1326,7 @@ int mc_MultichainParams::Validate()
     return MC_ERR_NOERROR;
 }
 
-int mc_MultichainParams::Print(FILE* fileHan)
+int mc_AksyonchainParams::Print(FILE* fileHan)
 {
     int i,c,size;
     int version;
@@ -1341,8 +1341,8 @@ int mc_MultichainParams::Print(FILE* fileHan)
     int param_sets[]={MC_PRM_COMMENT, MC_PRM_USER, MC_PRM_GENERATED, MC_PRM_CALCULATED};
     num_sets=sizeof(param_sets)/sizeof(int);    
     
-    fprintf(fileHan,"# ==== MultiChain configuration file ====\n\n");
-    fprintf(fileHan,"# Created by multichain-util \n");
+    fprintf(fileHan,"# ==== AksyonChain configuration file ====\n\n");
+    fprintf(fileHan,"# Created by aksyonchain-util \n");
     
     version=ProtocolVersion();
     if(version)
@@ -1358,24 +1358,24 @@ int mc_MultichainParams::Print(FILE* fileHan)
     {
         case MC_PRM_STATUS_EMPTY:
             fprintf(fileHan,"# Parameter set is EMPTY \n");
-            fprintf(fileHan,"# To join network please run \"multichaind %s@<seed-node-ip>[:<seed-node-port>]\".\n",Name());
+            fprintf(fileHan,"# To join network please run \"aksyonchaind %s@<seed-node-ip>[:<seed-node-port>]\".\n",Name());
             return MC_ERR_NOERROR;
         case MC_PRM_STATUS_ERROR:
             fprintf(fileHan,"# This parameter set cannot be used for generating network. \n");
             fprintf(fileHan,"# One of the parameters is invalid. \n");
-            fprintf(fileHan,"# Please fix it and rerun multichain-util. \n");
+            fprintf(fileHan,"# Please fix it and rerun aksyonchain-util. \n");
             break;
         case MC_PRM_STATUS_MINIMAL:
             fprintf(fileHan,"# This parameter set contains MINIMAL number of parameters required for connection to existing network. \n");
-            fprintf(fileHan,"# To join network please run \"multichaind %s@<seed-node-ip>[:<seed-node-port>]\".\n",Name());
+            fprintf(fileHan,"# To join network please run \"aksyonchaind %s@<seed-node-ip>[:<seed-node-port>]\".\n",Name());
             break;
         case MC_PRM_STATUS_GENERATED:
             fprintf(fileHan,"# This parameter set is properly GENERATED. \n");
-            fprintf(fileHan,"# To generate network please run \"multichaind %s\".\n",Name());
+            fprintf(fileHan,"# To generate network please run \"aksyonchaind %s\".\n",Name());
             break;
         case MC_PRM_STATUS_VALID:
             fprintf(fileHan,"# This parameter set is VALID. \n");
-            fprintf(fileHan,"# To join network please run \"multichaind %s\".\n",Name());
+            fprintf(fileHan,"# To join network please run \"aksyonchaind %s\".\n",Name());
             break;
     }
         
@@ -1397,7 +1397,7 @@ int mc_MultichainParams::Print(FILE* fileHan)
                     switch(param_sets[set])
                     {
                         case MC_PRM_COMMENT:
-                            fprintf(fileHan,"# The following parameters don't influence multichain network configuration. \n");
+                            fprintf(fileHan,"# The following parameters don't influence aksyonchain network configuration. \n");
                             fprintf(fileHan,"# They may be edited at any moment. \n");                            
                             break;
                         case MC_PRM_USER:
@@ -1406,28 +1406,28 @@ int mc_MultichainParams::Print(FILE* fileHan)
                                 fprintf(fileHan,"# The following parameters can be edited to fix errors. \n");
                                 if(Name())
                                 {
-                                    fprintf(fileHan,"# Please rerun \"multichain-util clone %s <new-network-name>\". \n",Name());
+                                    fprintf(fileHan,"# Please rerun \"aksyonchain-util clone %s <new-network-name>\". \n",Name());
                                 }
                             }
                             else
                             {
                                 if(m_Status == MC_PRM_STATUS_GENERATED)
                                 {
-                                    fprintf(fileHan,"# The following parameters can be edited before running multichaind for this chain. \n");                                    
+                                    fprintf(fileHan,"# The following parameters can be edited before running aksyonchaind for this chain. \n");
                                 }
                                 else
                                 {
                                     fprintf(fileHan,"# The following parameters can only be edited if this file is a prototype of another configuration file. \n");
-                                    fprintf(fileHan,"# Please run \"multichain-util clone %s <new-network-name>\" to generate new network. \n",Name());
+                                    fprintf(fileHan,"# Please run \"aksyonchain-util clone %s <new-network-name>\" to generate new network. \n",Name());
                                 }
                             }
                             break;
                         case MC_PRM_GENERATED:
-                            fprintf(fileHan,"# The following parameters were generated by multichain-util.\n");
+                            fprintf(fileHan,"# The following parameters were generated by aksyonchain-util.\n");
                             fprintf(fileHan,"# They SHOULD ONLY BE EDITED IF YOU KNOW WHAT YOU ARE DOING. \n");
                             break;
                         case MC_PRM_CALCULATED:
-                            fprintf(fileHan,"# The following parameters were generated by multichaind.\n");
+                            fprintf(fileHan,"# The following parameters were generated by aksyonchaind.\n");
                             fprintf(fileHan,"# They SHOULD NOT BE EDITED. \n");
                             break;
                     }
@@ -1663,7 +1663,7 @@ int mc_MultichainParams::Print(FILE* fileHan)
 
 }
 
-int mc_MultichainParams::Write(int overwrite)
+int mc_AksyonchainParams::Write(int overwrite)
 {
     FILE *fileHan;
     int create;
@@ -1725,39 +1725,39 @@ int mc_MultichainParams::Write(int overwrite)
 
 
 
-const char* mc_MultichainParams::Name()
+const char* mc_AksyonchainParams::Name()
 {
     return (char*)GetParam("chainname",NULL);
 }
 
-const unsigned char* mc_MultichainParams::MessageStart()
+const unsigned char* mc_AksyonchainParams::MessageStart()
 {
     return (unsigned char*)GetParam("networkmessagestart",NULL);
 }
 
-const unsigned char* mc_MultichainParams::DefaultMessageStart()
+const unsigned char* mc_AksyonchainParams::DefaultMessageStart()
 {
     return c_DefaultMessageStart;
 }
 
 
-const unsigned char* mc_MultichainParams::AddressVersion()
+const unsigned char* mc_AksyonchainParams::AddressVersion()
 {
     return (unsigned char*)GetParam("addresspubkeyhashversion",NULL);
 }
 
-const unsigned char* mc_MultichainParams::AddressScriptVersion()
+const unsigned char* mc_AksyonchainParams::AddressScriptVersion()
 {
     return (unsigned char*)GetParam("addressscripthashversion",NULL);
 }
 
-const unsigned char* mc_MultichainParams::AddressCheckumValue()
+const unsigned char* mc_AksyonchainParams::AddressCheckumValue()
 {
     return (unsigned char*)GetParam("addresschecksumvalue",NULL);
 }
 
 
-int mc_MultichainParams::ProtocolVersion()
+int mc_AksyonchainParams::ProtocolVersion()
 {
     if(mc_gState->m_NetworkParams->m_RelevantProtocolVersion)
     {
@@ -1775,9 +1775,9 @@ int mc_MultichainParams::ProtocolVersion()
     return 0;
 }
 
-int mc_MultichainParams::IsProtocolMultichain()
+int mc_AksyonchainParams::IsProtocolAksyonchain()
 {
-    return m_IsProtocolMultiChain;
+    return m_IsProtocolAksyonChain;
 }
 
 
@@ -1789,7 +1789,7 @@ int mc_Features::LastVersionNotSendingProtocolVersionInHandShake()
 int mc_Features::AnyoneCanReceiveEmpty()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1812,7 +1812,7 @@ int mc_Features::AnyoneCanReceiveEmpty()
 int mc_Features::FormattedData()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1832,7 +1832,7 @@ int mc_Features::FormattedData()
 int mc_Features::FixedDestinationExtraction()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 1;
     }
@@ -1853,7 +1853,7 @@ int mc_Features::FixedDestinationExtraction()
 int mc_Features::FixedIn1000920001()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 1;
     }
@@ -1873,7 +1873,7 @@ int mc_Features::FixedIn1000920001()
 int mc_Features::MultipleStreamKeys()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1893,7 +1893,7 @@ int mc_Features::MultipleStreamKeys()
 int mc_Features::FixedIsUnspendable()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1913,7 +1913,7 @@ int mc_Features::FixedIsUnspendable()
 int mc_Features::PerAssetPermissions()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1933,7 +1933,7 @@ int mc_Features::PerAssetPermissions()
 int mc_Features::ParameterUpgrades()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1953,7 +1953,7 @@ int mc_Features::ParameterUpgrades()
 int mc_Features::OffChainData()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1973,7 +1973,7 @@ int mc_Features::OffChainData()
 int mc_Features::Chunks()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1994,7 +1994,7 @@ int mc_Features::Chunks()
 int mc_Features::FixedIn1001020003()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 1;
     }
@@ -2024,7 +2024,7 @@ int mc_Features::FixedIn1001020003()
 int mc_Features::FixedIn1001120003()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 1;
     }
@@ -2054,7 +2054,7 @@ int mc_Features::FixedIn1001120003()
 int mc_Features::Filters()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2074,7 +2074,7 @@ int mc_Features::Filters()
 int mc_Features::CustomPermissions()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2094,7 +2094,7 @@ int mc_Features::CustomPermissions()
 int mc_Features::StreamFilters()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2114,7 +2114,7 @@ int mc_Features::StreamFilters()
 int mc_Features::FixedIn20005()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2134,7 +2134,7 @@ int mc_Features::FixedIn20005()
 int mc_Features::FilterLimitedMathSet()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2154,7 +2154,7 @@ int mc_Features::FilterLimitedMathSet()
 int mc_Features::FixedIn20006()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2174,7 +2174,7 @@ int mc_Features::FixedIn20006()
 int mc_Features::NonceInMinerSignature()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2194,7 +2194,7 @@ int mc_Features::NonceInMinerSignature()
 int mc_Features::ImplicitConnectPermission()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2221,7 +2221,7 @@ int mc_Features::ImplicitConnectPermission()
 int mc_Features::LicenseTokens()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2248,7 +2248,7 @@ int mc_Features::LicenseTokens()
 int mc_Features::FixedJSDateFunctions()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2275,7 +2275,7 @@ int mc_Features::FixedJSDateFunctions()
 int mc_Features::DisabledJSDateParse()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2302,7 +2302,7 @@ int mc_Features::DisabledJSDateParse()
 int mc_Features::FixedLegacyPermissionRestrictionFlag()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2329,7 +2329,7 @@ int mc_Features::FixedLegacyPermissionRestrictionFlag()
 int mc_Features::ReadPermissions()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2356,7 +2356,7 @@ int mc_Features::ReadPermissions()
 int mc_Features::SaltedChunks()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2383,7 +2383,7 @@ int mc_Features::SaltedChunks()
 int mc_Features::FixedIn20010()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2410,7 +2410,7 @@ int mc_Features::FixedIn20010()
 int mc_Features::License20010()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2438,7 +2438,7 @@ int mc_Features::License20010()
 int mc_Features::ExtendedEntityDetails()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2460,7 +2460,7 @@ int mc_Features::FixedSpendingBigScripts()
 {
     int ret=0;
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 1;
     }
@@ -2491,7 +2491,7 @@ int mc_Features::FixedSpendingBigScripts()
 int mc_Features::Variables()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2511,7 +2511,7 @@ int mc_Features::Variables()
 int mc_Features::Libraries()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2531,7 +2531,7 @@ int mc_Features::Libraries()
 int mc_Features::AnyoneCanIssueMore()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -2551,7 +2551,7 @@ int mc_Features::AnyoneCanIssueMore()
 int mc_Features::NFTokens()
 {
     int ret=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }

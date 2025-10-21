@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef V8JSON_SPIRIT_H
 #define V8JSON_SPIRIT_H

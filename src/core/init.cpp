@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2016 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #if defined(HAVE_CONFIG_H)
 #include "config/bitcoin-config.h"
@@ -36,7 +36,7 @@
 /* MCHN START */
 
 #include "structs/base58.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "wallet/wallettxs.h"
 #include "protocol/relay.h"
 #include "filters/filter.h"
@@ -70,7 +70,7 @@ mc_WalletTxs* pwalletTxsMain = NULL;
 #endif
 mc_RelayManager* pRelayManager = NULL;
 mc_FilterEngine* pFilterEngine = NULL;
-mc_MultiChainFilterEngine* pMultiChainFilterEngine = NULL;
+mc_AksyonChainFilterEngine* pAksyonChainFilterEngine = NULL;
 CInitNodeStatus *pNodeStatus = NULL;
 CCriticalSection cs_NodeStatus;
 
@@ -266,10 +266,10 @@ void Shutdown()
         pRelayManager=NULL;        
     }
     
-    if(pMultiChainFilterEngine)
+    if(pAksyonChainFilterEngine)
     {
-        delete pMultiChainFilterEngine;
-        pMultiChainFilterEngine=NULL;        
+        delete pAksyonChainFilterEngine;
+        pAksyonChainFilterEngine=NULL;
     }
 
     
@@ -371,7 +371,7 @@ std::string HelpMessage(HelpMessageMode mode)                                   
     strUsage += "  -blocknotify=<cmd>     " + _("Execute command when the best block changes (%s in cmd is replaced by block hash)") + "\n";
     strUsage += "  -checkblocks=<n>       " + strprintf(_("How many blocks to check at startup (default: %u, 0 = all)"), 288) + "\n";
     strUsage += "  -checklevel=<n>        " + strprintf(_("How thorough the block verification of -checkblocks is (0-4, default: %u)"), 3) + "\n";
-    strUsage += "  -conf=<file>           " + strprintf(_("Specify configuration file (default: %s)"), "multichain.conf") + "\n";
+    strUsage += "  -conf=<file>           " + strprintf(_("Specify configuration file (default: %s)"), "aksyonchain.conf") + "\n";
     if (mode == HMM_BITCOIND)
     {
 #if !defined(WIN32)
@@ -387,11 +387,11 @@ std::string HelpMessage(HelpMessageMode mode)                                   
     strUsage += "  -mempoolthrottle=<n>   " + strprintf(_("Slow down accepting new transactions if the memory pool approaches this total size in megabytes (default: %u)"), DEFAULT_MEMPOOL_THROTTLE) + "\n";
     strUsage += "  -par=<n>               " + strprintf(_("Set the number of script verification threads (%u to %d, 0 = auto, <0 = leave that many cores free, default: %d)"), -(int)boost::thread::hardware_concurrency(), MAX_SCRIPTCHECK_THREADS, DEFAULT_SCRIPTCHECK_THREADS) + "\n";
 #ifndef WIN32
-    strUsage += "  -pid=<file>            " + strprintf(_("Specify pid file (default: %s)"), "multichain.pid") + "\n";
+    strUsage += "  -pid=<file>            " + strprintf(_("Specify pid file (default: %s)"), "aksyonchain.pid") + "\n";
 #endif
     strUsage += "  -reindex               " + _("Rebuild the blockchain and reindex transactions on startup.") + "\n";
 #if !defined(WIN32)
-    strUsage += "  -shortoutput           " + _("Returns connection string if this node can start or default multichain address otherwise") + "\n";
+    strUsage += "  -shortoutput           " + _("Returns connection string if this node can start or default aksyonchain address otherwise") + "\n";
 #endif
 /* MCHN START */    
 /* Default was 0 */    
@@ -551,11 +551,11 @@ std::string HelpMessage(HelpMessageMode mode)                                   
     strUsage += "  -rpcservertimeout=<n>  " + strprintf(_("Timeout during HTTP requests (default: %d)"), DEFAULT_HTTP_SERVER_TIMEOUT) + "\n";
     strUsage += "  -rpcworkqueue=<n>      " + strprintf(_("Set the depth of the work queue to service RPC calls (default: %d)"), DEFAULT_HTTP_WORKQUEUE) + "\n";
 
-    strUsage += "\n" + _("MultiChain runtime parameters") + "\n";    
-    strUsage += "  -offline                                 " + _("Start multichaind in offline mode, no connections to other nodes.") + "\n";
+    strUsage += "\n" + _("AksyonChain runtime parameters") + "\n";
+    strUsage += "  -offline                                 " + _("Start aksyonchaind in offline mode, no connections to other nodes.") + "\n";
     strUsage += "  -storeruntimeparams                      " + _("Permanently save modifications to runtime parameters made by setruntimeparam APIs.") + "\n";
-    strUsage += "  -initprivkey=<privkey>                   " + _("Manually set the wallet default address and private key when running multichaind for the first time.") + "\n";
-    strUsage += "  -handshakelocal=<address>                " + _("Manually override the wallet address which is used for handshaking with other peers in a MultiChain blockchain.") + "\n";
+    strUsage += "  -initprivkey=<privkey>                   " + _("Manually set the wallet default address and private key when running aksyonchaind for the first time.") + "\n";
+    strUsage += "  -handshakelocal=<address>                " + _("Manually override the wallet address which is used for handshaking with other peers in a AksyonChain blockchain.") + "\n";
     strUsage += "  -lockadminminerounds=<n>                 " + _("If set overrides lock-admin-mine-rounds blockchain setting.") + "\n";
     strUsage += "  -miningrequirespeers                     " + _("If set overrides mining-requires-peers blockchain setting, values 0/1.") + "\n";
     strUsage += "  -mineemptyrounds=<n>                     " + _("If set overrides mine-empty-rounds blockchain setting, values 0.0-1000.0 or -1.") + "\n";
@@ -572,14 +572,14 @@ std::string HelpMessage(HelpMessageMode mode)                                   
     strUsage += "  -lockinlinemetadata=0|1                  " + _("Outputs with inline metadata can be sent only using create/appendrawtransaction, default 1") + "\n";
     strUsage += "  -purgemethod=<method>                    " + _("Overwrite data before purging. Available modes: unlink, simple(=zero, default), one, zeroone, random1-random4, dod, doe, rcmp, gutmann.") + "\n";
     strUsage += "                                           " + _("Can be followed by '-pattern' (up to 6 characters), i.e. random2-mchn makes two random pattern passes followed by 'mchn'. Enterprise Edition only.") + "\n";
-    strUsage += "  -explorersupport=0|2                     " + _("Provide support for MultiChain Explorer 2, default 0") + "\n";
+    strUsage += "  -explorersupport=0|2                     " + _("Provide support for AksyonChain Explorer 2, default 0") + "\n";
 
-    strUsage += "\n" + _("MultiChain API response parameters") + "\n";        
-    strUsage += "  -hideknownopdrops      " + strprintf(_("Remove recognized MultiChain OP_DROP metadata from the responses to JSON-RPC calls (default: %u)"), 0) + "\n";
+    strUsage += "\n" + _("AksyonChain API response parameters") + "\n";
+    strUsage += "  -hideknownopdrops      " + strprintf(_("Remove recognized AksyonChain OP_DROP metadata from the responses to JSON-RPC calls (default: %u)"), 0) + "\n";
     strUsage += "  -maxshowndata=<n>      " + strprintf(_("The maximum number of bytes to show in the data field of API responses. (default: %u)"), MAX_OP_RETURN_SHOWN) + "\n";
     strUsage += "                         " + _("Pieces of data larger than this will be returned as an object with txid, vout and size fields, for use with the gettxoutdata command.") + "\n";
     strUsage += "  -maxqueryscanitems=<n> " + strprintf(_("The maximum number of txs to be decoded during JSON-RPC querying commands. (default: %u)"), MAX_STREAM_QUERY_ITEMS) + "\n";
-    strUsage += "  -v1apicompatible       " + strprintf(_("JSON-RPC calls responses compatible with MultiChain 1.0 (default: %u)"), 0) + "\n";
+    strUsage += "  -v1apicompatible       " + strprintf(_("JSON-RPC calls responses compatible with AksyonChain 1.0 (default: %u)"), 0) + "\n";
 //    strUsage += "  -apidecimaldigits=<n>  " + _("maximal number of decimal digits in API output (default: auto)") + "\n";
            
     strUsage += "\n" + _("Wallet optimization options:") + "\n";
@@ -597,13 +597,13 @@ std::string HelpMessage(HelpMessageMode mode)                                   
 
 std::string LicenseInfo()
 {
-    return FormatParagraph(_("Copyright (c) Coin Sciences Ltd - www.multichain.com")) + "\n" +
+    return FormatParagraph(_("Copyright (c) Coin Sciences Ltd - www.aksyonchain.com")) + "\n" +
            "\n" +
            FormatParagraph(_("You are granted a non-exclusive license to use this software for any legal purpose, and to redistribute it unmodified.")) + "\n" +
            "\n" +
            FormatParagraph(_("The software product under this license is provided free of charge. ")) + "\n" +
            "\n" +
-           FormatParagraph(_("Full terms are shown at: http://www.multichain.com/terms-of-service/")) +
+           FormatParagraph(_("Full terms are shown at: http://www.aksyonchain.com/terms-of-service/")) +
            "\n";
         
 }
@@ -730,10 +730,10 @@ bool GrantMessagePrinted(int OutputPipe,bool failed_seed)
                     sprintf(bufOutput,"Please ask blockchain admin or user having activate permission to let you connect and/or transact:\n");
                     write(OutputPipe,bufOutput,strlen(bufOutput));
 
-                    sprintf(bufOutput,"multichain-cli %s grant %s connect\n",mc_gState->m_NetworkParams->Name(),
+                    sprintf(bufOutput,"aksyonchain-cli %s grant %s connect\n",mc_gState->m_NetworkParams->Name(),
                          CBitcoinAddress(pwalletMain->vchDefaultKey.GetID()).ToString().c_str());
                     write(OutputPipe,bufOutput,strlen(bufOutput));
-                    sprintf(bufOutput,"multichain-cli %s grant %s connect,send,receive\n\n",mc_gState->m_NetworkParams->Name(),
+                    sprintf(bufOutput,"aksyonchain-cli %s grant %s connect,send,receive\n\n",mc_gState->m_NetworkParams->Name(),
                          CBitcoinAddress(pwalletMain->vchDefaultKey.GetID()).ToString().c_str());
                     write(OutputPipe,bufOutput,strlen(bufOutput));
                 }
@@ -1023,7 +1023,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
 
     // Sanity check
     if (!InitSanityCheck())
-        return InitError(_("Initialization sanity check failed. MultiChain Core is shutting down."));
+        return InitError(_("Initialization sanity check failed. AksyonChain Core is shutting down."));
 
     std::string strDataDir = GetDataDir().string();
     LogPrint("mchn","mchn: Data directory: %s\n",strDataDir.c_str());
@@ -1043,7 +1043,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
 #ifndef WIN32
     static boost::interprocess::file_lock lock(pathLockFile.string().c_str());
     if (!lock.try_lock())
-        return InitError(strprintf(_("Cannot obtain a lock on data directory %s. MultiChain Core is probably already running."), strDataDir));
+        return InitError(strprintf(_("Cannot obtain a lock on data directory %s. AksyonChain Core is probably already running."), strDataDir));
 #endif
 /* MCHN END */
     
@@ -1055,9 +1055,9 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
     LogPrintf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 //    LogPrintf("Bitcoin version %s (%s)\n", FormatFullVersion(), CLIENT_DATE);
 /* MCHN START */    
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
-        LogPrintf("MultiChain version build %s protocol %s (%s)\n", mc_BuildDescription(mc_gState->GetNumericVersion()), mc_gState->GetProtocolVersion(), CLIENT_DATE);
+        LogPrintf("AksyonChain version build %s protocol %s (%s)\n", mc_BuildDescription(mc_gState->GetNumericVersion()), mc_gState->GetProtocolVersion(), CLIENT_DATE);
     }
 
 /* MCHN END */    
@@ -1123,18 +1123,18 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
             {
                 if(pEF->ENT_MinWalletDatVersion() > currentwalletdatversion)
                 {
-                    return InitError(strprintf("Wallet version %d is not supported in this edition of MultiChain.\n\n"
-                            "To upgrade to version %d, run MultiChain Offline Daemon: \n"
-                            "multichaind-cold %s -datadir=%s -walletdbversion=3\n"
-                            "and restart multichaind or use Community Edition.\n",
+                    return InitError(strprintf("Wallet version %d is not supported in this edition of AksyonChain.\n\n"
+                            "To upgrade to version %d, run AksyonChain Offline Daemon: \n"
+                            "aksyonchaind-cold %s -datadir=%s -walletdbversion=3\n"
+                            "and restart aksyonchaind or use Community Edition.\n",
                             currentwalletdatversion,pEF->ENT_MinWalletDatVersion(), mc_gState->m_NetworkParams->Name(),mc_gState->m_Params->DataDir(0,0)));                                                            
                 }
                 CDBWrapEnv env_cur;
                 if(env_cur.MinWalletDBVersion() > currentwalletdatversion)
                 {
-                    return InitError(strprintf("Wallet version %d is not supported in this build of MultiChain.\n\n"
-                            "To upgrade to version %d, run MultiChain Daemon from official build: \n"
-                            "multichaind %s -walletdbversion=%d\n",
+                    return InitError(strprintf("Wallet version %d is not supported in this build of AksyonChain.\n\n"
+                            "To upgrade to version %d, run AksyonChain Daemon from official build: \n"
+                            "aksyonchaind %s -walletdbversion=%d\n",
                             currentwalletdatversion,env_cur.MinWalletDBVersion(), mc_gState->m_NetworkParams->Name(), env_cur.MinWalletDBVersion()));                                                                                
                 }
             }
@@ -1160,7 +1160,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                         bool allOK = env2.Salvage(strWalletFile, false, salvagedData);
                         if(!allOK)
                         {
-                            return InitError(_("wallet.dat corrupt, cannot upgrade, you should repair it first.\n Run multichaind normally or with -salvagewallet flag"));                    
+                            return InitError(_("wallet.dat corrupt, cannot upgrade, you should repair it first.\n Run aksyonchaind normally or with -salvagewallet flag"));
                         }
 
                         currentwalletdatversion=3;
@@ -1169,9 +1169,9 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                 }
                 else
                 {
-                    return InitError(strprintf("Wallet version %d is not supported in this version of MultiChain.\n\n"
+                    return InitError(strprintf("Wallet version %d is not supported in this version of AksyonChain.\n\n"
                             "To upgrade to version %d, please run \n"
-                            "multichaind %s -walletdbversion=3\n",
+                            "aksyonchaind %s -walletdbversion=3\n",
                             currentwalletdatversion,MC_TDB_WALLET_VERSION, mc_gState->m_NetworkParams->Name()));                                                                                                
                 }
             }
@@ -1182,7 +1182,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
 //            if(pEF->ENT_MinWalletDatVersion() > currentwalletdatversion)
             if(MC_TDB_WALLET_VERSION > currentwalletdatversion)
             {
-                return InitError(strprintf("Wallet version %d is not supported in this version of MultiChain.\n",currentwalletdatversion));                                                            
+                return InitError(strprintf("Wallet version %d is not supported in this version of AksyonChain.\n",currentwalletdatversion));
             }
             
             LogPrintf("Wallet file doesn't exist. New file will be created with version %d.\n", currentwalletdatversion);
@@ -1195,9 +1195,9 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
             case 2:
                 break;
             case 1:
-                return InitError(strprintf("Wallet version 1 is not supported in this version of MultiChain. "
-                        "To upgrade to version 2, run MultiChain 1.0: \n"
-                        "multichaind %s -walletdbversion=2 -rescan\n",mc_gState->m_NetworkParams->Name()));                                        
+                return InitError(strprintf("Wallet version 1 is not supported in this version of AksyonChain. "
+                        "To upgrade to version 2, run AksyonChain 1.0: \n"
+                        "aksyonchaind %s -walletdbversion=2 -rescan\n",mc_gState->m_NetworkParams->Name()));
             default:
                 return InitError(_("Invalid wallet version, possible values: 3.\n"));                                                                    
         }
@@ -1249,7 +1249,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
 //            if (!CWalletDB::Recover(bitdbwrap, strWalletFile, true))
             if(!WalletDBRecover(bitdbwrap,strWalletFile,true))
                 return false;
-            sprintf(bufOutput,"\nTo work properly with salvaged addresses, you have to call importaddress API and restart MultiChain with -rescan\n\n");
+            sprintf(bufOutput,"\nTo work properly with salvaged addresses, you have to call importaddress API and restart AksyonChain with -rescan\n\n");
             bytes_written=write(OutputPipe,bufOutput,strlen(bufOutput));                
         }
 
@@ -1325,7 +1325,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
     }
     uint32_t SeedStopTime=(uint32_t)SeedStopTime64;
     
-    uiInterface.InitMessage(_("Initializing multichain..."));
+    uiInterface.InitMessage(_("Initializing aksyonchain..."));
     RegisterNodeSignals(GetNodeSignals());
 
     if(GetBoolArg("-v1apicompatible",false))
@@ -1364,7 +1364,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
             {
                 return InitError(_("wallet.dat corrupted. Please remove it and restart."));            
             }
-            return InitError(_("wallet.dat is partially corrupted. Please try running MultiChain with -salvagewallet."));                            
+            return InitError(_("wallet.dat is partially corrupted. Please try running AksyonChain with -salvagewallet."));
         }
 
         if(!pwalletMain->vchDefaultKey.IsValid())
@@ -1500,14 +1500,14 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
             
             if(mc_gState->m_NetworkParams->m_Status == MC_PRM_STATUS_MINIMAL)
             {
-                InitializeMultiChainParams();                    
+                InitializeAksyonChainParams();
                 if(init_privkey.size())
                 {
                     if(seed_attempt == 1)
                     {
                         if(mc_gState->m_NetworkParams->GetParam("privatekeyversion",NULL) == NULL)
                         {
-                            return InitError(_("The initprivkey runtime parameter can only be used when connecting to MultiChain 1.0 beta 2 or later"));                                                        
+                            return InitError(_("The initprivkey runtime parameter can only be used when connecting to AksyonChain 1.0 beta 2 or later"));
                         }
                         string init_privkey_error=pwalletMain->SetDefaultKeyIfInvalid(init_privkey);
                         if(init_privkey_error.size())
@@ -1579,7 +1579,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                 LOCK(cs_NodeStatus);
                 if((mc_gState->m_NetworkState == MC_NTS_SEED_READY) || (mc_gState->m_NetworkState == MC_NTS_SEED_NO_PARAMS) )
                 {
-                    seed_error="Couldn't disconnect from the seed node, please restart multichaind";
+                    seed_error="Couldn't disconnect from the seed node, please restart aksyonchaind";
                     pNodeStatus->sLastError="Disconnect error";
                 }
                 else
@@ -1592,9 +1592,9 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                     }
                     else
                     {
-                        seed_error=strprintf("Couldn't connect to the seed node %s on port %d - please check multichaind is running at that address and that your firewall settings allow incoming connections.",                
+                        seed_error=strprintf("Couldn't connect to the seed node %s on port %d - please check aksyonchaind is running at that address and that your firewall settings allow incoming connections.",
                             seed_ip.c_str(),seed_port);
-                        pNodeStatus->sLastError="Couldn't connect to the seed node, multichaind is not running or firewall issue";
+                        pNodeStatus->sLastError="Couldn't connect to the seed node, aksyonchaind is not running or firewall issue";
                     }
                 }
             }
@@ -1632,7 +1632,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                 {
                     if(mc_gState->IsDeprecated(protocol_version))
                     {
-                        seed_error=strprintf("The protocol version (%d) for blockchain %s has been deprecated and was last supported in MultiChain %s\n",                
+                        seed_error=strprintf("The protocol version (%d) for blockchain %s has been deprecated and was last supported in AksyonChain %s\n",
                                 protocol_version, mc_gState->m_Params->NetworkName(),
                                 mc_BuildDescription(-mc_gState->VersionInfo(protocol_version)));                    
                         return InitError(seed_error);                                
@@ -1640,8 +1640,8 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                     else
                     {
                         seed_error=strprintf("Couldn't connect to the seed node %s on port %d.\n"
-                                    "Blockchain was created by multichaind with newer protocol version (%d)\n"                
-                                    "Please upgrade to the latest version of MultiChain or connect only to blockchains using protocol version %d or earlier.\n",                
+                                    "Blockchain was created by aksyonchaind with newer protocol version (%d)\n"
+                                    "Please upgrade to the latest version of AksyonChain or connect only to blockchains using protocol version %d or earlier.\n",
                                 seed_ip.c_str(),seed_port,protocol_version, mc_gState->GetProtocolVersion());                        
                     }
                 }
@@ -1661,7 +1661,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
 
             if(mc_gState->m_NetworkParams->m_Status == MC_PRM_STATUS_VALID)
             {
-                SelectMultiChainParams(mc_gState->m_Params->NetworkName());
+                SelectAksyonChainParams(mc_gState->m_Params->NetworkName());
                 delete mc_gState->m_Permissions;
                 mc_gState->m_Permissions= new mc_Permissions;
                 if(mc_gState->m_Permissions->Initialize(mc_gState->m_Params->NetworkName(),0))                                
@@ -1679,7 +1679,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                 {
                     if(mc_gState->m_NetworkParams->GetParam("privatekeyversion",NULL) == NULL)
                     {
-                        return InitError(_("The initprivkey runtime parameter can only be used when connecting to MultiChain 1.0 beta 2 or later"));                                                        
+                        return InitError(_("The initprivkey runtime parameter can only be used when connecting to AksyonChain 1.0 beta 2 or later"));
                     }
                     string init_privkey_error=pwalletMain->SetDefaultKeyIfInvalid(init_privkey);
                     if(init_privkey_error.size())
@@ -1697,7 +1697,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                     sprintf(bufOutput,"Looking for genesis block...\n");
                     bytes_written=write(OutputPipe,bufOutput,strlen(bufOutput));                
                 }
-                mc_gState->m_NetworkParams->SetGlobals();                           // Needed to update IsProtocolMultichain flag in case of bitcoin
+                mc_gState->m_NetworkParams->SetGlobals();                           // Needed to update IsProtocolAksyonchain flag in case of bitcoin
                 if(mc_gState->m_NetworkParams->Build(pubKey,pubKeySize))
                 {
                     return InitError(_("Cannot build new blockchain"));
@@ -1749,7 +1749,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                     {
                         if(mc_gState->m_NetworkParams->m_Status == MC_PRM_STATUS_MINIMAL)
                         {
-                            InitializeMultiChainParams();        
+                            InitializeAksyonChainParams();
                         }
                         
                         if(!grant_message_printed)
@@ -1769,7 +1769,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                             if(mc_gState->m_NetworkParams->m_Status == MC_PRM_STATUS_MINIMAL)
                             {
                                 LogPrintf("Restarting RPC server...\n");
-                                SelectMultiChainParams(mc_gState->m_Params->NetworkName());
+                                SelectAksyonChainParams(mc_gState->m_Params->NetworkName());
                                 StopHTTPServer();        
                                 if (fServer)
                                 {
@@ -1822,7 +1822,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
     {
         LogPrintf("mchn: Parameter set is valid - initializing blockchain parameters...\n");
         mc_gState->m_NetworkParams->SetGlobals();
-        InitializeMultiChainParams();        
+        InitializeAksyonChainParams();
 
         if(GetBoolArg("-reindex", false))
         {
@@ -1833,7 +1833,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
         mc_gState->m_Assets= new mc_AssetDB;
         if(mc_gState->m_Assets->Initialize(mc_gState->m_Params->NetworkName(),0,MC_AST_DEFAULT_VERSION))                                
         {
-            seed_error=strprintf("ERROR: Couldn't initialize asset database for blockchain %s. Please restart multichaind with reindex=1.\n",mc_gState->m_Params->NetworkName());
+            seed_error=strprintf("ERROR: Couldn't initialize asset database for blockchain %s. Please restart aksyonchaind with reindex=1.\n",mc_gState->m_Params->NetworkName());
             return InitError(_(seed_error.c_str()));        
         }
         
@@ -1934,7 +1934,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
         {
             if(boost::filesystem::exists(pathWallet))
             {
-                return InitError(strprintf("Wallet was created in version 2 or higher. To switch to version 1, with worse performance and scalability, run: \nmultichaind %s -walletdbversion=1 -rescan\n",mc_gState->m_NetworkParams->Name()));                                        
+                return InitError(strprintf("Wallet was created in version 2 or higher. To switch to version 1, with worse performance and scalability, run: \naksyonchaind %s -walletdbversion=1 -rescan\n",mc_gState->m_NetworkParams->Name()));
             }
         }
         else
@@ -1949,7 +1949,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                     }
                     if(mc_gState->m_WalletMode != MC_WMD_NONE)
                     {
-                        return InitError(strprintf("Wallet was created in version 1. To switch to version %d, with better performance and scalability, run: \nmultichaind %s -walletdbversion=%d -rescan\n",
+                        return InitError(strprintf("Wallet was created in version 1. To switch to version %d, with better performance and scalability, run: \naksyonchaind %s -walletdbversion=%d -rescan\n",
                                 MC_TDB_WALLET_VERSION,mc_gState->m_NetworkParams->Name(),MC_TDB_WALLET_VERSION));                                        
                     }                    
                 }
@@ -2003,17 +2003,17 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                 
                 if(pwalletTxsMain->Initialize(mc_gState->m_NetworkParams->Name(),mc_gState->m_WalletMode))
                 {
-                    return InitError("Wallet tx database corrupted. Please restart multichaind with -rescan\n");                        
+                    return InitError("Wallet tx database corrupted. Please restart aksyonchaind with -rescan\n");
                 }
                 if((pwalletTxsMain->m_Database->m_DBStat.m_InitMode & MC_WMD_EXPLORER_MASK) == MC_WMD_EXPLORER1)
                 {
-                    return InitError("-explorersupport=1 is not supported by this version of MultiChain. To change it, please restart multichaind with -rescan -explorersupport=2\n");                                                                                
+                    return InitError("-explorersupport=1 is not supported by this version of AksyonChain. To change it, please restart aksyonchaind with -rescan -explorersupport=2\n");
                 }
                 if(explorer_mode >= 0)
                 {                    
                     if( (pwalletTxsMain->m_Database->m_DBStat.m_InitMode & MC_WMD_EXPLORER_MASK) != (mc_gState->m_WalletMode & MC_WMD_EXPLORER_MASK) )
                     {
-                        return InitError("Explorer database was initialized with different setting. To change it, please restart multichaind with -rescan\n");                                                    
+                        return InitError("Explorer database was initialized with different setting. To change it, please restart aksyonchaind with -rescan\n");
                     }
                 }
                 
@@ -2059,12 +2059,12 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                                 
                 if((pwalletTxsMain->m_Database->m_DBStat.m_WalletVersion) != wallet_mode)
                 {
-                    return InitError(strprintf("Wallet tx database was created with different wallet version (%d). Please restart multichaind with reindex=1 \n",pwalletTxsMain->m_Database->m_DBStat.m_WalletVersion));                        
+                    return InitError(strprintf("Wallet tx database was created with different wallet version (%d). Please restart aksyonchaind with reindex=1 \n",pwalletTxsMain->m_Database->m_DBStat.m_WalletVersion));
                 }        
 
                 if((pwalletTxsMain->m_Database->m_DBStat.m_InitMode & (MC_WMD_MODE_MASK - MC_WMD_EXPLORER_MASK)) != (mc_gState->m_WalletMode & (MC_WMD_MODE_MASK - MC_WMD_EXPLORER_MASK)))
                 {
-                    return InitError(strprintf("Wallet tx database was created in different mode (%08X). Please restart multichaind with reindex=1 \n",pwalletTxsMain->m_Database->m_DBStat.m_InitMode));                        
+                    return InitError(strprintf("Wallet tx database was created in different mode (%08X). Please restart aksyonchaind with reindex=1 \n",pwalletTxsMain->m_Database->m_DBStat.m_InitMode));
                 }        
             }
         }
@@ -2078,7 +2078,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
             }
         }
 
-        if(pwalletMain == NULL)                                                 // Opening wallet only after multichain parameters were initizalized
+        if(pwalletMain == NULL)                                                 // Opening wallet only after aksyonchain parameters were initizalized
         {
             pwalletMain = new CWallet(strWalletFile);
             DBErrors nLoadWalletRetForBuild = pwalletMain->LoadWallet(fFirstRunForBuild);
@@ -2089,7 +2089,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                 {
                     return InitError(_("wallet.dat corrupted. Please remove it and restart."));            
                 }
-                return InitError(_("wallet.dat corrupted. Please try running MultiChain with -salvagewallet."));                            
+                return InitError(_("wallet.dat corrupted. Please try running AksyonChain with -salvagewallet."));
             }
 
             if(!pwalletMain->vchDefaultKey.IsValid())
@@ -2210,7 +2210,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
             }
             
             CPubKey pkey;
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 if(pwalletMain->GetKeyFromAddressBook(pkey,MC_PTP_CONNECT))
                 {
@@ -2266,7 +2266,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
     {
         if(mc_gState->m_NetworkParams->m_Status == MC_PRM_STATUS_MINIMAL)
         {
-            InitializeMultiChainParams();        
+            InitializeAksyonChainParams();
 
             if(seed_node)
             {
@@ -2485,8 +2485,8 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
         return InitError(strprintf(_("Couldn't initialize filter engine: '%s'"), strResult));
     }
     
-    pMultiChainFilterEngine=new mc_MultiChainFilterEngine;
-    if(pMultiChainFilterEngine->Initialize())
+    pAksyonChainFilterEngine=new mc_AksyonChainFilterEngine;
+    if(pAksyonChainFilterEngine->Initialize())
     {
         return InitError(_("Couldn't initialize filter engine."));        
     }
@@ -2513,7 +2513,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
         {
             sprintf(bufOutput,"Other nodes can connect to this node using:\n");
             bytes_written=write(OutputPipe,bufOutput,strlen(bufOutput));
-            sprintf(bufOutput,"multichaind %s:%d\n\n",MultichainServerAddress(false).c_str(),GetListenPort());
+            sprintf(bufOutput,"aksyonchaind %s:%d\n\n",AksyonchainServerAddress(false).c_str(),GetListenPort());
             bytes_written=write(OutputPipe,bufOutput,strlen(bufOutput));
             if(found_ips > 1)
             {
@@ -2525,7 +2525,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                     {
                         unsigned char *ptr;
                         ptr=(unsigned char *)(all_ips+i_ips);
-                        sprintf(bufOutput,"multichaind %s@%u.%u.%u.%u:%d\n",mc_gState->m_NetworkParams->Name(),ptr[3],ptr[2],ptr[1],ptr[0],GetListenPort());
+                        sprintf(bufOutput,"aksyonchaind %s@%u.%u.%u.%u:%d\n",mc_gState->m_NetworkParams->Name(),ptr[3],ptr[2],ptr[1],ptr[0],GetListenPort());
                         bytes_written=write(OutputPipe,bufOutput,strlen(bufOutput));
                         if(bytes_written != strlen(bufOutput))
                         {
@@ -2546,13 +2546,13 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                     string s_ip=mc_ParseIPPort(strAddr,&port);
                     if(port>0)
                     {
-                        sprintf(bufOutput,"multichaind %s@%s\n",mc_gState->m_NetworkParams->Name(),strAddr.c_str());
+                        sprintf(bufOutput,"aksyonchaind %s@%s\n",mc_gState->m_NetworkParams->Name(),strAddr.c_str());
                         bytes_written=write(OutputPipe,bufOutput,strlen(bufOutput));
                         port=GetListenPort();
                     }
                     else
                     {
-                        sprintf(bufOutput,"multichaind %s@%s:%d\n",mc_gState->m_NetworkParams->Name(),strAddr.c_str(),GetListenPort());
+                        sprintf(bufOutput,"aksyonchaind %s@%s:%d\n",mc_gState->m_NetworkParams->Name(),strAddr.c_str(),GetListenPort());
                         bytes_written=write(OutputPipe,bufOutput,strlen(bufOutput));                    
                     }
                 }
@@ -2564,7 +2564,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
         {
             if(GetBoolArg("-offline",false))
             {                
-                sprintf(bufOutput,"MultiChain started in offline mode, other nodes cannot connect.\n\n");
+                sprintf(bufOutput,"AksyonChain started in offline mode, other nodes cannot connect.\n\n");
                 bytes_written=write(OutputPipe,bufOutput,strlen(bufOutput));            
             }
             else
@@ -2576,7 +2576,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
     }
     else
     {
-        sprintf(bufOutput,"%s:%d\n",MultichainServerAddress(true).c_str(),GetListenPort());                
+        sprintf(bufOutput,"%s:%d\n",AksyonchainServerAddress(true).c_str(),GetListenPort());
         bytes_written=write(OutputPipe,bufOutput,strlen(bufOutput));
     }
 
@@ -2759,7 +2759,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
             if (!fReset) {
 /* MCHN START */                
                 bool fRet = uiInterface.ThreadSafeMessageBox(
-                    strLoadError + ".\n\n" + _("Please restart multichaind with reindex=1."),
+                    strLoadError + ".\n\n" + _("Please restart aksyonchaind with reindex=1."),
                     "", CClientUIInterface::BTN_ABORT);
                 
 /* MCHN END */                
@@ -2820,7 +2820,7 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
 */    
 //    int version=mc_gState->m_NetworkParams->GetInt64Param("protocolversion");
     int version=mc_gState->m_NetworkParams->ProtocolVersion();
-    LogPrintf("MultiChain protocol version: %d\n",version);
+    LogPrintf("AksyonChain protocol version: %d\n",version);
     if(version != mc_gState->GetProtocolVersion())
     {
         if(!GetBoolArg("-shortoutput", false))
@@ -2893,10 +2893,10 @@ bool AppInit2(boost::thread_group& threadGroup,int OutputPipe)
                 InitWarning(msg);
             }
             else if (nLoadWalletRet == DB_TOO_NEW)                              // MCHN
-                strErrors << _("Error loading wallet.dat: Wallet requires newer version of MultiChain Core") << "\n";
+                strErrors << _("Error loading wallet.dat: Wallet requires newer version of AksyonChain Core") << "\n";
             else if (nLoadWalletRet == DB_NEED_REWRITE)                         // MCHN
             {
-                strErrors << _("Wallet needed to be rewritten: restart MultiChain Core to complete") << "\n";
+                strErrors << _("Wallet needed to be rewritten: restart AksyonChain Core to complete") << "\n";
                 LogPrintf("%s", strErrors.str());
                 return InitError(strErrors.str());
             }

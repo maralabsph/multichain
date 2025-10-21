@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "chainparams/chainparams.h"
 
@@ -12,7 +12,7 @@
 
 #include <assert.h>
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 #include <boost/assign/list_of.hpp>
 
@@ -91,12 +91,12 @@ static const Checkpoints::CCheckpointData dataTestnet = {
     };
 
 /* MCHN START */
-static Checkpoints::MapCheckpoints mapCheckpointsMultichain =
+static Checkpoints::MapCheckpoints mapCheckpointsAksyonchain =
         boost::assign::map_list_of
         ( -1, uint256("0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"))
         ;
-static const Checkpoints::CCheckpointData dataMultichain = {
-        &mapCheckpointsMultichain,
+static const Checkpoints::CCheckpointData dataAksyonchain = {
+        &mapCheckpointsAksyonchain,
         0,
         0,
         0
@@ -426,13 +426,13 @@ bool SelectParamsFromCommandLine()
 
 /* MCHN START */
 
-class CMultiChainParams : public CMainParams {
+class CAksyonChainParams : public CMainParams {
 public:
-    CMultiChainParams() {    };
+    CAksyonChainParams() {    };
     
     void SetFixedParams(const char *NetworkName)
     {
-        networkID = CBaseChainParams::MULTICHAIN;
+        networkID = CBaseChainParams::AKSYONCHAIN;
         strNetworkID=NetworkName;
         nMinerThreads = 0;
         fDefaultCheckMemPool = false;
@@ -468,7 +468,7 @@ public:
         const unsigned char *ucPtr;
         int size;
         
-        networkID = CBaseChainParams::MULTICHAIN;
+        networkID = CBaseChainParams::AKSYONCHAIN;
         
         strNetworkID = string(mc_gState->m_NetworkParams->Name());
                 
@@ -538,15 +538,15 @@ public:
         
 //        convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
-        SetMultiChainParams();
-        SetMultiChainRuntimeParams();
+        SetAksyonChainParams();
+        SetAksyonChainRuntimeParams();
         
         fRequireStandard = (mc_gState->m_NetworkParams->GetInt64Param("onlyacceptstdtxs") != 0);
         fRequireStandard=GetBoolArg("-requirestandard", fRequireStandard);
         fTestnetToBeDeprecatedFieldRPC = (mc_gState->m_NetworkParams->GetInt64Param("chainistestnet") != 0);
     }
     
-    void SetMultiChainParams()
+    void SetAksyonChainParams()
     {
         fAllowMinDifficultyBlocks=false;
         if(mc_gState->m_Features->FixedIn1000920001())
@@ -566,7 +566,7 @@ public:
         }
     }
     
-    void SetMultiChainParam(const char*param_name,int64_t value)
+    void SetAksyonChainParam(const char*param_name,int64_t value)
     {
         if(strcmp(param_name,"targetblocktime") == 0)
         {
@@ -574,7 +574,7 @@ public:
         }
     }
     
-    void SetMultiChainRuntimeParams()
+    void SetAksyonChainRuntimeParams()
     {
         fMineBlocksOnDemand = GetBoolArg("-mineblocksondemand", false);
         fMiningRequiresPeers = (mc_gState->m_NetworkParams->GetInt64Param("miningrequirespeers") != 0);
@@ -622,7 +622,7 @@ public:
 
         root_stream_name_size=0;
         root_stream_name=(unsigned char *)mc_gState->m_NetworkParams->GetParam("rootstreamname",&root_stream_name_size);        
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
         {
             root_stream_name_size=0;
         }    
@@ -642,7 +642,7 @@ public:
         
         txNew.vout[0].nValue = mc_gState->m_NetworkParams->GetInt64Param("initialblockreward");// * COIN;
         
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             ptrPubKeyHash=(unsigned char*)mc_gState->m_NetworkParams->GetParam("genesispubkeyhash",&size);        
             txNew.vout[0].scriptPubKey = CScript() << OP_DUP << OP_HASH160 << vector<unsigned char>(ptrPubKeyHash, ptrPubKeyHash + size) << OP_EQUALVERIFY << OP_CHECKSIG;
@@ -653,7 +653,7 @@ public:
             txNew.vout[0].scriptPubKey = CScript() << vector<unsigned char>(ptrPubKeyHash, ptrPubKeyHash + size) << OP_CHECKSIG;       
         }
         
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             mc_Script *lpScript;
             
@@ -719,7 +719,7 @@ public:
         assert(strcmp(storedHash,hashGenesisBlock.GetHex().c_str()) == 0);
         
 /*        
-        mapCheckpointsMultichain =
+        mapCheckpointsAksyonchain =
         boost::assign::map_list_of
         ( 0, uint256(storedHash))
         ;        
@@ -730,47 +730,47 @@ public:
     
     const Checkpoints::CCheckpointData& Checkpoints() const 
     {
-        return dataMultichain;
+        return dataAksyonchain;
     }
 };
-static CMultiChainParams multiChainParams;
+static CAksyonChainParams aksyonChainParams;
 
 
-bool SelectMultiChainParams(const char *NetworkName)
+bool SelectAksyonChainParams(const char *NetworkName)
 {
-    SelectMultiChainBaseParams(NetworkName,(int)mc_gState->m_NetworkParams->GetInt64Param("defaultrpcport"));
+    SelectAksyonChainBaseParams(NetworkName,(int)mc_gState->m_NetworkParams->GetInt64Param("defaultrpcport"));
 
-    multiChainParams.SetFixedParams(NetworkName);
+    aksyonChainParams.SetFixedParams(NetworkName);
     
-    multiChainParams.Initialize();
+    aksyonChainParams.Initialize();
     
-    pCurrentParams = &multiChainParams;
+    pCurrentParams = &aksyonChainParams;
     
     return true;
 }
 
-void SetMultiChainParams()
+void SetAksyonChainParams()
 {
-    multiChainParams.SetMultiChainParams();
+    aksyonChainParams.SetAksyonChainParams();
 }
 
-void SetMultiChainParam(const char*param_name,int64_t value)
+void SetAksyonChainParam(const char*param_name,int64_t value)
 {
-    multiChainParams.SetMultiChainParam(param_name,value);
+    aksyonChainParams.SetAksyonChainParam(param_name,value);
 }
 
 
-void SetMultiChainRuntimeParams()
+void SetAksyonChainRuntimeParams()
 {
-    multiChainParams.SetMultiChainRuntimeParams();
+    aksyonChainParams.SetAksyonChainRuntimeParams();
 }
 
-bool InitializeMultiChainParams()
+bool InitializeAksyonChainParams()
 {
     
-    multiChainParams.Initialize();
+    aksyonChainParams.Initialize();
     
-    multiChainParams.SetGenesis();
+    aksyonChainParams.SetGenesis();
     
     return true;
 }

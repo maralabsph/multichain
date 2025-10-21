@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_ASSET_H
-#define	MULTICHAIN_ASSET_H
+#ifndef AKSYONCHAIN_ASSET_H
+#define	AKSYONCHAIN_ASSET_H
 
 #include "utils/declare.h"
 #include "utils/dbwrapper.h"
@@ -451,5 +451,5 @@ void mc_InitABufferMap(mc_Buffer *buf);
 void mc_InitABufferDefault(mc_Buffer *buf);
 
 
-#endif	/* MULTICHAIN_ASSET_H */
+#endif	/* AKSYONCHAIN_ASSET_H */
 

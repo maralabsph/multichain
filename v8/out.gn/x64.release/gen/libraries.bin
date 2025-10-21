@@ -1,0 +1,58 @@
+ prologue’
+(function(global, utils, extrasUtils) {
+"use strict";
+%CheckIsBootstrapping();
+var imports = (void 0);
+var exports_container = %ExportFromRuntime({});
+function Export(f) {
+f(exports_container);
+}
+function Import(f) {
+f.next = imports;
+imports = f;
+}
+function PostNatives(utils) {
+%CheckIsBootstrapping();
+for ( ; !(imports === (void 0)); imports = imports.next) {
+imports(exports_container);
+}
+exports_container = (void 0);
+utils.Export = (void 0);
+utils.Import = (void 0);
+utils.PostNatives = (void 0);
+}
+%OptimizeObjectForAddingMultipleProperties(utils, 14);
+utils.Import = Import;
+utils.Export = Export;
+utils.PostNatives = PostNatives;
+%ToFastProperties(utils);
+%OptimizeObjectForAddingMultipleProperties(extrasUtils, 11);
+extrasUtils.logStackTrace = function logStackTrace() {
+%DebugTrace();
+};
+extrasUtils.log = function log() {
+let message = '';
+for (const arg of arguments) {
+message += arg;
+}
+%GlobalPrint(message);
+};
+extrasUtils.createPrivateSymbol = function createPrivateSymbol(name) {
+return %CreatePrivateSymbol(name);
+};
+extrasUtils.uncurryThis = function uncurryThis(func) {
+return function(thisArg, ...args) {
+return %reflect_apply(func, thisArg, args);
+};
+};
+extrasUtils.markPromiseAsHandled = function markPromiseAsHandled(promise) {
+%PromiseMarkAsHandled(promise);
+};
+extrasUtils.promiseState = function promiseState(promise) {
+return %PromiseStatus(promise);
+};
+extrasUtils.kPROMISE_PENDING = 0;
+extrasUtils.kPROMISE_FULFILLED = 1;
+extrasUtils.kPROMISE_REJECTED = 2;
+%ToFastProperties(extrasUtils);
+})

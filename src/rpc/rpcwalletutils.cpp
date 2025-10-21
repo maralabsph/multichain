@@ -2,11 +2,11 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 
 #include "rpc/rpcwallet.h"
-int VerifyNewTxForStreamFilters(const CTransaction& tx,std::string &strResult,mc_MultiChainFilter **lppFilter,int *applied);            
+int VerifyNewTxForStreamFilters(const CTransaction& tx,std::string &strResult,mc_AksyonChainFilter **lppFilter,int *applied);
 string OpReturnFormatToText(int format);
 
 void MinimalWalletTxToJSON(const CWalletTx& wtx, Object& entry)
@@ -272,7 +272,7 @@ void SendMoneyToSeveralAddresses(const std::vector<CTxDestination> addresses, CA
     }
     
         
-    mc_MultiChainFilter* lpFilter;
+    mc_AksyonChainFilter* lpFilter;
     int applied=0;
     string filter_error="";
 
@@ -941,7 +941,7 @@ Object StreamItemEntry(int rpc_slot,const CWalletTx& wtx,int first_output,const 
 //            if( AvailableFromStatus(retrieve_status) && ((retrieve_status & MC_OST_STORAGE_MASK) == MC_OST_OFF_CHAIN ))
             if( AvailableFromStatus(retrieve_status) )
             {
-                mc_MultiChainFilter* lpFilter;
+                mc_AksyonChainFilter* lpFilter;
                 int applied=0;
                 string filter_error="";
                 mc_TxDefRow txdef;
@@ -973,7 +973,7 @@ Object StreamItemEntry(int rpc_slot,const CWalletTx& wtx,int first_output,const 
                     }
                     
                     if(fDebug)LogPrint("drwut02","drwut02: %d: --> %s\n",rpc_slot,wtx.GetHash().ToString().c_str());
-                    if(pMultiChainFilterEngine->RunStreamFilters(wtx,stream_output,(unsigned char *)stream_id,filter_block,filter_offset, 
+                    if(pAksyonChainFilterEngine->RunStreamFilters(wtx,stream_output,(unsigned char *)stream_id,filter_block,filter_offset,
                             filter_error,&lpFilter,&applied) != MC_ERR_NOERROR)
                     {
                         full_error="Error while running stream filters";
@@ -1104,7 +1104,7 @@ Object TxOutEntry(const CTxOut& TxOutIn,int vout,const CTxIn& TxIn,uint256 hash,
         fIsMine=pwalletMain->IsMine(txout);
         string strFailReason;
         int required=0;
-        if(ParseMultichainTxOutToBuffer(hash,txout,amounts,lpScript,NULL,&required,strFailReason))
+        if(ParseAksyonchainTxOutToBuffer(hash,txout,amounts,lpScript,NULL,&required,strFailReason))
         {
             if(required & (MC_PTP_ADMIN | MC_PTP_ACTIVATE) )
             {
@@ -1166,7 +1166,7 @@ void AppendOffChainFormatData(uint32_t data_format,
 {
     if((mc_gState->m_WalletMode & MC_WMD_TXS) == 0)
     {
-        *strError="Offchain data is not supported with this wallet version. To get this functionality, run \"multichaind -walletdbversion=2 -rescan\"";
+        *strError="Offchain data is not supported with this wallet version. To get this functionality, run \"aksyonchaind -walletdbversion=2 -rescan\"";
         *errorCode=RPC_NOT_SUPPORTED;
         return;
     }   

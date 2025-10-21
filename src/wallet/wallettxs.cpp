@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "wallet/wallettxs.h"
 #include "utils/core_io.h"
@@ -2794,7 +2794,7 @@ int mc_WalletTxs::AddTx(mc_TxImport *import,const CWalletTx& tx,int block,CDiskT
 /*                        
                         else
                         {
-                            mc_MultiChainFilter* lpFilter;
+                            mc_AksyonChainFilter* lpFilter;
                             int applied=0;
                             string filter_error;
                             int filter_block=-1;
@@ -2811,7 +2811,7 @@ int mc_WalletTxs::AddTx(mc_TxImport *import,const CWalletTx& tx,int block,CDiskT
                                     filter_offset=-1;                                    
                                 }
                             }
-                            if(pMultiChainFilterEngine->RunStreamFilters(tx,i,entity.m_EntityID,filter_block, filter_offset, 
+                            if(pAksyonChainFilterEngine->RunStreamFilters(tx,i,entity.m_EntityID,filter_block, filter_offset,
                                     filter_error,&lpFilter,&applied) != MC_ERR_NOERROR)
                             {
                                 if(fDebug)LogPrint("mchn","mchn: Stream items rejected (%s): %s\n","Error while running filters",EncodeHexTx(tx));

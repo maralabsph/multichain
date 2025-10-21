@@ -1,10 +1,10 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef LICENSE_H
 #define LICENSE_H
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "utils/serialize.h"
 #include "utils/util.h"
 

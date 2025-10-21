@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_WALLETTXDB_H
-#define	MULTICHAIN_WALLETTXDB_H
+#ifndef AKSYONCHAIN_WALLETTXDB_H
+#define	AKSYONCHAIN_WALLETTXDB_H
 
 #include "utils/declare.h"
 #include "utils/dbwrapper.h"
@@ -527,5 +527,5 @@ typedef struct mc_TxDB
 } mc_TxDB;
 
 
-#endif	/* MULTICHAIN_WALLETTXDB_H */
+#endif	/* AKSYONCHAIN_WALLETTXDB_H */
 

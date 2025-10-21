@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_FILTER_H
-#define MULTICHAIN_FILTER_H
+#ifndef AKSYONCHAIN_FILTER_H
+#define AKSYONCHAIN_FILTER_H
 
 #include "filters/filtercallback.h"
 #include "json/json_spirit.h"
@@ -152,4 +152,4 @@ class mc_FilterEngine
     void ResetRunningFilter();
 }; // class mc_FilterEngine
 
-#endif /* MULTICHAIN_FILTER_H */
+#endif /* AKSYONCHAIN_FILTER_H */
