@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "rpc/rpcutils.h"
 #ifdef ENABLE_WALLET
@@ -46,8 +46,8 @@ bool ParseLibraryApproval(Value param,mc_EntityDetails *library_entity,mc_Entity
 
 CScript RemoveOpDropsIfNeeded(const CScript& scriptInput)
 {
-//    if(pMultiChainFilterEngine->m_TxID != 0)
-    if(pMultiChainFilterEngine->InFilter() != 0)
+//    if(pAksyonChainFilterEngine->m_TxID != 0)
+    if(pAksyonChainFilterEngine->InFilter() != 0)
     {
         return scriptInput;        
     }
@@ -94,13 +94,13 @@ bool AssetRefDecode(unsigned char *bin, const char* string, const size_t stringL
 int mc_MaxOpReturnShown()
 {
     int res=GetArg("-maxshowndata",MAX_OP_RETURN_SHOWN);    
-//    if(pMultiChainFilterEngine->m_TxID != 0)
-    if(pMultiChainFilterEngine->InFilter())
+//    if(pAksyonChainFilterEngine->m_TxID != 0)
+    if(pAksyonChainFilterEngine->InFilter())
     {
         res=MAX_OP_RETURN_SHOWN;    
-        if(pMultiChainFilterEngine->m_Params.m_MaxShownData >= 0)
+        if(pAksyonChainFilterEngine->m_Params.m_MaxShownData >= 0)
         {
-            res=pMultiChainFilterEngine->m_Params.m_MaxShownData;
+            res=pAksyonChainFilterEngine->m_Params.m_MaxShownData;
         }
     }
     
@@ -644,7 +644,7 @@ Array PerOutputDataEntries(const CTxOut& txout,mc_Script *lpScript,uint256 txid,
     unsigned char *ptr;
     int size;
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return results;
     }    
@@ -682,7 +682,7 @@ Array PermissionEntries(const CTxOut& txout,mc_Script *lpScript,bool fLong)
     unsigned char short_txid[MC_AST_SHORT_TXID_SIZE];
     mc_EntityDetails entity;
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return results;
     }    
@@ -1177,23 +1177,23 @@ Object StreamEntry(const unsigned char *txid,uint32_t output_level,mc_EntityDeta
             entry.push_back(Pair("creators",openers));                    
         }
         
-        if( ( (output_level & 0x0040)  != 0) && (pMultiChainFilterEngine->InFilter() == 0) )
+        if( ( (output_level & 0x0040)  != 0) && (pAksyonChainFilterEngine->InFilter() == 0) )
         {
             Array filters;
-            for(int i=0;i<(int)pMultiChainFilterEngine->m_Filters.size();i++)
+            for(int i=0;i<(int)pAksyonChainFilterEngine->m_Filters.size();i++)
             {
-                if(pMultiChainFilterEngine->m_Filters[i].m_FilterType == MC_FLT_TYPE_STREAM)
+                if(pAksyonChainFilterEngine->m_Filters[i].m_FilterType == MC_FLT_TYPE_STREAM)
                 {
-                    if(mc_gState->m_Permissions->FilterApproved(entity.GetTxID(),&(pMultiChainFilterEngine->m_Filters[i].m_FilterAddress)))
+                    if(mc_gState->m_Permissions->FilterApproved(entity.GetTxID(),&(pAksyonChainFilterEngine->m_Filters[i].m_FilterAddress)))
                     {
-                        filters.push_back(FilterEntry(pMultiChainFilterEngine->m_Filters[i].m_Details.GetTxID(),0x02,MC_FLT_TYPE_STREAM));
+                        filters.push_back(FilterEntry(pAksyonChainFilterEngine->m_Filters[i].m_Details.GetTxID(),0x02,MC_FLT_TYPE_STREAM));
                     }
                 }
             }            
             entry.push_back(Pair("filters",filters));                    
         }
         
-        if( ( (output_level & 0x0018)  != 0) && (pMultiChainFilterEngine->InFilter() == 0) )
+        if( ( (output_level & 0x0018)  != 0) && (pAksyonChainFilterEngine->InFilter() == 0) )
         {
             entStat.Zero();
             memcpy(&entStat,entity.GetTxID()+MC_AST_SHORT_TXID_OFFSET,MC_AST_SHORT_TXID_SIZE);
@@ -1319,7 +1319,7 @@ map<string, Value> ParamsToUpgrade(mc_EntityDetails *entity,int version)
 {
     map<string, Value> result;
     int size=0;
-    const mc_OneMultichainParam *param;
+    const mc_OneAksyonchainParam *param;
     char* ptr=(char*)entity->GetParamUpgrades(&size);
     char* ptrEnd;
     string param_name;
@@ -1824,7 +1824,7 @@ Value OpReturnFormatEntry(const unsigned char *elem,int64_t elem_size,uint256 tx
         *format_text_out="gettxoutdata";
     }
     
-    if( (pMultiChainFilterEngine->InFilter() == 0) || (mc_gState->m_Features->StreamFilters() == 0) )
+    if( (pAksyonChainFilterEngine->InFilter() == 0) || (mc_gState->m_Features->StreamFilters() == 0) )
     {        
         metadata_object.push_back(Pair("txid", txid.ToString()));
         metadata_object.push_back(Pair("vout", vout));
@@ -2429,7 +2429,7 @@ Object AssetEntry(const unsigned char *txid,int64_t quantity,uint32_t output_lev
                 if( (raw_output < 0) && ( (output_level & 0x0040) == 0) )
                 {
                     raw_output=total;
-                    if(pMultiChainFilterEngine->InFilter() == 0)
+                    if(pAksyonChainFilterEngine->InFilter() == 0)
                     {
                         entry.push_back(Pair("issuecount", issue_count));
                     }
@@ -2448,7 +2448,7 @@ Object AssetEntry(const unsigned char *txid,int64_t quantity,uint32_t output_lev
         }
         
         
-        if( ((output_level & 0x0008) != 0) && ((mc_gState->m_WalletMode & MC_WMD_TXS) != 0) && (pMultiChainFilterEngine->InFilter() == 0) )
+        if( ((output_level & 0x0008) != 0) && ((mc_gState->m_WalletMode & MC_WMD_TXS) != 0) && (pAksyonChainFilterEngine->InFilter() == 0) )
         {
             entStat.m_Entity.m_EntityType=MC_TET_ASSET | MC_TET_CHAINPOS;
             if(pwalletTxsMain->FindEntity(&entStat))
@@ -3010,7 +3010,7 @@ Object VariableEntry(const CTxOut& txout,mc_Script *lpScript,const CTransaction&
     set<uint160> publishers_set;    
     string assetref="";
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return entry;
     }    
@@ -4967,7 +4967,7 @@ vector <pair<CScript, CAmount> > ParseRawOutputMultiObject(Object sendTo,int *re
     set<CBitcoinAddress> setAddress;
     BOOST_FOREACH(const Pair& s, sendTo) 
     {        
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
         {
             CBitcoinAddress address(s.name_);        
             if (address.IsValid())
@@ -6189,7 +6189,7 @@ void ParseEntityIdentifier(Value entity_identifier,mc_EntityDetails *entity,uint
                     unsigned char *root_stream_name;
                     int root_stream_name_size;
                     root_stream_name=(unsigned char *)mc_gState->m_NetworkParams->GetParam("rootstreamname",&root_stream_name_size);        
-                    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+                    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
                     {
                         root_stream_name_size=0;
                     }    

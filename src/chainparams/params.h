@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAINPARAMS_H
-#define	MULTICHAINPARAMS_H
+#ifndef AKSYONCHAINPARAMS_H
+#define	AKSYONCHAINPARAMS_H
 
 #include "utils/declare.h"
 
@@ -88,7 +88,7 @@ extern int MCP_STD_OP_DROP_COUNT;
 extern int MCP_STD_OP_DROP_SIZE;
 extern int MCP_ANYONE_CAN_RECEIVE_EMPTY;
 
-typedef struct mc_OneMultichainParam
+typedef struct mc_OneAksyonchainParam
 {    
     char m_Name[MC_PRM_MAX_ARG_NAME_SIZE+1]; 
     char m_DisplayName[MC_PRM_MAX_ARG_NAME_SIZE+1]; 
@@ -106,29 +106,29 @@ typedef struct mc_OneMultichainParam
     char m_Description[MC_PRM_MAX_DESCRIPTION_SIZE+1]; 
     
     int IsRelevant(int version);
-} mc_OneMultichainParam;
+} mc_OneAksyonchainParam;
 
-typedef struct mc_MultichainParams
+typedef struct mc_AksyonchainParams
 {    
     char *m_lpData;
     mc_MapStringIndex *m_lpIndex;
-    mc_OneMultichainParam *m_lpParams;
+    mc_OneAksyonchainParam *m_lpParams;
     int *m_lpCoord;
     int m_Status;
     int m_Size;
     int m_Count;
-    int m_IsProtocolMultiChain;
+    int m_IsProtocolAksyonChain;
     int m_ProtocolVersion;
     int m_RelevantProtocolVersion;
     
     int m_AssetRefSize;
     
-    mc_MultichainParams()
+    mc_AksyonchainParams()
     {
         Zero();
     }
 
-    ~mc_MultichainParams()
+    ~mc_AksyonchainParams()
     {
         Destroy();
     }
@@ -140,7 +140,7 @@ typedef struct mc_MultichainParams
     int Create(const char *name,int version);
     int Read(const char *name);    
     int Read(const char* name,int argc, char* argv[],int create_version);
-    int Clone(const char *name,mc_MultichainParams *source);
+    int Clone(const char *name,mc_AksyonchainParams *source);
     int Build(const unsigned char* pubkey,int pubkey_size);
     int Validate();
     int CalculateHash(unsigned char *hash);
@@ -148,11 +148,11 @@ typedef struct mc_MultichainParams
     int Print(FILE *);
     int SetGlobals();
     int SetProtocolGlobals();
-    int SetUpgradedParamValue(const mc_OneMultichainParam *param,int64_t value);
+    int SetUpgradedParamValue(const mc_OneAksyonchainParam *param,int64_t value);
     int Import(const char *name,const char *source_address);
     int Set(const char *name,const char *source,int source_size);
     
-    const mc_OneMultichainParam *FindParam(const char *param);
+    const mc_OneAksyonchainParam *FindParam(const char *param);
     void* GetParam(const char *param,int* size);
     int64_t GetInt64Param(const char *param);
     double GetDoubleParam(const char *param);
@@ -164,7 +164,7 @@ typedef struct mc_MultichainParams
     int SetParam(const char *param,int64_t value);
     
     int CanBeUpgradedByVersion(const char *param,int version,int size);
-    int IsParamUpgradeValueInRange(const mc_OneMultichainParam *param,int version,int64_t value);
+    int IsParamUpgradeValueInRange(const mc_OneAksyonchainParam *param,int version,int64_t value);
     
     const char* Name();
     const unsigned char* DefaultMessageStart();
@@ -173,13 +173,13 @@ typedef struct mc_MultichainParams
     const unsigned char* AddressCheckumValue();
     const unsigned char* AddressScriptVersion();
     int ProtocolVersion();
-    int IsProtocolMultichain();
+    int IsProtocolAksyonchain();
     double ParamAccuracy();
     
 
     
-} mc_MultichainParams;
+} mc_AksyonchainParams;
 
 
-#endif	/* MULTICHAINPARAMS_H */
+#endif	/* AKSYONCHAINPARAMS_H */
 

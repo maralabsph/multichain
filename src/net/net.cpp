@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #if defined(HAVE_CONFIG_H)
 #include "config/bitcoin-config.h"
@@ -21,7 +21,7 @@
 #include "keys/pubkey.h"
 #include "wallet/wallet.h"
 extern CWallet* pwalletMain;
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "community/community.h"
 
 #ifdef WIN32
@@ -78,7 +78,7 @@ namespace {
 bool fDiscover = true;
 bool fListen = true;
 uint64_t nLocalServices = NODE_NETWORK;
-uint64_t nLocalMultiChainServices = 0;
+uint64_t nLocalAksyonChainServices = 0;
 CCriticalSection cs_mapLocalHost;
 map<CNetAddr, LocalServiceInfo> mapLocalHost;
 CCriticalSection cs_setLocalAddr;
@@ -526,13 +526,13 @@ void CNode::PushVersion()
     
 /* MCHN START */
     std::string subver=FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, std::vector<string>());
-    nLocalMultiChainServices |= pEF->NET_Services();
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    nLocalAksyonChainServices |= pEF->NET_Services();
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
-        subver=FormatSubVersion("MultiChain", mc_gState->GetProtocolVersion(), std::vector<string>());
+        subver=FormatSubVersion("AksyonChain", mc_gState->GetProtocolVersion(), std::vector<string>());
     }
     PushMessage("version", PROTOCOL_VERSION, nLocalServices, nTime, addrYou, addrMe,
-                nLocalHostNonce, subver, nBestHeight, true, nLocalMultiChainServices);
+                nLocalHostNonce, subver, nBestHeight, true, nLocalAksyonChainServices);
 /* MCHN END */
 }
 
@@ -1365,7 +1365,7 @@ void ThreadMapPort()
             }
         }
 
-        string strDesc = "MultiChain " + FormatFullVersion();
+        string strDesc = "AksyonChain " + FormatFullVersion();
 
         try {
             while (true) {
@@ -1767,7 +1767,7 @@ void ThreadOpenConnections()
 
             // if we selected an invalid address, restart
 /* MCHN START */            
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 if (!addr.IsValid() || (IsLocal(addr) && (addr.GetPort() == GetListenPort())))
                 {
@@ -1799,7 +1799,7 @@ void ThreadOpenConnections()
             // stop this loop, and let the outer loop run again (which sleeps, adds seed nodes, recalculates
             // already-connected network ranges, ...) before trying new addrman addresses.
             nTries++;
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 if (nTries > 20)                
                     break;
@@ -1817,7 +1817,7 @@ void ThreadOpenConnections()
 
             // only consider very recently tried nodes after 30 failed attempts
 /* MCHN START */            
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
             {
 /* MCHN END */            
             if (nANow - addr.nLastTry < 600 && nTries < 30)
@@ -1831,7 +1831,7 @@ void ThreadOpenConnections()
             
             // do not allow non-default ports, unless after 50 invalid addresses selected already
 /* MCHN START */            
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
             {
 /* MCHN END */            
                 if (addr.GetPort() != Params().GetDefaultPort() && nTries < 50)
@@ -1842,7 +1842,7 @@ void ThreadOpenConnections()
             }
 
 
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 
                 if(setConnectedVerifiedAddresses.count(addr.ToStringIPPort()))
@@ -2370,7 +2370,7 @@ bool BindListenPort(const CService &addrBind, string& strError, bool fWhiteliste
     {
         int nErr = WSAGetLastError();
         if (nErr == WSAEADDRINUSE)
-            strError = strprintf(_("Unable to bind to %s on this computer. MultiChain Core is probably already running."), addrBind.ToString());
+            strError = strprintf(_("Unable to bind to %s on this computer. AksyonChain Core is probably already running."), addrBind.ToString());
         else
             strError = strprintf(_("Unable to bind to %s on this computer (bind returned error %s)"), addrBind.ToString(), NetworkErrorString(nErr));
         LogPrintf("%s\n", strError);
@@ -2856,7 +2856,7 @@ CNode::CNode(SOCKET hSocketIn, CAddress addrIn, std::string addrNameIn, bool fIn
     fPingQueued = false;
 
 /* MCHN START */    
-    nMultiChainServices=0;
+    nAksyonChainServices=0;
     fDefaultMessageStart=false;
     fVerackackReceived=false;
     fVerackackSent=false;

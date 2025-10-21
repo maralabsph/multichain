@@ -2,11 +2,11 @@
 // Copyright (c) 2009-2016 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "core/main.h"
 #include "utils/util.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "wallet/wallettxs.h"
 #include "community/community.h"
 
@@ -20,7 +20,7 @@ size_t nMapRelaySize=0;
 
 using namespace std;
 /*
-bool AcceptMultiChainTransaction(const CTransaction& tx, 
+bool AcceptAksyonChainTransaction(const CTransaction& tx,
                                  const CCoinsViewCache &inputs,
                                  int offset,
                                  bool accept,
@@ -294,7 +294,7 @@ int CreateUpgradeLists(int current_height,vector<mc_UpgradedParameter> *vParams,
                                                 }
                                             }
                                         }
-                                        if(vUpgrades == NULL)                   // Called from MultichainNode_ApplyUpgrades
+                                        if(vUpgrades == NULL)                   // Called from AksyonchainNode_ApplyUpgrades
                                         {
                                             if((int)param.m_Block == current_height)
                                             {
@@ -379,7 +379,7 @@ bool ReplayMemPool(CTxMemPool& pool, int from,bool accept)
     
     double start_time=mc_TimeNowAsDouble();
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         for(pos=from;pos<pool.hashList->m_Count;pos++)
         {
@@ -442,7 +442,7 @@ bool ReplayMemPool(CTxMemPool& pool, int from,bool accept)
                     CCoinsViewCache view(&dummy);
                     CCoinsViewMemPool viewMemPool(pcoinsTip, pool);
                     view.SetBackend(viewMemPool);
-                    if(!AcceptMultiChainTransaction(tx,view,-1,accept ? MC_AMT_DEFAULT : MC_AMT_NO_ACCEPT,reason,NULL,NULL))
+                    if(!AcceptAksyonChainTransaction(tx,view,-1,accept ? MC_AMT_DEFAULT : MC_AMT_NO_ACCEPT,reason,NULL,NULL))
                     {
                         removed_type="rejected";                    
                     }
@@ -507,7 +507,7 @@ void FindSigner(CBlock *block,unsigned char *sig,int *sig_size,uint32_t *hash_ty
     int key_size;
     block->vSigner[0]=0;
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         for (unsigned int i = 0; i < block->vtx.size(); i++)
         {
@@ -665,7 +665,7 @@ bool VerifyBlockSignature(CBlock *block,bool force)
     }
     else
     {
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             if(block->hashPrevBlock != uint256(0))
             {
@@ -705,7 +705,7 @@ bool ReadTxFromDisk(CBlockIndex* pindex,int32_t offset,CTransaction& tx)
 
 bool VerifyBlockMiner(CBlock *block_in,CBlockIndex* pindexNew)
 {
-    if( (mc_gState->m_NetworkParams->IsProtocolMultichain() == 0) ||
+    if( (mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0) ||
         (mc_gState->m_NetworkParams->GetInt64Param("supportminerprecheck") == 0) ||
         (MCP_ANYONE_CAN_MINE) )                               
     {
@@ -934,7 +934,7 @@ bool CheckBlockPermissions(const CBlock& block,CBlockIndex* prev_block,unsigned 
             
     key_size=255;    
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return true;
     }

@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "protocol/relay.h"
 #include "structs/base58.h"
@@ -90,7 +90,7 @@ bool mc_RelayProcess_Address_Query(unsigned char *ptrStart,unsigned char *ptrEnd
     return true;
 }
 
-bool MultichainRelayResponse(uint32_t msg_type_stored, CNode *pto_stored,
+bool AksyonchainRelayResponse(uint32_t msg_type_stored, CNode *pto_stored,
                              uint32_t msg_type_in, uint32_t  flags, vector<unsigned char>& vPayloadIn,vector<CScript>& vSigScriptsIn,vector<CScript>& vSigScriptsToVerify,
                              uint32_t* msg_type_response,uint32_t  *flags_response,vector<unsigned char>& vPayloadResponse,vector<CScript>& vSigScriptsRespond,
                              uint32_t* msg_type_relay,uint32_t  *flags_relay,vector<unsigned char>& vPayloadRelay,vector<CScript>& vSigScriptsRelay,string& strError)
@@ -1100,7 +1100,7 @@ bool mc_RelayManager::ProcessRelay( CNode* pfrom,
     {
         if( (msg_type_relay_ptr != NULL) || (msg_type_response_ptr != NULL) )
         {
-            if(MultichainRelayResponse(msg_type_stored,pto_stored,
+            if(AksyonchainRelayResponse(msg_type_stored,pto_stored,
                                        msg_type_in,flags_in,vPayloadIn,vSigScripts,vSigScriptsToVerify,
                                        msg_type_response_ptr,&flags_response,vPayloadResponse,vSigScriptsRespond,
                                        msg_type_relay_ptr,&flags_relay,vPayloadRelay,vSigScriptsRelay,strError))

@@ -1,12 +1,12 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_STATE_H
-#define	MULTICHAIN_STATE_H
+#ifndef AKSYONCHAIN_STATE_H
+#define	AKSYONCHAIN_STATE_H
 
 #include "utils/define.h"
 #include "chainparams/params.h"
-#include "protocol/multichainscript.h"
+#include "protocol/aksyonchainscript.h"
 #include "permissions/permission.h"
 #include "entities/asset.h"
 #include "wallet/wallettxdb.h"
@@ -129,7 +129,7 @@ typedef struct mc_UpgradeStatus
 
 typedef struct mc_UpgradedParameter
 {    
-    const mc_OneMultichainParam *m_Param;
+    const mc_OneAksyonchainParam *m_Param;
     int64_t m_Value;    
     uint32_t m_Block;
     int32_t m_Skipped; 
@@ -287,7 +287,7 @@ typedef struct mc_State
     }
     
     mc_Params               *m_Params;
-    mc_MultichainParams     *m_NetworkParams;
+    mc_AksyonchainParams     *m_NetworkParams;
     mc_Permissions          *m_Permissions;
     mc_AssetDB              *m_Assets;
     mc_Features             *m_Features;
@@ -322,7 +322,7 @@ typedef struct mc_State
     {
         m_Params=new mc_Params;     
         m_Features=new mc_Features;
-        m_NetworkParams=new mc_MultichainParams;
+        m_NetworkParams=new mc_AksyonchainParams;
         m_Permissions=NULL;
         m_Assets=NULL;
         m_TmpScript=new mc_Script;
@@ -452,5 +452,5 @@ typedef struct mc_State
 
 extern mc_State* mc_gState;
 
-#endif	/* MULTICHAIN_STATE_H */
+#endif	/* AKSYONCHAIN_STATE_H */
 

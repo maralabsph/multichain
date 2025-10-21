@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef BITCOIN_PRIMITIVES_TRANSACTION_H
 #define BITCOIN_PRIMITIVES_TRANSACTION_H
@@ -12,7 +12,7 @@
 #include "utils/serialize.h"
 #include "structs/uint256.h"
 
-//#include "multichain/multichain.h"
+//#include "aksyonchain/aksyonchain.h"
 #include "chainparams/state.h"
 
 /** An outpoint - a combination of a transaction hash and an index n into its vout */
@@ -141,7 +141,7 @@ public:
 /* MCHN START */        
     CAmount GetDustThreshold(const CFeeRate &minRelayTxFee) const
     {
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             int64_t minOutput=MCP_MINIMUM_PER_OUTPUT;
             if(minOutput >= 0)
@@ -166,7 +166,7 @@ public:
         // with default minRelayTxFee.
 /* MCHN START */        
 /*        
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             int64_t minOutput=MCP_MINIMUM_PER_OUTPUT;
             if(minOutput >= 0)

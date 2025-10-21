@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef BITCOIN_CHAINPARAMS_H
 #define BITCOIN_CHAINPARAMS_H
@@ -166,11 +166,11 @@ bool SelectParamsFromCommandLine();
 
 /* MCHN START */
 
-bool SelectMultiChainParams(const char *NetworkName);
-bool InitializeMultiChainParams();
-void SetMultiChainParams();
-void SetMultiChainParam(const char*param_name,int64_t value);
-void SetMultiChainRuntimeParams();
+bool SelectAksyonChainParams(const char *NetworkName);
+bool InitializeAksyonChainParams();
+void SetAksyonChainParams();
+void SetAksyonChainParam(const char*param_name,int64_t value);
+void SetAksyonChainRuntimeParams();
 
 
 /* MCHN END */

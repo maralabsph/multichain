@@ -1,12 +1,12 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef JSON_SPIRIT_UBJSON_H
 #define JSON_SPIRIT_UBJSON_H
 
 #include "json/json_spirit_utils.h"
 #include "json/json_spirit_value.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 using namespace std;
 using namespace json_spirit;

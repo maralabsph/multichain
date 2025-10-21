@@ -21,7 +21,7 @@ define $(package)_preprocess_cmds
   cp -f $(BASEDIR)/config.guess $(BASEDIR)/config.sub build-aux
 endef
 define $(package)_preprocess_cmds
-#  patch -p1 < /home/vladrwm/multichain/depends/patches/libevent/arc4random.patch 
+#  patch -p1 < /home/vladrwm/aksyonchain/depends/patches/libevent/arc4random.patch
 
 # $($(package)_patch_dir)/arc4random.patch
 endef

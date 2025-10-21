@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "wallet/wallet.h"
 #include "wallet/wallettxs.h"
@@ -14,8 +14,8 @@
 #include "custom/custom.h"
 
 extern mc_WalletTxs* pwalletTxsMain;
-void MultiChainTransaction_SetTmpOutputScript(const CScript& script1);
-int64_t MultiChainTransaction_OffchainFee(int64_t total_offchain_size);
+void AksyonChainTransaction_SetTmpOutputScript(const CScript& script1);
+int64_t AksyonChainTransaction_OffchainFee(int64_t total_offchain_size);
 void AppendSpecialRowsToBuffer(mc_Buffer *amounts,uint256 hash,int expected_allowed,int expected_required,int *allowed,int *required,CAmount nValue);
 
 using namespace std;
@@ -899,7 +899,7 @@ bool StoreInCSCache(uint256 hash,uint32_t n,mc_Buffer *amounts,const CTxDestinat
     {
         return false;
     }
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return false;        
     }
@@ -970,7 +970,7 @@ bool FindRelevantCoins(CWallet *lpWallet,                                       
                        mc_Buffer *in_map,                                       // OUT txid/vout->coin id map (used in coin selection)
                        mc_Buffer *tmp_amounts,                                  // TMP temporary asset-quantity buffer
                        unsigned char *in_row,int in_size,                       // TMP temporary buffer row and its size
-                       mc_Script *lpScript,                                     // TMP temporary multichain script object
+                       mc_Script *lpScript,                                     // TMP temporary aksyonchain script object
                        int *in_special_row,                                     // IN  Coordinates of special rows
                        map<uint32_t, uint256>* mapSpecialEntity,
                        map<uint256, vector<int>>& mapNFTAssetOutputs,
@@ -1011,7 +1011,7 @@ bool FindRelevantCoins(CWallet *lpWallet,                                       
         tmp_amounts->Clear();
         if(custom_good_for_coin_selection(txout.scriptPubKey) &&
             ( (use_cache && (found_in_cache=ParseFromCSCache(out,tmp_amounts,dest,&required,&txout_with_inline_data,&is_empty))) ||     
-            ParseMultichainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,&allowed,&required,mapSpecialEntity,strError)))
+            ParseAksyonchainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,&allowed,&required,mapSpecialEntity,strError)))
         {
                                                                                 // All coins are taken, possible future optimization
 /*            
@@ -1193,7 +1193,7 @@ bool FindCoinsToCombine(CWallet *lpWallet,                                      
                         mc_Buffer *in_map,                                      // OUT txid/vout->coin id map (used in coin selection)
                         mc_Buffer *tmp_amounts,                                 // TMP temporary asset-quantity buffer
                         unsigned char *in_row,int in_size,                      // TMP temporary buffer row and its size
-                        mc_Script *lpScript,                                    // TMP temporary multichain script object
+                        mc_Script *lpScript,                                    // TMP temporary aksyonchain script object
                         int *in_special_row,                                    // IN  Coordinates of special rows
                         std::string& strFailReason)                             // OUT error message
 {
@@ -1232,7 +1232,7 @@ bool FindCoinsToCombine(CWallet *lpWallet,                                      
             out_i=out.i;
             tmp_amounts->Clear();
             if(custom_good_for_coin_selection(txout.scriptPubKey) && 
-                    ParseMultichainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,&allowed,&required,strError))
+                    ParseAksyonchainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,&allowed,&required,strError))
             {
                 txout_with_inline_data=false;
                 if(check_for_inline_coins)
@@ -1348,7 +1348,7 @@ bool FindCoinsToCombine(CWallet *lpWallet,                                      
             out_i=out.i;
             tmp_amounts->Clear();
             if(custom_good_for_coin_selection(txout.scriptPubKey) &&
-                    ParseMultichainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,&allowed,&required,strError))
+                    ParseAksyonchainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,&allowed,&required,strError))
             {
                 if( (required & MC_PTP_ISSUE) == 0 )                            // Ignore txouts containing unconfirmed geneses
                 {
@@ -1510,7 +1510,7 @@ bool ModifyForNFTAssets(const vector<pair<CScript, CAmount> >& vecSend,
                         mc_Buffer *in_amounts,                                  // IN  selected asset amounts
                         mc_Buffer *tmp_amounts,                                 // TMP temporary asset-quantity buffer
                         int coins_count,
-                        mc_Script *lpScript,                                    // TMP temporary multichain script object
+                        mc_Script *lpScript,                                    // TMP temporary aksyonchain script object
                         int *in_special_row,                                    // IN  Coordinates of special rows
                         std::string& strFailReason)                             // OUT error message
 {
@@ -1700,7 +1700,7 @@ bool CalculateChangeAmounts(CWallet *lpWallet,                                  
                             mc_Buffer *in_amounts,                              // IN  selected asset amounts
                             mc_Buffer *change_amounts,                          // OUT change amounts, asset-quantity buffer with additional field - group
                             mc_Buffer *tmp_amounts,                             // TMP temporary asset-quantity buffer
-                            mc_Script *lpScript,                                // TMP temporary multichain script object
+                            mc_Script *lpScript,                                // TMP temporary aksyonchain script object
                             int *in_special_row,                                // IN  Coordinates of special rows
                             map<uint32_t, uint256>* mapSpecialEntity,           // IN  Special permission entry, like issue txid of follow-on issuance  
                             set<CTxDestination>* usedAddresses,                 // OUT List of addresses used in selection.
@@ -1733,7 +1733,7 @@ bool CalculateChangeAmounts(CWallet *lpWallet,                                  
                 tmp_amounts->Clear();                                     
                 allowed=expected_required;
                 required=expected_required;
-                if(ParseMultichainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,&allowed,&required,mapSpecialEntity,strError))
+                if(ParseAksyonchainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,&allowed,&required,mapSpecialEntity,strError))
                 {
                     for(int i=0;i<tmp_amounts->GetCount();i++)
                     {
@@ -2013,7 +2013,7 @@ bool SelectAssetCoins(CWallet *lpWallet,                                        
             }
         }
                                                                                 // Selecting coins covering remaining asset amount
-        if(!lpWallet->SelectMultiChainCoins(nTargetValue,vCoins,in_map,in_amounts,in_special_row[0],in_asset_row,in_prefered_row,setAssetCoins, nAssetValueIn, coinControl))
+        if(!lpWallet->SelectAksyonChainCoins(nTargetValue,vCoins,in_map,in_amounts,in_special_row[0],in_asset_row,in_prefered_row,setAssetCoins, nAssetValueIn, coinControl))
         {
             return false;
         }                        
@@ -2057,7 +2057,7 @@ CAmount BuildAssetTransaction(CWallet *lpWallet,                                
                               int required,                                     // IN  Required special permissions
                               CAmount min_output,                               // IN  minimum native currency value (to be set in change outputs))
                               mc_Buffer *tmp_amounts,                           // TMP temporary asset-quantity buffer
-                              mc_Script *lpScript,                              // TMP temporary multichain script object
+                              mc_Script *lpScript,                              // TMP temporary aksyonchain script object
                               int *in_special_row,                              // IN  Coordinates of special rows
                               set<CTxDestination>* usedAddresses,               // In  List of addresses used in selection.
                               uint32_t flags,                                   // In  Coin selection flags
@@ -2136,7 +2136,7 @@ CAmount BuildAssetTransaction(CWallet *lpWallet,                                
     }
     
     extra_change_count=0;
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         BOOST_FOREACH(const CTxDestination& address, *usedAddresses)             // Sending empty change to all addresses used in inputs, except change_address
         {        
@@ -2179,10 +2179,10 @@ CAmount BuildAssetTransaction(CWallet *lpWallet,                                
         total_offchain_size=0;
         BOOST_FOREACH (const PAIRTYPE(CScript, CAmount)& s, vecSend)            // Original outputs
         {
-            MultiChainTransaction_SetTmpOutputScript(s.first);
+            AksyonChainTransaction_SetTmpOutputScript(s.first);
             mc_gState->m_TmpScript->ExtractAndDeleteDataFormat(NULL,NULL,NULL,&total_offchain_size);            
         }
-        mandatory_fee=MultiChainTransaction_OffchainFee(total_offchain_size);
+        mandatory_fee=AksyonChainTransaction_OffchainFee(total_offchain_size);
     }
     
     if(nFeeRet == 0)
@@ -2277,7 +2277,7 @@ CAmount BuildAssetTransaction(CWallet *lpWallet,                                
             txNew.vout.push_back(txout);            
         }
         
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             BOOST_FOREACH(const CTxDestination& address, *usedAddresses)             // Sending empty change to all addresses used in inputs, except change_address
             {        
@@ -2707,7 +2707,7 @@ bool CreateAssetGroupingTransaction(CWallet *lpWallet, const vector<pair<CScript
     CAmount nValue = 0;
     BOOST_FOREACH (const PAIRTYPE(CScript, CAmount)& s, vecSendIn)
     {
-        if (nValue < 0)                                                         // Multichain allows protocol zero-value outputs
+        if (nValue < 0)                                                         // Aksyonchain allows protocol zero-value outputs
         {
             strFailReason = _("Transaction amounts must be non-negative");
             return false;
@@ -2797,7 +2797,7 @@ bool CreateAssetGroupingTransaction(CWallet *lpWallet, const vector<pair<CScript
             {
                 CTxOut txout(s.second, s.first);
                 int this_required=MC_PTP_ALL;
-                if(!ParseMultichainTxOutToBuffer(hash,txout,out_amounts,lpScript,NULL,&this_required,&mapSpecialEntity,strFailReason))
+                if(!ParseAksyonchainTxOutToBuffer(hash,txout,out_amounts,lpScript,NULL,&this_required,&mapSpecialEntity,strFailReason))
                 {
                     goto exitlbl;
                 }
@@ -2812,7 +2812,7 @@ bool CreateAssetGroupingTransaction(CWallet *lpWallet, const vector<pair<CScript
             {
                 CTxOut txout(s.second, s.first);
                 int this_required=MC_PTP_SEND | MC_PTP_RECEIVE;
-                if(!ParseMultichainTxOutToBuffer(hash,txout,out_amounts,lpScript,NULL,&this_required,&mapSpecialEntity,strFailReason))
+                if(!ParseAksyonchainTxOutToBuffer(hash,txout,out_amounts,lpScript,NULL,&this_required,&mapSpecialEntity,strFailReason))
                 {
                     goto exitlbl;
                 }                
@@ -2868,7 +2868,7 @@ bool CreateAssetGroupingTransaction(CWallet *lpWallet, const vector<pair<CScript
     {
         required=MC_PTP_SEND;
         CTxOut txout(0, CScript());
-        if(!ParseMultichainTxOutToBuffer(hash,txout,out_amounts,lpScript,NULL,&required,strFailReason))
+        if(!ParseAksyonchainTxOutToBuffer(hash,txout,out_amounts,lpScript,NULL,&required,strFailReason))
         {
             goto exitlbl;
         }        
@@ -2906,7 +2906,7 @@ bool CreateAssetGroupingTransaction(CWallet *lpWallet, const vector<pair<CScript
     if(csperf_debug_print)if(vecSend.size())printf("Alloc                   : %8.6f (%d)\n",this_time-last_time,in_size);
     last_time=this_time;
                                                                                 // Map coin -> index in in_amounts
-                                                                                // We need this as in SelectMultiChainCoinsMinConf coins will be shuffled
+                                                                                // We need this as in SelectAksyonChainCoinsMinConf coins will be shuffled
                                                                                 // Key: 32-byte txid, 4-byte output id. Value - index in in_amounts
     in_map=new mc_Buffer;
     in_map->Initialize(36,40,MC_BUF_MODE_MAP);
@@ -3197,7 +3197,7 @@ bool CreateAssetGroupingTransaction(CWallet *lpWallet, const vector<pair<CScript
             nFeeRet = 0;
             
             min_output=-1;                                                      // Calculate minimal output for the change
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 min_output=MCP_MINIMUM_PER_OUTPUT;
             }            
@@ -3304,7 +3304,7 @@ exitlbl:
     return true;
 }
 
-bool CWallet::CreateMultiChainTransaction(const vector<pair<CScript, CAmount> >& vecSend,
+bool CWallet::CreateAksyonChainTransaction(const vector<pair<CScript, CAmount> >& vecSend,
                                 CWalletTx& wtxNew, CReserveKey& reservekey, CAmount& nFeeRet, std::string& strFailReason, const CCoinControl* coinControl,
                                 const set<CTxDestination>* addresses,int min_conf,int min_inputs,int max_inputs,const vector<COutPoint>* lpCoinsToUse, int *eErrorCode)
 {
@@ -3437,7 +3437,7 @@ bool CWallet::InitializeUnspentList()
             CTxOut txout;
             uint256 hash=out.GetHashAndTxOut(txout);
 
-            ParseMultichainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,NULL,NULL,strError);
+            ParseAksyonchainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,NULL,NULL,strError);
         }
         asset_count=tmp_amounts->GetCount();
         if(mc_gState->m_Features->PerAssetPermissions())
@@ -3466,7 +3466,7 @@ bool CWallet::InitializeUnspentList()
             CTxOut txout;
             uint256 hash=out.GetHashAndTxOut(txout);
             tmp_amounts->Clear();
-            ParseMultichainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,NULL,NULL,strError);
+            ParseAksyonchainTxOutToBuffer(hash,txout,tmp_amounts,lpScript,NULL,NULL,strError);
             lpAssetGroups->GetGroup(tmp_amounts,1);
         }
         if(fDebug)LogPrint("mchn","mchn: Found %d assets in %d groups\n",asset_count,lpAssetGroups->GroupCount()-1);
@@ -3617,7 +3617,7 @@ bool COutput::IsTrustedNoDepth() const
 
 bool OutputCanSend(COutput out)
 {            
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         if(MCP_ANYONE_CAN_SEND == 0)
         {

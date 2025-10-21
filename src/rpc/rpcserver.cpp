@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include <rpc/rpchttpserver.h>
 #include "rpc/rpcprotocol.h"
@@ -600,7 +600,7 @@ Value stop(const Array& params, bool fHelp)
         throw runtime_error("Help message not found\n");
     // Shutdown will take long enough that the response should get back
     StartShutdown();
-    return "MultiChain server stopping";
+    return "AksyonChain server stopping";
 }
 
 string AllowedPausedServices()
@@ -1038,7 +1038,7 @@ bool  HTTPReq_JSONRPC(string& strRequest, uint32_t flags, string& strReply, stri
         return false;
     }
     
-    mapHeaders.insert(make_pair("Server",strprintf("multichain-json-rpc/%s",FormatFullMultiChainVersion())));
+    mapHeaders.insert(make_pair("Server",strprintf("aksyonchain-json-rpc/%s",FormatFullAksyonChainVersion())));
 
     return true;    
 }
@@ -1111,7 +1111,7 @@ json_spirit::Value CRPCTable::execute(const std::string &strMethod, const json_s
         }
         else
         {
-            throw JSONRPCError(RPC_NOT_SUPPORTED, "Method not available in cold version of MultiChain");            
+            throw JSONRPCError(RPC_NOT_SUPPORTED, "Method not available in cold version of AksyonChain");
         }
     }
 #ifdef ENABLE_WALLET
@@ -1123,7 +1123,7 @@ json_spirit::Value CRPCTable::execute(const std::string &strMethod, const json_s
     {
         if( setAllowedWhenWaitingForUpgrade.count(strMethod) == 0 )
         {
-            throw JSONRPCError(RPC_UPGRADE_REQUIRED, strprintf("BlockChain was upgraded to protocol version %d, please upgrade MultiChain",mc_gState->m_ProtocolVersionToUpgrade));
+            throw JSONRPCError(RPC_UPGRADE_REQUIRED, strprintf("BlockChain was upgraded to protocol version %d, please upgrade AksyonChain",mc_gState->m_ProtocolVersionToUpgrade));
         }
     }
     
@@ -1239,7 +1239,7 @@ json_spirit::Value CRPCTable::execute(const std::string &strMethod, const json_s
 }
 
 std::string HelpExampleCli(string methodname, string args){
-    return "> multichain-cli " + std::string(mc_gState->m_NetworkParams->Name()) + " " + methodname + " " + args + "\n";
+    return "> aksyonchain-cli " + std::string(mc_gState->m_NetworkParams->Name()) + " " + methodname + " " + args + "\n";
 }
 
 std::string HelpExampleRpc(string methodname, string args){

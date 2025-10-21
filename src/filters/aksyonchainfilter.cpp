@@ -1,19 +1,19 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#include "filters/multichainfilter.h"
+#include "filters/aksyonchainfilter.h"
 #include "filters/filter.h"
 
 using namespace std;
 
-int mc_MultiChainFilterParams::Zero()
+int mc_AksyonChainFilterParams::Zero()
 {
     m_MaxShownData=-1;
     m_Compatibility=MC_VCM_NONE;
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainFilterParams::Init()
+int mc_AksyonChainFilterParams::Init()
 {
     Zero();
     m_Compatibility=mc_gState->m_Compatibility;
@@ -21,13 +21,13 @@ int mc_MultiChainFilterParams::Init()
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainFilterParams::Close()
+int mc_AksyonChainFilterParams::Close()
 {
     mc_gState->m_Compatibility=m_Compatibility;    
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainFilterParams::Destroy()
+int mc_AksyonChainFilterParams::Destroy()
 {
     return Zero();
 }
@@ -73,7 +73,7 @@ uint160 mc_LibraryIDForUpdate(uint160 hash)
     return library_hash;
 }
 
-int mc_MultiChainLibrary::Zero()
+int mc_AksyonChainLibrary::Zero()
 {
     m_CreateError="Not Initialized";
     m_LibraryCaption="Unknown";
@@ -85,19 +85,19 @@ int mc_MultiChainLibrary::Zero()
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainLibrary::Destroy()
+int mc_AksyonChainLibrary::Destroy()
 {
     Zero();
     
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainLibrary::Initialize(const unsigned char* short_txid,uint32_t index)
+int mc_AksyonChainLibrary::Initialize(const unsigned char* short_txid,uint32_t index)
 {
     return MC_ERR_NOERROR;    
 }
 
-int mc_MultiChainFilter::Zero()
+int mc_AksyonChainFilter::Zero()
 {
     m_RelevantEntities.clear();
     m_Libraries.clear();
@@ -113,7 +113,7 @@ int mc_MultiChainFilter::Zero()
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainFilter::Destroy()
+int mc_AksyonChainFilter::Destroy()
 {
     if(m_CachedWorker)
     {
@@ -124,7 +124,7 @@ int mc_MultiChainFilter::Destroy()
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainFilter::Initialize(const unsigned char* short_txid)
+int mc_AksyonChainFilter::Initialize(const unsigned char* short_txid)
 {
     size_t value_size;
     unsigned char *ptr;
@@ -210,16 +210,16 @@ int mc_MultiChainFilter::Initialize(const unsigned char* short_txid)
     ptr=(unsigned char *)m_Details.GetSpecialParam(MC_ENT_SPRM_FILTER_CODE,&value_size,1);
     if(ptr)
     {
-        m_FilterCodeRow=pMultiChainFilterEngine->m_CodeLibrary->GetNumElements();
-        pMultiChainFilterEngine->m_CodeLibrary->AddElement();
-        pMultiChainFilterEngine->m_CodeLibrary->SetData(ptr,value_size);
-        pMultiChainFilterEngine->m_CodeLibrary->SetData(&ntc,1);        
+        m_FilterCodeRow=pAksyonChainFilterEngine->m_CodeLibrary->GetNumElements();
+        pAksyonChainFilterEngine->m_CodeLibrary->AddElement();
+        pAksyonChainFilterEngine->m_CodeLibrary->SetData(ptr,value_size);
+        pAksyonChainFilterEngine->m_CodeLibrary->SetData(&ntc,1);
     }                                    
     else
     {
-        m_FilterCodeRow=pMultiChainFilterEngine->m_CodeLibrary->GetNumElements();
-        pMultiChainFilterEngine->m_CodeLibrary->AddElement();
-        pMultiChainFilterEngine->m_CodeLibrary->SetData(&ntc,1);                
+        m_FilterCodeRow=pAksyonChainFilterEngine->m_CodeLibrary->GetNumElements();
+        pAksyonChainFilterEngine->m_CodeLibrary->AddElement();
+        pAksyonChainFilterEngine->m_CodeLibrary->SetData(&ntc,1);
     }
 /*    
     else
@@ -231,7 +231,7 @@ int mc_MultiChainFilter::Initialize(const unsigned char* short_txid)
     return MC_ERR_NOERROR;    
 }
 
-bool mc_MultiChainFilter::HasRelevantEntity(set <uint160>& sRelevantEntities)
+bool mc_AksyonChainFilter::HasRelevantEntity(set <uint160>& sRelevantEntities)
 {
     if(m_RelevantEntities.size() == 0)
     {
@@ -247,7 +247,7 @@ bool mc_MultiChainFilter::HasRelevantEntity(set <uint160>& sRelevantEntities)
     return false;
 }
 
-int mc_MultiChainFilterEngine::Zero()
+int mc_AksyonChainFilterEngine::Zero()
 {
     m_Filters.clear();
     m_TxID=0;
@@ -264,7 +264,7 @@ int mc_MultiChainFilterEngine::Zero()
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainFilterEngine::Destroy()
+int mc_AksyonChainFilterEngine::Destroy()
 {
     if(m_Semaphore)
     {
@@ -296,7 +296,7 @@ int mc_MultiChainFilterEngine::Destroy()
     return MC_ERR_NOERROR;
 }
 
-void mc_MultiChainFilterEngine::Lock(int write_mode)
+void mc_AksyonChainFilterEngine::Lock(int write_mode)
 {        
     uint64_t this_thread;
     this_thread=__US_ThreadID();
@@ -310,13 +310,13 @@ void mc_MultiChainFilterEngine::Lock(int write_mode)
     m_LockedBy=this_thread;
 }
 
-void mc_MultiChainFilterEngine::UnLock()
+void mc_AksyonChainFilterEngine::UnLock()
 {    
     m_LockedBy=0;
     __US_SemPost(m_Semaphore);
 }
 
-int mc_MultiChainFilterEngine::InFilter()
+int mc_AksyonChainFilterEngine::InFilter()
 {    
     if(__US_ThreadID() != m_LockedBy)
     {
@@ -331,12 +331,12 @@ int mc_MultiChainFilterEngine::InFilter()
 
 
 
-int mc_MultiChainFilterEngine::GetAcceptTimeout()
+int mc_AksyonChainFilterEngine::GetAcceptTimeout()
 {    
     return GetArg("-acceptfiltertimeout",DEFAULT_ACCEPT_FILTER_TIMEOUT);
 }
 
-int mc_MultiChainFilterEngine::GetSendTimeout()
+int mc_AksyonChainFilterEngine::GetSendTimeout()
 {    
     int accept_timeout=GetAcceptTimeout();
     int timeout=GetArg("-sendfiltertimeout",DEFAULT_SEND_FILTER_TIMEOUT);
@@ -350,7 +350,7 @@ int mc_MultiChainFilterEngine::GetSendTimeout()
     return timeout;
 }
 
-int mc_MultiChainFilterEngine::SetTimeout(int timeout)
+int mc_AksyonChainFilterEngine::SetTimeout(int timeout)
 {
     Lock(1);
     
@@ -360,7 +360,7 @@ int mc_MultiChainFilterEngine::SetTimeout(int timeout)
     return err;
 }
 
-int mc_MultiChainFilterEngine::SetTimeoutInternal(int timeout)
+int mc_AksyonChainFilterEngine::SetTimeoutInternal(int timeout)
 {
     for(int i=0;i<(int)m_Filters.size();i++)
     {
@@ -370,9 +370,9 @@ int mc_MultiChainFilterEngine::SetTimeoutInternal(int timeout)
     return MC_ERR_NOERROR;
 }
 
-uint160 mc_MultiChainFilterEngine::ActiveUpdateID(uint160 hash)
+uint160 mc_AksyonChainFilterEngine::ActiveUpdateID(uint160 hash)
 {
-    map<uint160,mc_MultiChainLibrary>::iterator it=m_Libraries.find(hash);
+    map<uint160,mc_AksyonChainLibrary>::iterator it=m_Libraries.find(hash);
     if (it != m_Libraries.end())
     {
         uint160 update_hash=hash;
@@ -383,14 +383,14 @@ uint160 mc_MultiChainFilterEngine::ActiveUpdateID(uint160 hash)
     return hash;
 }
 
-int mc_MultiChainFilterEngine::LoadLibrary(uint160 hash,bool *modified)
+int mc_AksyonChainFilterEngine::LoadLibrary(uint160 hash,bool *modified)
 {
     int count;
     size_t value_size;
     unsigned char *ptr;
     uint32_t update_id=0;
     
-    mc_MultiChainLibrary library[2];
+    mc_AksyonChainLibrary library[2];
     
     if(modified)
     {
@@ -463,7 +463,7 @@ int mc_MultiChainFilterEngine::LoadLibrary(uint160 hash,bool *modified)
             library[i].m_Code="";            
         }
 
-        map<uint160,mc_MultiChainLibrary>::iterator it=m_Libraries.find(library[i].m_Hash);
+        map<uint160,mc_AksyonChainLibrary>::iterator it=m_Libraries.find(library[i].m_Hash);
         if (it == m_Libraries.end())
         {
             if(i == 0)
@@ -503,7 +503,7 @@ int mc_MultiChainFilterEngine::LoadLibrary(uint160 hash,bool *modified)
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainFilterEngine::CheckLibraries(set<uint160>* lpAffectedLibraries, int for_block)
+int mc_AksyonChainFilterEngine::CheckLibraries(set<uint160>* lpAffectedLibraries, int for_block)
 {
     Lock(1);
     
@@ -513,12 +513,12 @@ int mc_MultiChainFilterEngine::CheckLibraries(set<uint160>* lpAffectedLibraries,
     return err;
 }
 
-int mc_MultiChainFilterEngine::CheckLibrariesInternal(set<uint160>* lpAffectedLibraries, int for_block)
+int mc_AksyonChainFilterEngine::CheckLibrariesInternal(set<uint160>* lpAffectedLibraries, int for_block)
 {
     int err;
     bool modified;
-    map<uint160,mc_MultiChainLibrary>::iterator mit;
-    map<uint160,mc_MultiChainLibrary>::iterator lit;    
+    map<uint160,mc_AksyonChainLibrary>::iterator mit;
+    map<uint160,mc_AksyonChainLibrary>::iterator lit;
     set <uint160>::iterator it;
     
     set <uint160> all_libraries;
@@ -624,7 +624,7 @@ int mc_MultiChainFilterEngine::CheckLibrariesInternal(set<uint160>* lpAffectedLi
     return MC_ERR_NOERROR;
 }
 
-mc_Filter *mc_MultiChainFilterEngine::StreamFilterWorker(int row,bool *modified)
+mc_Filter *mc_AksyonChainFilterEngine::StreamFilterWorker(int row,bool *modified)
 {
     int err; 
     char *code;
@@ -644,7 +644,7 @@ mc_Filter *mc_MultiChainFilterEngine::StreamFilterWorker(int row,bool *modified)
     for (unsigned int i=0;i<m_Filters[row].m_Libraries.size();i++) 
     {
         mc_EntityDetails update_entity;
-        map<uint160,mc_MultiChainLibrary>::iterator it=m_Libraries.find(mc_LibraryIDForUpdate(m_Filters[row].m_Libraries[i]));
+        map<uint160,mc_AksyonChainLibrary>::iterator it=m_Libraries.find(mc_LibraryIDForUpdate(m_Filters[row].m_Libraries[i]));
         if(it == m_Libraries.end())
         {
             LogPrintf("Couldn't find library for stream filter %d\n",row);
@@ -748,7 +748,7 @@ mc_Filter *mc_MultiChainFilterEngine::StreamFilterWorker(int row,bool *modified)
     return worker;
 }
 
-int mc_MultiChainFilterEngine::RebuildFilter(int row,int for_block)
+int mc_AksyonChainFilterEngine::RebuildFilter(int row,int for_block)
 {
     int err; 
     
@@ -766,7 +766,7 @@ int mc_MultiChainFilterEngine::RebuildFilter(int row,int for_block)
     
     for (unsigned int i=0;i<m_Filters[row].m_Libraries.size();i++) 
     {
-        map<uint160,mc_MultiChainLibrary>::iterator it=m_Libraries.find(m_Filters[row].m_Libraries[i]);
+        map<uint160,mc_AksyonChainLibrary>::iterator it=m_Libraries.find(m_Filters[row].m_Libraries[i]);
         if (it != m_Libraries.end())
         {
             if(fDebug)LogPrint("filter","filter: Active library: %s\n",it->second.m_LibraryCaption.c_str());
@@ -806,7 +806,7 @@ int mc_MultiChainFilterEngine::RebuildFilter(int row,int for_block)
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainFilterEngine::AddFilter(const unsigned char* short_txid,int for_block)
+int mc_AksyonChainFilterEngine::AddFilter(const unsigned char* short_txid,int for_block)
 {
     Lock(1);
     
@@ -816,10 +816,10 @@ int mc_MultiChainFilterEngine::AddFilter(const unsigned char* short_txid,int for
     return err;
 }
 
-int mc_MultiChainFilterEngine::AddFilterInternal(const unsigned char* short_txid,int for_block)
+int mc_AksyonChainFilterEngine::AddFilterInternal(const unsigned char* short_txid,int for_block)
 {    
     int err;
-    mc_MultiChainFilter filter;
+    mc_AksyonChainFilter filter;
     
     err=filter.Initialize(short_txid);
     if(err)
@@ -859,7 +859,7 @@ int mc_MultiChainFilterEngine::AddFilterInternal(const unsigned char* short_txid
     return MC_ERR_NOERROR;
 }
 
-int mc_MultiChainFilterEngine::Reset(int block,int for_block)
+int mc_AksyonChainFilterEngine::Reset(int block,int for_block)
 {
     Lock(1);
     
@@ -869,7 +869,7 @@ int mc_MultiChainFilterEngine::Reset(int block,int for_block)
     return err;
 }
 
-int mc_MultiChainFilterEngine::ResetInternal(int block,int for_block)
+int mc_AksyonChainFilterEngine::ResetInternal(int block,int for_block)
 {
     int filter_block;
     int err;
@@ -930,7 +930,7 @@ int mc_MultiChainFilterEngine::ResetInternal(int block,int for_block)
     if(fDebug)LogPrint("filter","filter: Filter engine reset\n");
     return MC_ERR_NOERROR;
 }
-int mc_MultiChainFilterEngine::NoStreamFilters()
+int mc_AksyonChainFilterEngine::NoStreamFilters()
 {
     int ret=1;
     
@@ -956,7 +956,7 @@ exitlbl:
     return ret;
 }
 
-int mc_MultiChainFilterEngine::RunStreamFilters(const CTransaction& tx,int vout, unsigned char *stream_short_txid,int block,int offset,std::string &strResult,mc_MultiChainFilter **lppFilter,int *applied)            
+int mc_AksyonChainFilterEngine::RunStreamFilters(const CTransaction& tx,int vout, unsigned char *stream_short_txid,int block,int offset,std::string &strResult,mc_AksyonChainFilter **lppFilter,int *applied)
 {
     if(mc_gState->m_Features->StreamFilters() == 0)
     {
@@ -1057,7 +1057,7 @@ exitlbl:
     return err;    
 }
 
-int mc_MultiChainFilterEngine::RunTxFilters(const CTransaction& tx,std::set <uint160>& sRelevantEntities,std::string &strResult,mc_MultiChainFilter **lppFilter,int *applied,bool only_once)
+int mc_AksyonChainFilterEngine::RunTxFilters(const CTransaction& tx,std::set <uint160>& sRelevantEntities,std::string &strResult,mc_AksyonChainFilter **lppFilter,int *applied,bool only_once)
 {    
     Lock(0);
     
@@ -1139,7 +1139,7 @@ exitlbl:
     return err;
 }
 
-int mc_MultiChainFilterEngine::RunFilter(const CTransaction& tx,mc_Filter *filter,std::string &strResult)
+int mc_AksyonChainFilterEngine::RunFilter(const CTransaction& tx,mc_Filter *filter,std::string &strResult)
 {
     Lock(0);
     int err=MC_ERR_NOERROR;
@@ -1155,7 +1155,7 @@ int mc_MultiChainFilterEngine::RunFilter(const CTransaction& tx,mc_Filter *filte
     return err;
 }
 
-int mc_MultiChainFilterEngine::RunFilterWithCallbackLog(const CTransaction& tx,int vout,uint256 stream_txid,mc_Filter *filter,std::string &strResult, json_spirit::Array& callbacks)
+int mc_AksyonChainFilterEngine::RunFilterWithCallbackLog(const CTransaction& tx,int vout,uint256 stream_txid,mc_Filter *filter,std::string &strResult, json_spirit::Array& callbacks)
 {
     Lock(0);
     int err=MC_ERR_NOERROR;
@@ -1174,7 +1174,7 @@ int mc_MultiChainFilterEngine::RunFilterWithCallbackLog(const CTransaction& tx,i
     return err;
 }
 
-void mc_MultiChainFilterEngine::SetCallbackNames()
+void mc_AksyonChainFilterEngine::SetCallbackNames()
 {
     Lock(1);
     
@@ -1183,7 +1183,7 @@ void mc_MultiChainFilterEngine::SetCallbackNames()
     UnLock();
 }
 
-void mc_MultiChainFilterEngine::SetCallbackNamesInternal()
+void mc_AksyonChainFilterEngine::SetCallbackNamesInternal()
 {
     m_CallbackNames.clear();
     
@@ -1251,7 +1251,7 @@ void mc_MultiChainFilterEngine::SetCallbackNamesInternal()
     m_CallbackNames.push_back(callbacks);    
 }
 
-int mc_MultiChainFilterEngine::Initialize()
+int mc_AksyonChainFilterEngine::Initialize()
 {
     mc_Buffer *filters;
     unsigned char *txid;

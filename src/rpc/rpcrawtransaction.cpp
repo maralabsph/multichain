@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "structs/base58.h"
 #include "primitives/transaction.h"
@@ -26,7 +26,7 @@
 #include "json/json_spirit_utils.h"
 #include "json/json_spirit_value.h"
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "rpc/rpcutils.h"
 
 using namespace boost;
@@ -66,8 +66,8 @@ void ScriptPubKeyToJSON(const CScript& scriptPubKey, Object& out, bool fIncludeH
     
     if(mc_gState->m_Features->StreamFilters())
     {
-//        if(pMultiChainFilterEngine->m_TxID != 0)
-        if(pMultiChainFilterEngine->InFilter())
+//        if(pAksyonChainFilterEngine->m_TxID != 0)
+        if(pAksyonChainFilterEngine->InFilter())
         {
             max_hex_size=mc_MaxOpReturnShown();
         }
@@ -247,7 +247,7 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry)
         out.push_back(Pair("scriptPubKey", o));
         
 /* MCHN START */    
-// TODO too many duplicate code with ListWalletTransactions and may be AccepMultiChainTransaction
+// TODO too many duplicate code with ListWalletTransactions and may be AccepAksyonChainTransaction
         
         aFormatMetaData.clear();
         
@@ -712,7 +712,7 @@ void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry)
     }
 }
 
-int VerifyNewTxForStreamFilters(const CTransaction& tx,std::string &strResult,mc_MultiChainFilter **lppFilter,int *applied)            
+int VerifyNewTxForStreamFilters(const CTransaction& tx,std::string &strResult,mc_AksyonChainFilter **lppFilter,int *applied)
 {
     if(mc_gState->m_Features->StreamFilters() == 0)
     {
@@ -723,7 +723,7 @@ int VerifyNewTxForStreamFilters(const CTransaction& tx,std::string &strResult,mc
         return MC_ERR_NOERROR;        
     }
     
-    if(pMultiChainFilterEngine->NoStreamFilters())
+    if(pAksyonChainFilterEngine->NoStreamFilters())
     {
         return MC_ERR_NOERROR;
     }
@@ -739,17 +739,17 @@ int VerifyNewTxForStreamFilters(const CTransaction& tx,std::string &strResult,mc
         {
             uint256 hash=*(streams_already_seen.begin());
             
-            if(pMultiChainFilterEngine)
+            if(pAksyonChainFilterEngine)
             {
-                pMultiChainFilterEngine->SetTimeout(pMultiChainFilterEngine->GetSendTimeout());
+                pAksyonChainFilterEngine->SetTimeout(pAksyonChainFilterEngine->GetSendTimeout());
             }
             
-            int err=pMultiChainFilterEngine->RunStreamFilters(tx,i,(unsigned char*)&hash+MC_AST_SHORT_TXID_OFFSET,-1,0, 
+            int err=pAksyonChainFilterEngine->RunStreamFilters(tx,i,(unsigned char*)&hash+MC_AST_SHORT_TXID_OFFSET,-1,0,
                     strResult,lppFilter,applied);
             
-            if(pMultiChainFilterEngine)
+            if(pAksyonChainFilterEngine)
             {
-                pMultiChainFilterEngine->SetTimeout(pMultiChainFilterEngine->GetAcceptTimeout());
+                pAksyonChainFilterEngine->SetTimeout(pAksyonChainFilterEngine->GetAcceptTimeout());
             }
             if(err != MC_ERR_NOERROR)
             {
@@ -782,26 +782,26 @@ Value getfilterstreamitem(const Array& params, bool fHelp)
         mc_ThrowHelpMessage("getfilterstreamitem");        
 //        throw runtime_error("Help message not found\n");
 
-    if(pMultiChainFilterEngine->m_Vout < 0)
+    if(pAksyonChainFilterEngine->m_Vout < 0)
     {
         throw JSONRPCError(RPC_NOT_SUPPORTED, "This callback cannot be used in tx filters");                            
     }
     
     set<uint256> streams_already_seen;
     
-    if(pMultiChainFilterEngine->m_Vout >= (int)pMultiChainFilterEngine->m_Tx.vout.size())
+    if(pAksyonChainFilterEngine->m_Vout >= (int)pAksyonChainFilterEngine->m_Tx.vout.size())
     {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "vout out of range");                                            
     }
-    Value result=DataItemEntry(pMultiChainFilterEngine->m_Tx,pMultiChainFilterEngine->m_Vout,streams_already_seen, 0x0E00);
+    Value result=DataItemEntry(pAksyonChainFilterEngine->m_Tx,pAksyonChainFilterEngine->m_Vout,streams_already_seen, 0x0E00);
     
     if(result.type() != obj_type)
     {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Stream input is not found in this output");                                    
     }
     
-//    result.get_obj().push_back(Pair("txid", pMultiChainFilterEngine->m_Tx.GetHash().GetHex()));
-    result.get_obj().push_back(Pair("vout", pMultiChainFilterEngine->m_Vout));
+//    result.get_obj().push_back(Pair("txid", pAksyonChainFilterEngine->m_Tx.GetHash().GetHex()));
+    result.get_obj().push_back(Pair("vout", pAksyonChainFilterEngine->m_Vout));
     
     return result;
 }
@@ -811,19 +811,19 @@ Value getfilterstream(const Array& params, bool fHelp)
     if (fHelp || params.size() != 0)                        
         mc_ThrowHelpMessage("getfilterstream");        
     
-    if(pMultiChainFilterEngine->m_Vout < 0)
+    if(pAksyonChainFilterEngine->m_Vout < 0)
     {
         throw JSONRPCError(RPC_NOT_SUPPORTED, "This callback cannot be used in tx filters");                            
     }
     
     set<uint256> streams_already_seen;
     
-    if(pMultiChainFilterEngine->m_Vout >= (int)pMultiChainFilterEngine->m_Tx.vout.size())
+    if(pAksyonChainFilterEngine->m_Vout >= (int)pAksyonChainFilterEngine->m_Tx.vout.size())
     {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "vout out of range");                                            
     }
 
-    Value result=StreamEntry((unsigned char*)&(pMultiChainFilterEngine->m_EntityTxID),0x0002);
+    Value result=StreamEntry((unsigned char*)&(pAksyonChainFilterEngine->m_EntityTxID),0x0002);
     
     if(result.type() != obj_type)
     {
@@ -842,14 +842,14 @@ Value getfiltertransaction(const Array& params, bool fHelp)
 /*    
     CTransaction tx;
     uint256 hashBlock = 0;
-//    if(pMultiChainFilterEngine->m_TxID != 0)
-    if(pMultiChainFilterEngine->InFilter)
+//    if(pAksyonChainFilterEngine->m_TxID != 0)
+    if(pAksyonChainFilterEngine->InFilter)
     {
         if(params.size())
         {
             throw JSONRPCError(RPC_INVALID_PARAMS, "TxID parameter should be omitted when called from filter");            
         }
-        tx=pMultiChainFilterEngine->m_Tx;
+        tx=pAksyonChainFilterEngine->m_Tx;
     }
     else
     {
@@ -865,7 +865,7 @@ Value getfiltertransaction(const Array& params, bool fHelp)
     }
 */    
     Object result;
-    TxToJSON(pMultiChainFilterEngine->m_Tx, 0, result);
+    TxToJSON(pAksyonChainFilterEngine->m_Tx, 0, result);
     
     return result;    
 }
@@ -1031,7 +1031,7 @@ Value listunspent(const Array& params, bool fHelp)
         entry.push_back(Pair("confirmations",out.nDepth));
 
 /* MCHN START */        
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             if(OutputCanSend(out))
             {
@@ -1159,7 +1159,7 @@ Value appendrawchange(const Array& params, bool fHelp)
     asset_amounts->Clear();
     BOOST_FOREACH(const CTxOut& txout, tx.vout)
     {
-        if(ParseMultichainTxOutToBuffer(0,txout,asset_amounts,lpScript,&allowed,&required,strError))
+        if(ParseAksyonchainTxOutToBuffer(0,txout,asset_amounts,lpScript,&allowed,&required,strError))
         {
             nAmount+=txout.nValue;
         }
@@ -1178,7 +1178,7 @@ Value appendrawchange(const Array& params, bool fHelp)
     int i=0;
     BOOST_FOREACH(const CTxOut& txout, input_txouts)
     {
-        if(ParseMultichainTxOutToBuffer(tx.vin[i].prevout.hash,txout,asset_amounts,lpScript,&allowed,&required,strError))
+        if(ParseAksyonchainTxOutToBuffer(tx.vin[i].prevout.hash,txout,asset_amounts,lpScript,&allowed,&required,strError))
         {
             nAmount+=txout.nValue;
         }
@@ -1248,7 +1248,7 @@ Value appendrawchange(const Array& params, bool fHelp)
     
     CAmount change_amount;
     CAmount min_output=-1;                                                              // Calculate minimal output for the change
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         min_output=MCP_MINIMUM_PER_OUTPUT;
     }            
@@ -1834,10 +1834,10 @@ Value disablerawtransaction(const Array& params, bool fHelp)
 
     RPCTypeCheck(params, list_of(str_type));
 
-    if( (mc_gState->m_NetworkParams->IsProtocolMultichain() == 0) ||
+    if( (mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0) ||
         ( (pwalletMain->lpAssetGroups == NULL) || (pwalletMain->lpAssetGroups == 0) ) )
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "disablerawtransaction supported only for protocol=multichain");
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "disablerawtransaction supported only for protocol=aksyonchain");
     }    
 
     CTransaction tx;
@@ -2214,7 +2214,7 @@ Value sendrawtransaction(const Array& params, bool fHelp)
         throw JSONRPCError(RPC_DESERIALIZATION_ERROR, "TX decode failed");
     uint256 hashTx = tx.GetHash();
 
-    mc_MultiChainFilter* lpFilter;
+    mc_AksyonChainFilter* lpFilter;
     int applied=0;
     string filter_error="";
     
@@ -2244,17 +2244,17 @@ Value sendrawtransaction(const Array& params, bool fHelp)
     if (!fHaveMempool && !fHaveChain) {
         // push to local node and sync with wallets
         CValidationState state;
-        if(pMultiChainFilterEngine)
+        if(pAksyonChainFilterEngine)
         {
-            pMultiChainFilterEngine->SetTimeout(pMultiChainFilterEngine->GetSendTimeout());
+            pAksyonChainFilterEngine->SetTimeout(pAksyonChainFilterEngine->GetSendTimeout());
         }
         bool accepted=AcceptToMemoryPool(mempool, state, tx, false, &fMissingInputs, !fOverrideFees);
         pwalletTxsMain->WRPWriteLock();        
         pwalletTxsMain->WRPSync(0);
         pwalletTxsMain->WRPWriteUnLock();
-        if(pMultiChainFilterEngine)
+        if(pAksyonChainFilterEngine)
         {
-            pMultiChainFilterEngine->SetTimeout(pMultiChainFilterEngine->GetAcceptTimeout());
+            pAksyonChainFilterEngine->SetTimeout(pAksyonChainFilterEngine->GetAcceptTimeout());
         }
         if (!accepted) {
             if(state.IsInvalid())

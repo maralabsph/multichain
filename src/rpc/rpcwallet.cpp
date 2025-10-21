@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "structs/amount.h"
 #include "structs/base58.h"
@@ -32,7 +32,7 @@ using namespace json_spirit;
 
 /* MCHN START */
 #include "script/sign.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "wallet/wallettxs.h"
 
 #include "rpc/rpcutils.h"
@@ -78,7 +78,7 @@ Value getnewaddress(const Array& params, bool fHelp)
     {
         if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
         {
-            throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+            throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
         }            
         strAccount = AccountFromValue(params[0]);
     }
@@ -153,7 +153,7 @@ Value getaccountaddress(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }            
     
     // Parse the account first so we don't generate a key if there's an error
@@ -195,7 +195,7 @@ Value setaccount(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }            
     
     CBitcoinAddress address(params[0].get_str());
@@ -233,7 +233,7 @@ Value getaccount(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }            
     
     CBitcoinAddress address(params[0].get_str());
@@ -259,7 +259,7 @@ Value getaddressesbyaccount(const Array& params, bool fHelp)
     {
         if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
         {
-            throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+            throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
         }            
     }
     
@@ -414,7 +414,7 @@ Value listaddresses(const Array& params, bool fHelp)
 
     if((mc_gState->m_WalletMode & MC_WMD_TXS) == 0)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"multichaind -walletdbversion=2 -rescan\" ");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"aksyonchaind -walletdbversion=2 -rescan\" ");
     }   
 
     Array result;
@@ -546,7 +546,7 @@ Value storechunk(const Array& params, bool fHelp)
     
     if((mc_gState->m_WalletMode & MC_WMD_TXS) == 0)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"multichaind -walletdbversion=2 -rescan\" ");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"aksyonchaind -walletdbversion=2 -rescan\" ");
     }   
     
     vector<unsigned char> vValue;
@@ -1099,7 +1099,7 @@ Value getreceivedbyaddress(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }            
     
     // Bitcoin address
@@ -1140,7 +1140,7 @@ Value getreceivedbyaccount(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }            
     
     // Minimum confirmations
@@ -1280,7 +1280,7 @@ Value getbalance(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need getbalance, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need getbalance, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }
     string strAccount = AccountFromValue(params[0]);
 
@@ -1304,7 +1304,7 @@ Value movecmd(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need move, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need move, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }
     
     string strFrom = AccountFromValue(params[0]);
@@ -1357,7 +1357,7 @@ Value sendfrom(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need sendfrom, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need sendfrom, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }
     
     string strAccount = AccountFromValue(params[0]);
@@ -1398,7 +1398,7 @@ Value sendmany(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need sendmany, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need sendmany, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }
     
     string strAccount = AccountFromValue(params[0]);
@@ -1475,7 +1475,7 @@ Value addmultisigaddress(const Array& params, bool fHelp)
     {
         if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
         {
-            throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+            throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
         }            
         strAccount = AccountFromValue(params[2]);
     }
@@ -1651,7 +1651,7 @@ Value listreceivedbyaddress(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }            
     
     return ListReceived(params, false);
@@ -1664,7 +1664,7 @@ Value listreceivedbyaccount(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need accounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }            
 
     return ListReceived(params, true);
@@ -1827,7 +1827,7 @@ Value listtransactions(const Array& params, bool fHelp)
     Array ret;
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Not supported with scalable wallet - if you need listtransactions, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Not supported with scalable wallet - if you need listtransactions, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }
     else
     {
@@ -1880,7 +1880,7 @@ Value listaccounts(const Array& params, bool fHelp)
 
     if(mc_gState->m_WalletMode & MC_WMD_ADDRESS_TXS)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need listaccounts, run multichaind -walletdbversion=1 -rescan, but the wallet will perform worse");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "Accounts are not supported with scalable wallet - if you need listaccounts, run aksyonchaind -walletdbversion=1 -rescan, but the wallet will perform worse");
     }   
 
     int nMinDepth = 1;

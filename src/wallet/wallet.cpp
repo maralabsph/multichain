@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "wallet/wallet.h"
 /* MCHN START */
@@ -165,7 +165,7 @@ string CWallet::SetDefaultKeyIfInvalid(std::string init_privkey)
     {
         if(mc_gState->m_NetworkParams->GetParam("privatekeyversion",NULL) == NULL)
         {
-            return "Private key version is not set, please chose seed node running at least MultiChain 1.0 beta 2";            
+            return "Private key version is not set, please chose seed node running at least AksyonChain 1.0 beta 2";
         }
         return "Invalid private key encoding";
     }
@@ -1139,7 +1139,7 @@ void CWalletTx::GetAmounts(list<COutputEntry>& listReceived,
     }
     else
     {
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             if(IsFromMe(filter))
             {
@@ -1197,7 +1197,7 @@ void CWalletTx::GetAmounts(list<COutputEntry>& listReceived,
         {
             // Don't report 'change' txouts
             bool isChange=false;
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 if(!isSelf)
                 {                    
@@ -2199,7 +2199,7 @@ void CWallet::AvailableCoins(vector<COutput>& vCoins, bool fOnlyConfirmed, const
             }
 
 /* MCHN START */            
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 for (unsigned int i = 0; i < pcoin->vout.size(); i++) {
                     isminetype mine = IsMine(pcoin->vout[i]);
@@ -2714,7 +2714,7 @@ bool CWallet::CreateTransaction(CScript scriptPubKey, const CAmount& nValue, CSc
     {
         vecSend.push_back(make_pair(scriptOpReturn, 0));
     }
-    return CreateMultiChainTransaction(vecSend, wtxNew, reservekey, nFeeRet, strFailReason, coinControl, addresses, min_conf, min_inputs, max_inputs, lpCoinsToUse, 
+    return CreateAksyonChainTransaction(vecSend, wtxNew, reservekey, nFeeRet, strFailReason, coinControl, addresses, min_conf, min_inputs, max_inputs, lpCoinsToUse,
     (eErrorCode != 0) ? eErrorCode : & eErrorCode1);
 }
 
@@ -2739,10 +2739,10 @@ bool CWallet::CreateTransaction(std::vector<CScript> scriptPubKeys, const CAmoun
     {
         vecSend.push_back(make_pair(scriptOpReturn, 0));
     }
-    return CreateMultiChainTransaction(vecSend, wtxNew, reservekey, nFeeRet, strFailReason, coinControl, addresses, min_conf, min_inputs, max_inputs,lpCoinsToUse,eErrorCode);
+    return CreateAksyonChainTransaction(vecSend, wtxNew, reservekey, nFeeRet, strFailReason, coinControl, addresses, min_conf, min_inputs, max_inputs,lpCoinsToUse,eErrorCode);
 }
 
-int CWallet::SelectMultiChainCombineCoinsMinConf(int nConfMine, int nConfTheirs, vector<COutput> vCoins, mc_Buffer *in_map, mc_Buffer *in_amounts,
+int CWallet::SelectAksyonChainCombineCoinsMinConf(int nConfMine, int nConfTheirs, vector<COutput> vCoins, mc_Buffer *in_map, mc_Buffer *in_amounts,
                                 int in_selected_row,int in_asset_row,
                                 set<pair<const CWalletTx*,unsigned int> >& setCoinsRet,int max_inputs) const
 {
@@ -2836,11 +2836,11 @@ int CWallet::SelectMultiChainCombineCoinsMinConf(int nConfMine, int nConfTheirs,
 }
 
 
-bool CWallet::SelectMultiChainCoinsMinConf(const CAmount& nTargetValue, int nConfMine, int nConfTheirs, vector<COutput> vCoins, mc_Buffer *in_map, mc_Buffer *in_amounts,
+bool CWallet::SelectAksyonChainCoinsMinConf(const CAmount& nTargetValue, int nConfMine, int nConfTheirs, vector<COutput> vCoins, mc_Buffer *in_map, mc_Buffer *in_amounts,
                                 int in_selected_row,int in_asset_row,int in_preferred_row,
                                 set<pair<uint256,unsigned int> >& setCoinsRet, CAmount& nValueRet) const
 {
-//    printf("SelectMultiChainCoinsMinConf\n");
+//    printf("SelectAksyonChainCoinsMinConf\n");
     setCoinsRet.clear();
     nValueRet = 0;
 
@@ -3087,7 +3087,7 @@ bool CWallet::SelectMultiChainCoinsMinConf(const CAmount& nTargetValue, int nCon
     return true;
 }
 
-bool CWallet::SelectMultiChainCoins(const CAmount& nTargetValue, vector<COutput> &vCoins, mc_Buffer *in_map, mc_Buffer *in_amounts, 
+bool CWallet::SelectAksyonChainCoins(const CAmount& nTargetValue, vector<COutput> &vCoins, mc_Buffer *in_map, mc_Buffer *in_amounts,
                                 int in_selected_row,int in_asset_row,int in_preferred_row,
                                 set<pair<uint256,unsigned int> >& setCoinsRet, CAmount& nValueRet, const CCoinControl* coinControl) const
 {
@@ -3130,9 +3130,9 @@ bool CWallet::SelectMultiChainCoins(const CAmount& nTargetValue, vector<COutput>
     int preferred_row=in_preferred_row;
     for(int attempt=0;attempt<2;attempt++)
     {
-        if((SelectMultiChainCoinsMinConf(nTargetValue, 1, 6, vCoins, in_map, in_amounts, in_selected_row, in_asset_row, preferred_row, setCoinsRet, nValueRet) ||
-            SelectMultiChainCoinsMinConf(nTargetValue, 1, 1, vCoins, in_map, in_amounts, in_selected_row, in_asset_row, preferred_row, setCoinsRet, nValueRet) ||
-            (bSpendZeroConfChange && SelectMultiChainCoinsMinConf(nTargetValue, 0, 1, vCoins, in_map, in_amounts, in_selected_row, in_asset_row, preferred_row, setCoinsRet, nValueRet))))
+        if((SelectAksyonChainCoinsMinConf(nTargetValue, 1, 6, vCoins, in_map, in_amounts, in_selected_row, in_asset_row, preferred_row, setCoinsRet, nValueRet) ||
+            SelectAksyonChainCoinsMinConf(nTargetValue, 1, 1, vCoins, in_map, in_amounts, in_selected_row, in_asset_row, preferred_row, setCoinsRet, nValueRet) ||
+            (bSpendZeroConfChange && SelectAksyonChainCoinsMinConf(nTargetValue, 0, 1, vCoins, in_map, in_amounts, in_selected_row, in_asset_row, preferred_row, setCoinsRet, nValueRet))))
         {
             return true;
         }
@@ -3487,7 +3487,7 @@ bool CWallet::NewKeyPool()
         if (IsLocked())
             return false;
 
-        int64_t nKeys = max(GetArg("-keypool", mc_gState->m_NetworkParams->IsProtocolMultichain() ? 1 : 100), (int64_t)0);
+        int64_t nKeys = max(GetArg("-keypool", mc_gState->m_NetworkParams->IsProtocolAksyonchain() ? 1 : 100), (int64_t)0);
         for (int i = 0; i < nKeys; i++)
         {
             int64_t nIndex = i+1;
@@ -3515,7 +3515,7 @@ bool CWallet::TopUpKeyPool(unsigned int kpSize)
         else
 /* MCHN START */            
         {
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 nTargetSize = max(GetArg("-keypool", 1), (int64_t) 0);
             }
@@ -3610,7 +3610,7 @@ bool CWallet::GetKeyFromPool(CPubKey& result)
 /* MCHN START */
 bool CWallet::GetKeyFromAddressBook(CPubKey& result,uint32_t type,const set<CTxDestination>* addresses,map<uint32_t, uint256>* mapSpecialEntity)
 {
-    if((mc_gState->m_NetworkParams->IsProtocolMultichain() == 0) || 
+    if((mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0) ||
        (type == 0))
     {
         result=vchDefaultKey;
@@ -4321,16 +4321,16 @@ bool CWalletTx::AcceptToMemoryPoolReturnReason(bool fLimitFree, bool fRejectInsa
 {
     CValidationState state;
     
-    if(pMultiChainFilterEngine)
+    if(pAksyonChainFilterEngine)
     {
-        pMultiChainFilterEngine->SetTimeout(pMultiChainFilterEngine->GetSendTimeout());
+        pAksyonChainFilterEngine->SetTimeout(pAksyonChainFilterEngine->GetSendTimeout());
     }
 
     bool result=::AcceptToMemoryPool(mempool, state, *this, fLimitFree, NULL, fRejectInsaneFee,this);
 
-    if(pMultiChainFilterEngine)
+    if(pAksyonChainFilterEngine)
     {
-        pMultiChainFilterEngine->SetTimeout(pMultiChainFilterEngine->GetAcceptTimeout());
+        pAksyonChainFilterEngine->SetTimeout(pAksyonChainFilterEngine->GetAcceptTimeout());
     }
 
     if(!result)

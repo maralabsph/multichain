@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "community/community.h"
 #include "rpc/rpcwallet.h"
@@ -18,7 +18,7 @@ Value getlicenserequest(const Array& params, bool fHelp)
 /*    
     if((mc_gState->m_WalletMode & MC_WMD_TXS) == 0)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"multichaind -walletdbversion=2 -rescan\" ");        
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "API is not supported with this wallet version. To get this functionality, run \"aksyonchaind -walletdbversion=2 -rescan\" ");
     }   
     
     int errCode;

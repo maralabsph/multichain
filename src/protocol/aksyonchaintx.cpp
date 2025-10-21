@@ -2,18 +2,18 @@
 // Copyright (c) 2009-2016 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "core/main.h"
 #include "utils/util.h"
 #include "utils/utilparse.h"
 #include "community/license.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "structs/base58.h"
 #include "custom/custom.h"
-#include "filters/multichainfilter.h"
+#include "filters/aksyonchainfilter.h"
 
-extern mc_MultiChainFilterEngine* pMultiChainFilterEngine;
+extern mc_AksyonChainFilterEngine* pAksyonChainFilterEngine;
 
 using namespace std;
 
@@ -32,7 +32,7 @@ bool ExtractDestinations10008(const CScript& scriptPubKey, txnouttype& typeRet, 
 #define MC_MTX_OUTPUT_DETAIL_FLAG_PERMISSION_NOT_FILTER  0x00000100                              
 #define MC_MTX_OUTPUT_DETAIL_FLAG_LICENSE_TRANSFER       0x00000200
 
-typedef struct CMultiChainTxDetails
+typedef struct CAksyonChainTxDetails
 {    
     bool fCheckCachedScript;                                                    // If tx contains admin/miner grants, it should have cached input script
     bool fScriptHashAllFound;                                                   // Input script with SIGHASH_ALL found, OP_RETURN metadata data can be transferred in this tx
@@ -74,12 +74,12 @@ typedef struct CMultiChainTxDetails
     int64_t total_value_out;                                                    // Total amount in outputs
     int emergency_disapproval_output;                                           // Output carrying emergency filter disapproval - bypassed by filters
     
-    CMultiChainTxDetails()
+    CAksyonChainTxDetails()
     {
         Zero();
     }
     
-    ~CMultiChainTxDetails()
+    ~CAksyonChainTxDetails()
     {
         
     }
@@ -90,9 +90,9 @@ typedef struct CMultiChainTxDetails
     bool IsRelevantEntity(uint160 hash);
     void SetAffectedLibrary(void *entity);
     
-} CMultiChainTxDetails;
+} CAksyonChainTxDetails;
 
-void CMultiChainTxDetails::Zero()
+void CAksyonChainTxDetails::Zero()
 {
     vInputScriptTypes.clear();
     vInputDestinations.clear();
@@ -131,7 +131,7 @@ void CMultiChainTxDetails::Zero()
     emergency_disapproval_output=-1;
 }
 
-bool CMultiChainTxDetails::IsRelevantInput(int vin, int vout)
+bool CAksyonChainTxDetails::IsRelevantInput(int vin, int vout)
 {
     if( (vInputHashTypes[vin] == SIGHASH_ALL) || ( (vInputHashTypes[vin] == SIGHASH_SINGLE) && ((vin == vout) ) ) )
     {
@@ -140,7 +140,7 @@ bool CMultiChainTxDetails::IsRelevantInput(int vin, int vout)
     return false;
 }
 
-bool CMultiChainTxDetails::IsRelevantEntity(uint160 hash)
+bool CAksyonChainTxDetails::IsRelevantEntity(uint160 hash)
 {
     if(vRelevantEntities.find(hash) != vRelevantEntities.end())
     {
@@ -149,7 +149,7 @@ bool CMultiChainTxDetails::IsRelevantEntity(uint160 hash)
     return false;
 }
 
-void CMultiChainTxDetails::SetRelevantEntity(void *entity)
+void CAksyonChainTxDetails::SetRelevantEntity(void *entity)
 {
     uint160 hash=0;
     memcpy(&hash,entity,MC_AST_SHORT_TXID_SIZE);
@@ -159,7 +159,7 @@ void CMultiChainTxDetails::SetRelevantEntity(void *entity)
     }
 }
 
-void CMultiChainTxDetails::SetAffectedLibrary(void *entity)
+void CAksyonChainTxDetails::SetAffectedLibrary(void *entity)
 {
     uint160 hash=0;
     memcpy(&hash,entity,MC_AST_SHORT_TXID_SIZE);
@@ -262,7 +262,7 @@ bool mc_ExtractInputAssetQuantities(mc_Buffer *assets, const CScript& script1, u
     return true;
 }
 
-bool mc_CompareAssetQuantities(CMultiChainTxDetails *details,string& reason)
+bool mc_CompareAssetQuantities(CAksyonChainTxDetails *details,string& reason)
 {
     unsigned char *ptrIn;
     unsigned char *ptrOut;
@@ -329,14 +329,14 @@ bool mc_CompareAssetQuantities(CMultiChainTxDetails *details,string& reason)
     return true;
 }
 
-void MultiChainTransaction_SetTmpOutputScript(const CScript& script1)
+void AksyonChainTransaction_SetTmpOutputScript(const CScript& script1)
 {
     CScript::const_iterator pc1 = script1.begin();
     mc_gState->m_TmpScript->Clear();
     mc_gState->m_TmpScript->SetScript((unsigned char*)(&pc1[0]),(size_t)(script1.end()-pc1),MC_SCR_TYPE_SCRIPTPUBKEY);
 }
 
-bool MultiChainTransaction_CheckCachedScriptFlag(const CTransaction& tx)
+bool AksyonChainTransaction_CheckCachedScriptFlag(const CTransaction& tx)
 {
     bool flag=false;
     if(mc_gState->m_NetworkParams->GetInt64Param("supportminerprecheck"))                                
@@ -350,8 +350,8 @@ bool MultiChainTransaction_CheckCachedScriptFlag(const CTransaction& tx)
     return flag;
 }
 
-bool MultiChainTransaction_CheckCoinbaseInputs(const CTransaction& tx,     
-                                               CMultiChainTxDetails *details)
+bool AksyonChainTransaction_CheckCoinbaseInputs(const CTransaction& tx,
+                                               CAksyonChainTxDetails *details)
 {
     if(!tx.IsCoinBase())                                                  
     {   
@@ -377,9 +377,9 @@ bool MultiChainTransaction_CheckCoinbaseInputs(const CTransaction& tx,
 }
 
 
-bool MultiChainTransaction_CheckInputs(const CTransaction& tx,                  // Tx to check
+bool AksyonChainTransaction_CheckInputs(const CTransaction& tx,                  // Tx to check
                                        const CCoinsViewCache &inputs,           // Tx inputs from UTXO database
-                                       CMultiChainTxDetails *details,           // Tx details object
+                                       CAksyonChainTxDetails *details,           // Tx details object
                                        string& reason)                          // Error message
         
 {
@@ -507,9 +507,9 @@ bool MultiChainTransaction_CheckInputs(const CTransaction& tx,                  
     return true;
 }
 
-bool MultiChainTransaction_CheckNewEntity(int vout,
+bool AksyonChainTransaction_CheckNewEntity(int vout,
                                           bool& fScriptParsed,
-                                          CMultiChainTxDetails *details,   
+                                          CAksyonChainTxDetails *details,
                                           string& reason)      
 {
     int err;
@@ -569,10 +569,10 @@ bool MultiChainTransaction_CheckNewEntity(int vout,
     return true;
 }
 
-bool MultiChainTransaction_CheckCachedScript(const CTransaction& tx, 
+bool AksyonChainTransaction_CheckCachedScript(const CTransaction& tx,
                                              const CCoinsViewCache &inputs,   
                                              bool& fScriptParsed,
-                                             CMultiChainTxDetails *details,   
+                                             CAksyonChainTxDetails *details,
                                              string& reason)      
 {
     int err;
@@ -627,8 +627,8 @@ bool MultiChainTransaction_CheckCachedScript(const CTransaction& tx,
     return true;
 }
 
-void MultiChainTransaction_FillAdminPermissionsBeforeTx(const CTransaction& tx,
-                                                        CMultiChainTxDetails *details)      
+void AksyonChainTransaction_FillAdminPermissionsBeforeTx(const CTransaction& tx,
+                                                        CAksyonChainTxDetails *details)
 {
     if(details->vInputHadAdminPermissionBeforeThisTx.size() == 0)
     {
@@ -639,7 +639,7 @@ void MultiChainTransaction_FillAdminPermissionsBeforeTx(const CTransaction& tx,
     }
 }
 
-bool MultiChainTransaction_VerifyAndDeleteDataFormatElements(string& reason,int64_t *total_size,uint32_t *salt_size)
+bool AksyonChainTransaction_VerifyAndDeleteDataFormatElements(string& reason,int64_t *total_size,uint32_t *salt_size)
 {    
     if(mc_gState->m_TmpScript->ExtractAndDeleteDataFormat(NULL,NULL,NULL,total_size,salt_size,1))
     {
@@ -650,10 +650,10 @@ bool MultiChainTransaction_VerifyAndDeleteDataFormatElements(string& reason,int6
     return true;        
 }
 
-bool MultiChainTransaction_CheckOpReturnScript(const CTransaction& tx, 
+bool AksyonChainTransaction_CheckOpReturnScript(const CTransaction& tx,
                                                const CCoinsViewCache &inputs,   
                                                int vout,
-                                               CMultiChainTxDetails *details,   
+                                               CAksyonChainTxDetails *details,
                                                string& reason)      
 {
     bool fScriptParsed=false;
@@ -663,7 +663,7 @@ bool MultiChainTransaction_CheckOpReturnScript(const CTransaction& tx,
     int64_t total_offchain_size;
     
     total_offchain_size=0;
-    if(!MultiChainTransaction_VerifyAndDeleteDataFormatElements(reason,&total_offchain_size,NULL))
+    if(!AksyonChainTransaction_VerifyAndDeleteDataFormatElements(reason,&total_offchain_size,NULL))
     {
         return false;
     }
@@ -700,7 +700,7 @@ bool MultiChainTransaction_CheckOpReturnScript(const CTransaction& tx,
         if(!fScriptParsed)
         {
                                                                                 // Cached scripts
-            if(!MultiChainTransaction_CheckCachedScript(tx, inputs, fScriptParsed, details, reason))
+            if(!AksyonChainTransaction_CheckCachedScript(tx, inputs, fScriptParsed, details, reason))
             {
                 return false;
             }
@@ -709,7 +709,7 @@ bool MultiChainTransaction_CheckOpReturnScript(const CTransaction& tx,
         if(!fScriptParsed)
         {
                                                                                 // New entities
-            if(!MultiChainTransaction_CheckNewEntity(vout, fScriptParsed, details, reason))
+            if(!AksyonChainTransaction_CheckNewEntity(vout, fScriptParsed, details, reason))
             {
                 return false;
             }
@@ -737,7 +737,7 @@ bool MultiChainTransaction_CheckOpReturnScript(const CTransaction& tx,
 
         if(mc_gState->m_TmpScript->GetApproval(&approval,&timestamp) == 0)
         {
-            MultiChainTransaction_FillAdminPermissionsBeforeTx(tx,details);
+            AksyonChainTransaction_FillAdminPermissionsBeforeTx(tx,details);
         }                        
     }
     
@@ -753,9 +753,9 @@ bool MultiChainTransaction_CheckOpReturnScript(const CTransaction& tx,
     return true;
 }
 
-bool MultiChainTransaction_CheckAssetUpdateDetails(mc_EntityDetails *entity,
+bool AksyonChainTransaction_CheckAssetUpdateDetails(mc_EntityDetails *entity,
                                                    int vout,
-                                                   CMultiChainTxDetails *details,   
+                                                   CAksyonChainTxDetails *details,
                                                    string& reason)      
 {
     int err;
@@ -801,11 +801,11 @@ bool MultiChainTransaction_CheckAssetUpdateDetails(mc_EntityDetails *entity,
     return true;
 }
 
-bool MultiChainTransaction_CheckVariableUpdateDetails(const CTransaction& tx,
+bool AksyonChainTransaction_CheckVariableUpdateDetails(const CTransaction& tx,
                                                    mc_EntityDetails *entity,
                                                    int offset, 
                                                    int vout,
-                                                   CMultiChainTxDetails *details,   
+                                                   CAksyonChainTxDetails *details,
                                                    string& reason)      
 {
     int err;
@@ -1040,11 +1040,11 @@ bool MultiChainTransaction_CheckVariableUpdateDetails(const CTransaction& tx,
     return true;
 }
 
-bool MultiChainTransaction_CheckUpgradeApproval(const CTransaction& tx,
+bool AksyonChainTransaction_CheckUpgradeApproval(const CTransaction& tx,
                                                 mc_EntityDetails *entity,
                                                 int offset,  
                                                 int vout,
-                                                CMultiChainTxDetails *details,   
+                                                CAksyonChainTxDetails *details,
                                                 string& reason)      
 {
     uint32_t timestamp,approval;
@@ -1104,9 +1104,9 @@ bool MultiChainTransaction_CheckUpgradeApproval(const CTransaction& tx,
     return true;
 }
 
-bool MultiChainTransaction_CheckStreamItem(mc_EntityDetails *entity,
+bool AksyonChainTransaction_CheckStreamItem(mc_EntityDetails *entity,
                                            int vout,
-                                           CMultiChainTxDetails *details,   
+                                           CAksyonChainTxDetails *details,
                                            string& reason)      
 {
     bool fAllValidPublishers;
@@ -1160,17 +1160,17 @@ bool MultiChainTransaction_CheckStreamItem(mc_EntityDetails *entity,
     return true;
 }
 
-bool MultiChainTransaction_CheckEntityItem(const CTransaction& tx,
+bool AksyonChainTransaction_CheckEntityItem(const CTransaction& tx,
                                            int offset,  
                                            int vout,
-                                           CMultiChainTxDetails *details,   
+                                           CAksyonChainTxDetails *details,
                                            string& reason)      
 {
     unsigned char short_txid[MC_AST_SHORT_TXID_SIZE];
     mc_EntityDetails entity;
     uint32_t salt_size=0;
     
-    if(!MultiChainTransaction_VerifyAndDeleteDataFormatElements(reason,NULL,&salt_size))
+    if(!AksyonChainTransaction_VerifyAndDeleteDataFormatElements(reason,NULL,&salt_size))
     {
         return false;
     }
@@ -1211,14 +1211,14 @@ bool MultiChainTransaction_CheckEntityItem(const CTransaction& tx,
     {
         if(entity.GetEntityType() == MC_ENT_TYPE_ASSET)
         {
-            if(!MultiChainTransaction_CheckAssetUpdateDetails(&entity,vout,details,reason))
+            if(!AksyonChainTransaction_CheckAssetUpdateDetails(&entity,vout,details,reason))
             {
                 return false;            
             }
         }
         if( (entity.GetEntityType() == MC_ENT_TYPE_VARIABLE) || (entity.GetEntityType() == MC_ENT_TYPE_LIBRARY))
         {
-            if(!MultiChainTransaction_CheckVariableUpdateDetails(tx,&entity,offset,vout,details,reason))
+            if(!AksyonChainTransaction_CheckVariableUpdateDetails(tx,&entity,offset,vout,details,reason))
             {
                 return false;            
             }
@@ -1228,7 +1228,7 @@ bool MultiChainTransaction_CheckEntityItem(const CTransaction& tx,
     {
         if(entity.GetEntityType() == MC_ENT_TYPE_UPGRADE)                       // Upgrade approval
         {
-            if(!MultiChainTransaction_CheckUpgradeApproval(tx,&entity,offset,vout,details,reason))
+            if(!AksyonChainTransaction_CheckUpgradeApproval(tx,&entity,offset,vout,details,reason))
             {
                 return false;            
             }
@@ -1251,7 +1251,7 @@ bool MultiChainTransaction_CheckEntityItem(const CTransaction& tx,
                         }
                     }
                 }
-                if(!MultiChainTransaction_CheckStreamItem(&entity,vout,details,reason))
+                if(!AksyonChainTransaction_CheckStreamItem(&entity,vout,details,reason))
                 {
                     return false;            
                 }            
@@ -1270,9 +1270,9 @@ bool MultiChainTransaction_CheckEntityItem(const CTransaction& tx,
     return true;
 }
 
-bool MultiChainTransaction_CheckDestinations(const CScript& script1,
+bool AksyonChainTransaction_CheckDestinations(const CScript& script1,
                                              int vout,
-                                             CMultiChainTxDetails *details,   
+                                             CAksyonChainTxDetails *details,
                                              string& reason)      
 {
     bool fNoDestinationInOutput;
@@ -1348,8 +1348,8 @@ bool MultiChainTransaction_CheckDestinations(const CScript& script1,
     return true;
 }
 
-bool MultiChainTransaction_CheckIfLibraryApproval(unsigned char* ptr,
-                                                  CMultiChainTxDetails *details)
+bool AksyonChainTransaction_CheckIfLibraryApproval(unsigned char* ptr,
+                                                  CAksyonChainTxDetails *details)
 {
     mc_EntityDetails entity;
     if(mc_gState->m_Assets->FindEntityByShortTxID(&entity,ptr))
@@ -1363,12 +1363,12 @@ bool MultiChainTransaction_CheckIfLibraryApproval(unsigned char* ptr,
     return false;
 }
 
-bool MultiChainTransaction_ProcessPermissions(const CTransaction& tx,
+bool AksyonChainTransaction_ProcessPermissions(const CTransaction& tx,
                                               int offset,  
                                               int vout,
                                               uint32_t permission_type,
                                               bool fFirstPass,
-                                              CMultiChainTxDetails *details,   
+                                              CAksyonChainTxDetails *details,
                                               string& reason)      
 {
     bool fIsPurePermission;
@@ -1547,7 +1547,7 @@ bool MultiChainTransaction_ProcessPermissions(const CTransaction& tx,
                                     {
                                         if(type & MC_PTP_FILTER)
                                         {
-                                            MultiChainTransaction_CheckIfLibraryApproval(ptr,details);
+                                            AksyonChainTransaction_CheckIfLibraryApproval(ptr,details);
                                         }
                                         fAdminFound=true;
                                     }
@@ -1608,7 +1608,7 @@ bool MultiChainTransaction_ProcessPermissions(const CTransaction& tx,
     return true;
 }
 
-bool Is_MultiChainLicenseTokenTransfer(const CTransaction& tx)
+bool Is_AksyonChainLicenseTokenTransfer(const CTransaction& tx)
 {
     mc_EntityDetails entity;
     if(tx.IsCoinBase())
@@ -1628,7 +1628,7 @@ bool Is_MultiChainLicenseTokenTransfer(const CTransaction& tx)
         return false;
     }
         
-    MultiChainTransaction_SetTmpOutputScript(tx.vout[0].scriptPubKey);
+    AksyonChainTransaction_SetTmpOutputScript(tx.vout[0].scriptPubKey);
     if(mc_gState->m_TmpScript->GetNumElements() == 0)
     {
         return false;        
@@ -1652,9 +1652,9 @@ bool Is_MultiChainLicenseTokenTransfer(const CTransaction& tx)
     return false;
 }
 
-bool MultiChainTransaction_CheckLicenseTokenTransfer(const CTransaction& tx,
+bool AksyonChainTransaction_CheckLicenseTokenTransfer(const CTransaction& tx,
                                                int unchecked_row, 
-                                               CMultiChainTxDetails *details,   
+                                               CAksyonChainTxDetails *details,
                                                string& reason)      
 {
     bool token_transfer=false;
@@ -1734,10 +1734,10 @@ bool MultiChainTransaction_CheckLicenseTokenTransfer(const CTransaction& tx,
 }
 
 
-bool MultiChainTransaction_CheckAssetTransfers(const CTransaction& tx,
+bool AksyonChainTransaction_CheckAssetTransfers(const CTransaction& tx,
                                                int offset,  
                                                int vout,
-                                               CMultiChainTxDetails *details,   
+                                               CAksyonChainTxDetails *details,
                                                string& reason)      
 {
     int receive_required=details->vOutputPermissionRequired[vout];
@@ -1761,7 +1761,7 @@ bool MultiChainTransaction_CheckAssetTransfers(const CTransaction& tx,
         return false;                                
     }    
     
-    if(!MultiChainTransaction_CheckLicenseTokenTransfer(tx,unchecked_row,details,reason))
+    if(!AksyonChainTransaction_CheckLicenseTokenTransfer(tx,unchecked_row,details,reason))
     {
         return false;
     }
@@ -1830,12 +1830,12 @@ bool MultiChainTransaction_CheckAssetTransfers(const CTransaction& tx,
     return true;
 }
 
-bool MultiChainTransaction_ProcessTokenIssuance(const CTransaction& tx,
+bool AksyonChainTransaction_ProcessTokenIssuance(const CTransaction& tx,
                                                 int offset,  
                                                 bool accept,
                                                 int vout,
                                                 uint256 txid,                   // Non-zero means - in genesis trabnsaction
-                                                CMultiChainTxDetails *details,   
+                                                CAksyonChainTxDetails *details,
                                                 string& reason)      
 {    
     mc_EntityDetails entity;
@@ -2234,11 +2234,11 @@ bool MultiChainTransaction_ProcessTokenIssuance(const CTransaction& tx,
 }
 
 
-bool MultiChainTransaction_CheckOutputs(const CTransaction& tx,                 // Tx to check
+bool AksyonChainTransaction_CheckOutputs(const CTransaction& tx,                 // Tx to check
                                         const CCoinsViewCache &inputs,          // Tx inputs from UTXO database
                                         int offset,                             // Tx offset in block, -1 if in memppol
                                         bool accept,
-                                        CMultiChainTxDetails *details,          // Tx details object
+                                        CAksyonChainTxDetails *details,          // Tx details object
                                         string& reason)                         // Error message
 {
     uint32_t permission_type;
@@ -2251,18 +2251,18 @@ bool MultiChainTransaction_CheckOutputs(const CTransaction& tx,                 
     {
         details->total_value_out+=tx.vout[vout].nValue;
         
-        MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+        AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
 
         if(mc_gState->m_TmpScript->IsOpReturnScript())                    
         {
-            if(!MultiChainTransaction_CheckOpReturnScript(tx,inputs,vout,details,reason))
+            if(!AksyonChainTransaction_CheckOpReturnScript(tx,inputs,vout,details,reason))
             {
                 return false;
             }
         }
         else
         {
-            if(!MultiChainTransaction_CheckDestinations(tx.vout[vout].scriptPubKey,vout,details,reason))
+            if(!AksyonChainTransaction_CheckDestinations(tx.vout[vout].scriptPubKey,vout,details,reason))
             {
                 return false;
             }            
@@ -2273,7 +2273,7 @@ bool MultiChainTransaction_CheckOutputs(const CTransaction& tx,                 
             {
                 permission_type |= MC_PTP_READ;                
             }
-            if(!MultiChainTransaction_ProcessPermissions(tx,offset,vout,permission_type,true,details,reason))
+            if(!AksyonChainTransaction_ProcessPermissions(tx,offset,vout,permission_type,true,details,reason))
             {
                 return false;
             }            
@@ -2284,7 +2284,7 @@ bool MultiChainTransaction_CheckOutputs(const CTransaction& tx,                 
     {
         if(details->vOutputScriptFlags[vout] & (MC_MTX_OUTPUT_DETAIL_FLAG_PERMISSION_CREATE | MC_MTX_OUTPUT_DETAIL_FLAG_PERMISSION_FILTER) )
         {
-            MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+            AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
             
             permission_type=MC_PTP_CREATE | MC_PTP_ISSUE | MC_PTP_ACTIVATE | MC_PTP_FILTER;
             if(mc_gState->m_Features->NFTokens())
@@ -2292,7 +2292,7 @@ bool MultiChainTransaction_CheckOutputs(const CTransaction& tx,                 
                 permission_type |= MC_PTP_DETAILS;                
             }
             permission_type |= mc_gState->m_Permissions->GetCustomHighPermissionTypes();
-            if(!MultiChainTransaction_ProcessPermissions(tx,offset,vout,permission_type,false,details,reason))
+            if(!AksyonChainTransaction_ProcessPermissions(tx,offset,vout,permission_type,false,details,reason))
             {
                 return false;
             }                        
@@ -2303,10 +2303,10 @@ bool MultiChainTransaction_CheckOutputs(const CTransaction& tx,                 
     {
         if(details->vOutputScriptFlags[vout] & MC_MTX_OUTPUT_DETAIL_FLAG_PERMISSION_ADMIN)
         {
-            MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+            AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
             
             permission_type=MC_PTP_MINE | MC_PTP_ADMIN;
-            if(!MultiChainTransaction_ProcessPermissions(tx,offset,vout,permission_type,false,details,reason))
+            if(!AksyonChainTransaction_ProcessPermissions(tx,offset,vout,permission_type,false,details,reason))
             {
                 return false;
             }            
@@ -2318,9 +2318,9 @@ bool MultiChainTransaction_CheckOutputs(const CTransaction& tx,                 
                                                                                 // Entity items (stream items, upgrade approvals, updates)
         if(details->vOutputScriptFlags[vout] & MC_MTX_OUTPUT_DETAIL_FLAG_OP_RETURN_ENTITY_ITEM)
         {
-            MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+            AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
             
-            if(!MultiChainTransaction_CheckEntityItem(tx,offset,vout,details,reason))
+            if(!AksyonChainTransaction_CheckEntityItem(tx,offset,vout,details,reason))
             {
                 return false;                
             }
@@ -2331,9 +2331,9 @@ bool MultiChainTransaction_CheckOutputs(const CTransaction& tx,                 
     {
         for (unsigned int vout = 0; vout < tx.vout.size(); vout++)
         {
-            MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+            AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
 
-            if(!MultiChainTransaction_ProcessTokenIssuance(tx,offset,accept,vout,0,details,reason))
+            if(!AksyonChainTransaction_ProcessTokenIssuance(tx,offset,accept,vout,0,details,reason))
             {
                 return false;                
             }        
@@ -2344,9 +2344,9 @@ bool MultiChainTransaction_CheckOutputs(const CTransaction& tx,                 
 }
 
 
-bool MultiChainTransaction_CheckTransfers(const CTransaction& tx,               // Tx to check
+bool AksyonChainTransaction_CheckTransfers(const CTransaction& tx,               // Tx to check
                                         int offset,                             // Tx offset in block, -1 if in memppol
-                                        CMultiChainTxDetails *details,          // Tx details object
+                                        CAksyonChainTxDetails *details,          // Tx details object
                                         string& reason)                         // Error message
 {
     mc_gState->m_TmpAssetsOut->Clear();
@@ -2356,9 +2356,9 @@ bool MultiChainTransaction_CheckTransfers(const CTransaction& tx,               
                                                                                 // Assets quantities and permission checks
         if(details->vOutputScriptFlags[vout] & MC_MTX_OUTPUT_DETAIL_FLAG_NOT_OP_RETURN)
         {
-            MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+            AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
 
-            if(!MultiChainTransaction_CheckAssetTransfers(tx,offset,vout,details,reason))
+            if(!AksyonChainTransaction_CheckAssetTransfers(tx,offset,vout,details,reason))
             {
                 return false;                
             }
@@ -2373,16 +2373,16 @@ bool MultiChainTransaction_CheckTransfers(const CTransaction& tx,               
     return true;
 }
 
-int64_t MultiChainTransaction_OffchainFee(int64_t total_offchain_size)            // Total size of offchain items
+int64_t AksyonChainTransaction_OffchainFee(int64_t total_offchain_size)            // Total size of offchain items
 {
     return (MIN_OFFCHAIN_FEE*total_offchain_size + 999)/ 1000;
 }
 
-bool MultiChainTransaction_CheckMandatoryFee(CMultiChainTxDetails *details,     // Tx details object
+bool AksyonChainTransaction_CheckMandatoryFee(CAksyonChainTxDetails *details,     // Tx details object
                                              int64_t *mandatory_fee,            // Mandatory Fee    
                                              string& reason)                    // Error message
 {
-    *mandatory_fee = MultiChainTransaction_OffchainFee(details->total_offchain_size);
+    *mandatory_fee = AksyonChainTransaction_OffchainFee(details->total_offchain_size);
 
     if(*mandatory_fee)
     {
@@ -2396,7 +2396,7 @@ bool MultiChainTransaction_CheckMandatoryFee(CMultiChainTxDetails *details,     
     return true;
 }
 
-bool MultiChainTransaction_CheckLicenseTokenDetails(CMultiChainTxDetails *details,     // Tx details object
+bool AksyonChainTransaction_CheckLicenseTokenDetails(CAksyonChainTxDetails *details,     // Tx details object
                                              void *token_address,               // Address the token is issued to
                                              string& reason)                    // Error message
 {
@@ -2524,10 +2524,10 @@ bool MultiChainTransaction_CheckLicenseTokenDetails(CMultiChainTxDetails *detail
     return true;
 }
 
-bool MultiChainTransaction_ProcessAssetIssuance(const CTransaction& tx,         // Tx to check
+bool AksyonChainTransaction_ProcessAssetIssuance(const CTransaction& tx,         // Tx to check
                                                 int offset,                     // Tx offset in block, -1 if in memppol
                                                 bool accept,                    // Accept to mempools if successful
-                                                CMultiChainTxDetails *details,  // Tx details object
+                                                CAksyonChainTxDetails *details,  // Tx details object
                                                 string& reason)                 // Error message
 {
     int update_mempool;
@@ -2633,7 +2633,7 @@ bool MultiChainTransaction_ProcessAssetIssuance(const CTransaction& tx,         
                                                                                 // We already extracted the details, we just have to find entity
         if(details->vOutputScriptFlags[vout] & MC_MTX_OUTPUT_DETAIL_FLAG_FOLLOWON_DETAILS)
         {
-            MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+            AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
             mc_gState->m_TmpScript->SetElement(0);
                                                                         
             if(mc_gState->m_TmpScript->GetEntity(short_txid))           
@@ -2645,7 +2645,7 @@ bool MultiChainTransaction_ProcessAssetIssuance(const CTransaction& tx,         
         
         if(details->vOutputScriptFlags[vout] & MC_MTX_OUTPUT_DETAIL_FLAG_NOT_OP_RETURN)
         {
-            MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+            AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
 
             mc_gState->m_TmpAssetsTmp->Clear();
             issue_in_output=false;
@@ -3001,7 +3001,7 @@ bool MultiChainTransaction_ProcessAssetIssuance(const CTransaction& tx,         
                         return false;                                                                                                                                                        
                     }
                     
-                    MultiChainTransaction_SetTmpOutputScript(tx.vout[issue_vout].scriptPubKey);
+                    AksyonChainTransaction_SetTmpOutputScript(tx.vout[issue_vout].scriptPubKey);
                     if(mc_gState->m_Features->License20010())
                     {
                         if(mc_gState->m_TmpScript->GetNumElements() < 2)
@@ -3019,7 +3019,7 @@ bool MultiChainTransaction_ProcessAssetIssuance(const CTransaction& tx,         
                         }
                     }
                     
-                    if(!MultiChainTransaction_CheckLicenseTokenDetails(details,token_address,reason))
+                    if(!AksyonChainTransaction_CheckLicenseTokenDetails(details,token_address,reason))
                     {
                         return false;                                                                                                                                                        
                     }
@@ -3236,8 +3236,8 @@ bool MultiChainTransaction_ProcessAssetIssuance(const CTransaction& tx,         
             {
                 for (unsigned int vout = 0; vout < tx.vout.size(); vout++)
                 {
-                    MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
-                    if(!MultiChainTransaction_ProcessTokenIssuance(tx,offset,accept,vout,txid,details,reason))
+                    AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+                    if(!AksyonChainTransaction_ProcessTokenIssuance(tx,offset,accept,vout,txid,details,reason))
                     {
                         return false;                
                     }        
@@ -3309,10 +3309,10 @@ bool MultiChainTransaction_ProcessAssetIssuance(const CTransaction& tx,         
 }
 
 
-bool MultiChainTransaction_ProcessEntityCreation(const CTransaction& tx,        // Tx to check
+bool AksyonChainTransaction_ProcessEntityCreation(const CTransaction& tx,        // Tx to check
                                                  int offset,                    // Tx offset in block, -1 if in memppol
                                                  bool accept,                   // Accept to mempools if successful
-                                                 CMultiChainTxDetails *details, // Tx details object
+                                                 CAksyonChainTxDetails *details, // Tx details object
                                                  string& reason)                // Error message
 {
     if(details->new_entity_output < 0)
@@ -3510,7 +3510,7 @@ bool MultiChainTransaction_ProcessEntityCreation(const CTransaction& tx,        
             }
             if(details->new_entity_type == MC_ENT_TYPE_FILTER)
             {
-                pMultiChainFilterEngine->AddFilter((unsigned char*)&txid+MC_AST_SHORT_TXID_OFFSET,(offset < 0) ? 0 : 1);
+                pAksyonChainFilterEngine->AddFilter((unsigned char*)&txid+MC_AST_SHORT_TXID_OFFSET,(offset < 0) ? 0 : 1);
             }
         }
         else
@@ -3523,10 +3523,10 @@ bool MultiChainTransaction_ProcessEntityCreation(const CTransaction& tx,        
     return true;
 }
 
-bool MultiChainTransaction_VerifyNotFilteredRestrictions(const CTransaction& tx,        // Tx to check
+bool AksyonChainTransaction_VerifyNotFilteredRestrictions(const CTransaction& tx,        // Tx to check
                                                          int offset,                    // Tx offset in block, -1 if in memppol
                                                          bool accept,                   // Accept to mempools if successful
-                                                         CMultiChainTxDetails *details, // Tx details object
+                                                         CAksyonChainTxDetails *details, // Tx details object
                                                          string& reason)                // Error message
 {
     if(details->emergency_disapproval_output < 0)
@@ -3577,7 +3577,7 @@ bool MultiChainTransaction_VerifyNotFilteredRestrictions(const CTransaction& tx,
             }
         }
                 
-        MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+        AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
         
         if((int)vout == details->emergency_disapproval_output)
         {
@@ -3633,8 +3633,8 @@ bool MultiChainTransaction_VerifyNotFilteredRestrictions(const CTransaction& tx,
     return true;
 }
 
-bool MultiChainTransaction_VerifyStandardCoinbase(const CTransaction& tx,        // Tx to check
-                                                        CMultiChainTxDetails *details, // Tx details object
+bool AksyonChainTransaction_VerifyStandardCoinbase(const CTransaction& tx,        // Tx to check
+                                                        CAksyonChainTxDetails *details, // Tx details object
                                                         string& reason)                // Error message
 {
     details->fIsStandardCoinbase=false;
@@ -3653,7 +3653,7 @@ bool MultiChainTransaction_VerifyStandardCoinbase(const CTransaction& tx,       
     bool signature_output=false;
     for (unsigned int vout = 0; vout < tx.vout.size(); vout++)
     {
-        MultiChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
+        AksyonChainTransaction_SetTmpOutputScript(tx.vout[vout].scriptPubKey);
 
         if(mc_gState->m_TmpScript->IsOpReturnScript())                    
         {
@@ -3700,10 +3700,10 @@ bool MultiChainTransaction_VerifyStandardCoinbase(const CTransaction& tx,       
         }        
     }
     
-    if(signature_output == (mc_gState->m_NetworkParams->IsProtocolMultichain() == 0))
+    if(signature_output == (mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0))
     {
         LogPrintf("Non-standard coinbase: Sigature output doesn't match protocol\n");
-        return true;                                                            // Signature output should appear only if protocol=multichain
+        return true;                                                            // Signature output should appear only if protocol=aksyonchain
     }
         
     details->fIsStandardCoinbase=true;
@@ -3711,8 +3711,8 @@ bool MultiChainTransaction_VerifyStandardCoinbase(const CTransaction& tx,       
     return true;    
 }
 
-bool MultiChainTransaction_ProcessLibraryUpdates(int offset,
-                                                 CMultiChainTxDetails *details, // Tx details object                                                 
+bool AksyonChainTransaction_ProcessLibraryUpdates(int offset,
+                                                 CAksyonChainTxDetails *details, // Tx details object
                                                  string& reason)                // Error message
 {
     if(details->vAffectedLibraries.size() == 0)
@@ -3735,15 +3735,15 @@ bool MultiChainTransaction_ProcessLibraryUpdates(int offset,
         }
     }    
     
-    if(pMultiChainFilterEngine)
+    if(pAksyonChainFilterEngine)
     {    
-        pMultiChainFilterEngine->CheckLibraries(&(details->vAffectedLibraries),(offset >= 0));
+        pAksyonChainFilterEngine->CheckLibraries(&(details->vAffectedLibraries),(offset >= 0));
     }
     return true;
 }
 
 
-bool AcceptMultiChainTransaction   (const CTransaction& tx,                     // Tx to check
+bool AcceptAksyonChainTransaction   (const CTransaction& tx,                     // Tx to check
                                     const CCoinsViewCache &inputs,              // Tx inputs from UTXO database
                                     int offset,                                 // Tx offset in block, -1 if in memppol
                                     uint32_t flags,                             // Accept to mempools if successful, no filters
@@ -3751,7 +3751,7 @@ bool AcceptMultiChainTransaction   (const CTransaction& tx,                     
                                     int64_t *mandatory_fee_out,                 // Mandatory fee
                                     uint32_t *replay)                           // Replay flag - if tx should be rechecked or only permissions
 {
-    CMultiChainTxDetails details;
+    CAksyonChainTxDetails details;
     bool fReject=false;
     int64_t mandatory_fee=0;
     int permission_mempool_size;
@@ -3761,18 +3761,18 @@ bool AcceptMultiChainTransaction   (const CTransaction& tx,                     
         accept=false;
     }
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)                 
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return true;
     }    
     
-    details.fCheckCachedScript=MultiChainTransaction_CheckCachedScriptFlag(tx);
+    details.fCheckCachedScript=AksyonChainTransaction_CheckCachedScriptFlag(tx);
     
     mc_gState->m_TmpAssetsIn->Clear();
     
-    if(!MultiChainTransaction_CheckCoinbaseInputs(tx,&details))                 // Inputs
+    if(!AksyonChainTransaction_CheckCoinbaseInputs(tx,&details))                 // Inputs
     {
-        if(!MultiChainTransaction_CheckInputs(tx,inputs,&details,reason))
+        if(!AksyonChainTransaction_CheckInputs(tx,inputs,&details,reason))
         {
             return false;
         }
@@ -3785,49 +3785,49 @@ bool AcceptMultiChainTransaction   (const CTransaction& tx,                     
         permission_mempool_size=(int)mc_gState->m_Permissions->m_CheckPointMemPoolSize;
     }
     
-    if(!MultiChainTransaction_CheckOutputs(tx,inputs,offset,accept,&details,reason))   // Outputs        
+    if(!AksyonChainTransaction_CheckOutputs(tx,inputs,offset,accept,&details,reason))   // Outputs
     {
         fReject=true;
         goto exitlbl;                                                                    
     }
     
-    if(!MultiChainTransaction_ProcessAssetIssuance(tx,offset,accept,&details,reason))                // Asset genesis/followon
+    if(!AksyonChainTransaction_ProcessAssetIssuance(tx,offset,accept,&details,reason))                // Asset genesis/followon
     {
         fReject=true;
         goto exitlbl;                                                                    
     }
 
-    if(!MultiChainTransaction_CheckMandatoryFee(&details,&mandatory_fee,reason))
+    if(!AksyonChainTransaction_CheckMandatoryFee(&details,&mandatory_fee,reason))
     {
         fReject=true;
         goto exitlbl;                                                                            
     }                                                                           
 
-    if(!MultiChainTransaction_CheckTransfers(tx,offset,&details,reason))        // Transfers and receive permissions
+    if(!AksyonChainTransaction_CheckTransfers(tx,offset,&details,reason))        // Transfers and receive permissions
     {
         fReject=true;
         goto exitlbl;                                                                    
     }
                                                                                 // Creating of (pseudo)streams/upgrades
-    if(!MultiChainTransaction_ProcessEntityCreation(tx,offset,accept,&details,reason))           
+    if(!AksyonChainTransaction_ProcessEntityCreation(tx,offset,accept,&details,reason))
     {
         fReject=true;
         goto exitlbl;                                                                    
     }
 
-    if(!MultiChainTransaction_VerifyNotFilteredRestrictions(tx,offset,accept,&details,reason))           
+    if(!AksyonChainTransaction_VerifyNotFilteredRestrictions(tx,offset,accept,&details,reason))
     {
         fReject=true;
         goto exitlbl;                                                                                
     }        
     
-    if(!MultiChainTransaction_VerifyStandardCoinbase(tx,&details,reason))           
+    if(!AksyonChainTransaction_VerifyStandardCoinbase(tx,&details,reason))
     {
         fReject=true;
         goto exitlbl;                                                                                
     }        
     
-    if(!MultiChainTransaction_ProcessLibraryUpdates(offset,&details,reason))           
+    if(!AksyonChainTransaction_ProcessLibraryUpdates(offset,&details,reason))
     {
         fReject=true;
         goto exitlbl;                                                                                
@@ -3840,12 +3840,12 @@ bool AcceptMultiChainTransaction   (const CTransaction& tx,                     
     {
         if(mc_gState->m_Features->Filters())
         {
-            if(pMultiChainFilterEngine)
+            if(pAksyonChainFilterEngine)
             {
-                mc_MultiChainFilter* lpFilter;
+                mc_AksyonChainFilter* lpFilter;
                 int applied=0;
 
-                if(pMultiChainFilterEngine->RunTxFilters(tx,details.vRelevantEntities,reason,&lpFilter,&applied,(offset >= 0)) != MC_ERR_NOERROR)
+                if(pAksyonChainFilterEngine->RunTxFilters(tx,details.vRelevantEntities,reason,&lpFilter,&applied,(offset >= 0)) != MC_ERR_NOERROR)
                 {
                     reason="Error while running filters";
                     fReject=true;
@@ -3891,7 +3891,7 @@ exitlbl:
     {
         mc_gState->m_Permissions->RollBackToCheckPoint();
         mc_gState->m_Assets->RollBackToCheckPoint();    
-        MultiChainTransaction_ProcessLibraryUpdates(offset,&details,reason);
+        AksyonChainTransaction_ProcessLibraryUpdates(offset,&details,reason);
     }
 
     if(mandatory_fee_out)

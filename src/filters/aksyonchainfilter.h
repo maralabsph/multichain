@@ -1,14 +1,14 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAINFILTER_H
-#define MULTICHAINFILTER_H
+#ifndef AKSYONCHAINFILTER_H
+#define AKSYONCHAINFILTER_H
 
 #include "core/init.h"
 #include "core/main.h"
 #include "utils/util.h"
 #include "utils/utilparse.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "json/json_spirit_value.h"
 //#include "filters/filter.h"
 
@@ -18,7 +18,7 @@
 
 #define MC_FLT_MAIN_NAME_TX                "filtertransaction"
 #define MC_FLT_MAIN_NAME_STREAM            "filterstreamitem"
-#define MC_FLT_MAIN_NAME_TEST              "_multichain_library_test_"
+#define MC_FLT_MAIN_NAME_TEST              "_aksyonchain_library_test_"
 
 #define MC_FLT_LIBRARY_GLUE                "\n\n"
 
@@ -26,7 +26,7 @@ std::vector <uint160>  mc_FillRelevantFilterEntitities(const unsigned char *ptr,
 
 class mc_Filter;
 
-typedef struct mc_MultiChainFilter
+typedef struct mc_AksyonChainFilter
 {
     std::vector <uint160> m_RelevantEntities;
     std::vector <uint160> m_Libraries;
@@ -43,12 +43,12 @@ typedef struct mc_MultiChainFilter
     bool m_AlreadyUsed;
     
     
-    mc_MultiChainFilter()
+    mc_AksyonChainFilter()
     {
         Zero();
     }
     
-    ~mc_MultiChainFilter()
+    ~mc_AksyonChainFilter()
     {
         Destroy();
     }
@@ -60,9 +60,9 @@ typedef struct mc_MultiChainFilter
 
     bool HasRelevantEntity(std::set <uint160>& sRelevantEntities);
     
-} mc_MultiChainFilter;
+} mc_AksyonChainFilter;
 
-typedef struct mc_MultiChainLibrary
+typedef struct mc_AksyonChainLibrary
 {
     mc_EntityDetails m_Details;
     std::string m_CreateError;
@@ -73,12 +73,12 @@ typedef struct mc_MultiChainLibrary
     uint160 m_Hash;
     std::string m_Code;
     
-    mc_MultiChainLibrary()
+    mc_AksyonChainLibrary()
     {
         Zero();
     }
     
-    ~mc_MultiChainLibrary()
+    ~mc_AksyonChainLibrary()
     {
         Destroy();
     }
@@ -88,18 +88,18 @@ typedef struct mc_MultiChainLibrary
     int Zero();
     int Destroy();   
     
-} mc_MultiChainLibrary;
+} mc_AksyonChainLibrary;
 
-typedef struct mc_MultiChainFilterParams
+typedef struct mc_AksyonChainFilterParams
 {
     int m_MaxShownData;
     int m_Compatibility;
-    mc_MultiChainFilterParams()
+    mc_AksyonChainFilterParams()
     {
         Zero();
     }
     
-    ~mc_MultiChainFilterParams()
+    ~mc_AksyonChainFilterParams()
     {
         Destroy();
     }
@@ -108,13 +108,13 @@ typedef struct mc_MultiChainFilterParams
     int Destroy();  
     int Init();
     int Close();
-}mc_MultiChainFilterParams;
+}mc_AksyonChainFilterParams;
 
-typedef struct mc_MultiChainFilterEngine
+typedef struct mc_AksyonChainFilterEngine
 {
-    std::vector <mc_MultiChainFilter> m_Filters;
+    std::vector <mc_AksyonChainFilter> m_Filters;
     std::vector <std::vector <std::string>> m_CallbackNames;
-    std::map<uint160,mc_MultiChainLibrary> m_Libraries;
+    std::map<uint160,mc_AksyonChainLibrary> m_Libraries;
     
     mc_Buffer *m_Workers;
     mc_Script *m_CodeLibrary;
@@ -122,18 +122,18 @@ typedef struct mc_MultiChainFilterEngine
     uint256 m_EntityTxID;
     CTransaction m_Tx;
     int m_Vout;
-    mc_MultiChainFilterParams m_Params;
+    mc_AksyonChainFilterParams m_Params;
     void *m_CoinsCache;
     
     void *m_Semaphore;
     uint64_t m_LockedBy;
     
-    mc_MultiChainFilterEngine()
+    mc_AksyonChainFilterEngine()
     {
         Zero();
     }
     
-    ~mc_MultiChainFilterEngine()
+    ~mc_AksyonChainFilterEngine()
     {
         Destroy();
     }
@@ -145,8 +145,8 @@ typedef struct mc_MultiChainFilterEngine
     int SetTimeout(int timeout);    
     int AddFilter(const unsigned char* short_txid,int for_block);
     int Reset(int block,int for_block);
-    int RunTxFilters(const CTransaction& tx,std::set <uint160>& sRelevantEntities,std::string &strResult,mc_MultiChainFilter **lppFilter,int *applied,bool only_once);            
-    int RunStreamFilters(const CTransaction& tx,int vout, unsigned char *stream_short_txid,int block,int offset,std::string &strResult,mc_MultiChainFilter **lppFilter,int *applied);            
+    int RunTxFilters(const CTransaction& tx,std::set <uint160>& sRelevantEntities,std::string &strResult,mc_AksyonChainFilter **lppFilter,int *applied,bool only_once);
+    int RunStreamFilters(const CTransaction& tx,int vout, unsigned char *stream_short_txid,int block,int offset,std::string &strResult,mc_AksyonChainFilter **lppFilter,int *applied);
     int RunFilter(const CTransaction& tx,mc_Filter *filter,std::string &strResult);            
     int RunFilterWithCallbackLog(const CTransaction& tx,int vout,uint256 stream_txid,mc_Filter *filter,std::string &strResult, json_spirit::Array& callbacks);
     int NoStreamFilters();
@@ -167,7 +167,7 @@ typedef struct mc_MultiChainFilterEngine
     int ResetInternal(int block,int for_block);
     void SetCallbackNamesInternal();
     
-} mc_MultiChainFilterEngine;
+} mc_AksyonChainFilterEngine;
 
-#endif /* MULTICHAINFILTER_H */
+#endif /* AKSYONCHAINFILTER_H */
 

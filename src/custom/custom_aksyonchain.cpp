@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 void* custom_get_blockchain_default(const char *param,int* size,void *param_in)
 {

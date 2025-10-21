@@ -1,7 +1,7 @@
 // Copyright (c) 2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef BITCOIN_CHAINPARAMSBASE_H
 #define BITCOIN_CHAINPARAMSBASE_H
@@ -22,7 +22,7 @@ public:
         REGTEST,
         UNITTEST,
 /* MCHN START */      
-        MULTICHAIN,
+        AKSYONCHAIN,
 /* MCHN END */                
 
         MAX_NETWORK_TYPES
@@ -68,7 +68,7 @@ bool AreBaseParamsConfigured();
 
 /* MCHN START */
 
-bool SelectMultiChainBaseParams(const char *NetworkName,int RPCPort);
+bool SelectAksyonChainBaseParams(const char *NetworkName,int RPCPort);
 
 /* MCHN END */
 

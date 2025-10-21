@@ -1,10 +1,10 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef RPCMULTICHAINUTILS_H
-#define	RPCMULTICHAINUTILS_H
+#ifndef RPCAKSYONCHAINUTILS_H
+#define	RPCAKSYONCHAINUTILS_H
 
 #include "primitives/transaction.h"
 #include "core/init.h"
@@ -17,10 +17,10 @@
 
 #include "json/json_spirit_utils.h"
 #include "json/json_spirit_value.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "utils/utilparse.h"
 #include "wallet/chunkdb.h"
-#include "filters/multichainfilter.h"
+#include "filters/aksyonchainfilter.h"
 
 using namespace std;
 using namespace json_spirit;
@@ -172,5 +172,5 @@ int mc_VerifyTestLibraryUpdates();
 string mc_GetTestLibraryUpdateCode(string library,string *update,bool *local_library);
 mc_Buffer *mc_GetEntityTxIDList(uint32_t entity_type,int req_count,int req_start,bool *exact_results);
 
-#endif	/* RPCMULTICHAINUTILS_H */
+#endif	/* RPCAKSYONCHAINUTILS_H */
 

@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by multichain-v8.rc
+// Used by aksyonchain-v8.rc
 
 // Next default values for new objects
 // 

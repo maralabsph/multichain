@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "rpc/rpcserver.h"
 
@@ -38,7 +38,7 @@
 
 using namespace json_spirit;
 using namespace std;
-void PushMultiChainRelay(CNode* pto, uint32_t msg_type,vector<CAddress>& path,vector<CAddress>& path_to_follow,vector<unsigned char>& payload);
+void PushAksyonChainRelay(CNode* pto, uint32_t msg_type,vector<CAddress>& path,vector<CAddress>& path_to_follow,vector<unsigned char>& payload);
 int64_t mc_PeerStatusDelayForget();
 bool paramtobool(Value param);
 
@@ -115,7 +115,7 @@ Value getpeerinfo(const Array& params, bool fHelp)
         // their ver message.
         obj.push_back(Pair("subver", stats.cleanSubVer));
 /* MCHN START */        
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             if(MCP_ANYONE_CAN_CONNECT)
             {
@@ -645,7 +645,7 @@ Value getaddednodeinfo(const Array& params, bool fHelp)
                     vector<CAddress>path_to_follow;
                     vector<unsigned char> payload;
                     
-//                    PushMultiChainRelay(pnode, MC_RMT_GLOBAL_PING,path,path_to_follow,payload);
+//                    PushAksyonChainRelay(pnode, MC_RMT_GLOBAL_PING,path,path_to_follow,payload);
 
                     break;
                 }
@@ -701,10 +701,10 @@ Value getnetworkinfo(const Array& params, bool fHelp)
     Object obj;
     obj.push_back(Pair("version",       CLIENT_VERSION));
 /* MCHN START */    
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         obj.push_back(Pair("subversion",
-            FormatSubVersion("MultiChain", mc_gState->GetProtocolVersion(), std::vector<string>())));
+            FormatSubVersion("AksyonChain", mc_gState->GetProtocolVersion(), std::vector<string>())));
     }
     else
     {

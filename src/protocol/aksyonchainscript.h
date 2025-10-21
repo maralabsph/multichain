@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAINSCRIPT_H
-#define	MULTICHAINSCRIPT_H
+#ifndef AKSYONCHAINSCRIPT_H
+#define	AKSYONCHAINSCRIPT_H
 
 #include "utils/declare.h"
 
@@ -154,5 +154,5 @@ typedef struct mc_TSScriptHeap
 } mc_TSScriptHeap;
     
 
-#endif	/* MULTICHAINSCRIPT_H */
+#endif	/* AKSYONCHAINSCRIPT_H */
 

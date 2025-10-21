@@ -18,7 +18,7 @@ The steps described in this document have to be executed in a shell configured f
 
 The following instructions fetch the Google V8 JavaScript engine to your local machine, configure it to create static libraries, and builds them.
 
-MultiChain uses V8 version 6.8.290, and requires at least 4 GB of RAM to build in a reasonable time. It will not build at all with less than 2 GB RAM.
+AksyonChain uses V8 version 6.8.290, and requires at least 4 GB of RAM to build in a reasonable time. It will not build at all with less than 2 GB RAM.
 
 ## Get Google's `depot_tools`
 
@@ -30,7 +30,7 @@ Google's [`depot_tools`](http://dev.chromium.org/developers/how-tos/install-depo
 
 ## Fetch V8
 
-The following commands check out V8 and select the branch used by MultiChain. Please note that this step downloads about 2 GB of data, and can take a long time (30 minutes or more).
+The following commands check out V8 and select the branch used by AksyonChain. Please note that this step downloads about 2 GB of data, and can take a long time (30 minutes or more).
 
     gclient
     

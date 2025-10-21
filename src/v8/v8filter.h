@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_V8FILTER_H_
-#define MULTICHAIN_V8FILTER_H_
+#ifndef AKSYONCHAIN_V8FILTER_H_
+#define AKSYONCHAIN_V8FILTER_H_
 
 #include "json/json_spirit.h"
 #include <v8.h>
@@ -59,4 +59,4 @@ class V8Filter
 
 } // namespace mc_v8
 
-#endif /* MULTICHAIN_V8FILTER_H_ */
+#endif /* AKSYONCHAIN_V8FILTER_H_ */

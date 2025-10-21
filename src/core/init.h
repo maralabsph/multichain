@@ -2,18 +2,19 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef BITCOIN_INIT_H
 #define BITCOIN_INIT_H
 
 #include <string>
+#include <cstdint>
 
 class CWallet;
 struct mc_WalletTxs;
 struct mc_RelayManager;
 struct mc_FilterEngine;
-struct mc_MultiChainFilterEngine;
+struct mc_AksyonChainFilterEngine;
 struct mc_EnterpriseFeatures;
 
 
@@ -40,7 +41,7 @@ extern CWallet* pwalletMain;
 extern mc_WalletTxs* pwalletTxsMain;
 extern mc_RelayManager* pRelayManager;
 extern mc_FilterEngine* pFilterEngine;
-extern mc_MultiChainFilterEngine* pMultiChainFilterEngine;
+extern mc_AksyonChainFilterEngine* pAksyonChainFilterEngine;
 extern mc_EnterpriseFeatures* pEF;
 extern CInitNodeStatus *pNodeStatus;
 

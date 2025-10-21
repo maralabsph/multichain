@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef RPCWALLET_H
 #define	RPCWALLET_H
@@ -18,7 +18,7 @@
 #include "json/json_spirit_value.h"
 
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "wallet/wallettxs.h"
 #include "wallet/chunkdb.h"
 #include "rpc/rpcutils.h"

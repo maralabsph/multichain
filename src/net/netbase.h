@@ -1,7 +1,7 @@
 // Copyright (c) 2009-2013 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef BITCOIN_NETBASE_H
 #define BITCOIN_NETBASE_H

@@ -2,18 +2,18 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 
 #include "rpc/rpcwallet.h"
-#include "filters/multichainfilter.h"
+#include "filters/aksyonchainfilter.h"
 #include "filters/filter.h"
 
 void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry);
 void parseStreamIdentifier(Value stream_identifier,mc_EntityDetails *entity);
 bool mc_JSInExtendedScript(size_t size);
 /*
-bool AcceptMultiChainTransaction(const CTransaction& tx, 
+bool AcceptAksyonChainTransaction(const CTransaction& tx,
                                  const CCoinsViewCache &inputs,
                                  int offset,
                                  bool accept,
@@ -429,7 +429,7 @@ Value createfilterfromcmd(const Array& params, bool fHelp)
         test_code=library_code + MC_FLT_LIBRARY_GLUE + js;
     }
     
-    err=pFilterEngine->CreateFilter(test_code.c_str(),filter_main_name,pMultiChainFilterEngine->m_CallbackNames[filter_type],worker,strError);
+    err=pFilterEngine->CreateFilter(test_code.c_str(),filter_main_name,pAksyonChainFilterEngine->m_CallbackNames[filter_type],worker,strError);
     delete worker;
     if(err)
     {
@@ -584,14 +584,14 @@ Value listfilters(const Array& params, uint32_t filter_type)
     }
     
     int unconfirmed_count=0;
-    for(int i=0;i<(int)pMultiChainFilterEngine->m_Filters.size();i++)
+    for(int i=0;i<(int)pAksyonChainFilterEngine->m_Filters.size();i++)
     {
         Object entry;
 
         if((filter_list.size() == 0) || 
-           (filter_list.find(*(uint256*)pMultiChainFilterEngine->m_Filters[i].m_Details.GetTxID()) != filter_list.end()) )
+           (filter_list.find(*(uint256*)pAksyonChainFilterEngine->m_Filters[i].m_Details.GetTxID()) != filter_list.end()) )
         {
-            entry=FilterEntry(pMultiChainFilterEngine->m_Filters[i].m_Details.GetTxID(),output_level,filter_type);
+            entry=FilterEntry(pAksyonChainFilterEngine->m_Filters[i].m_Details.GetTxID(),output_level,filter_type);
             if(entry.size()>0)
             {
                 bool take_it=false;
@@ -611,12 +611,12 @@ Value listfilters(const Array& params, uint32_t filter_type)
                 }            
                 if(take_it)
                 {
-                    bool valid=pMultiChainFilterEngine->m_Filters[i].m_CreateError.size() == 0;
+                    bool valid=pAksyonChainFilterEngine->m_Filters[i].m_CreateError.size() == 0;
                     entry.push_back(Pair("compiled",valid));
                     if(check_approval)
                     {
-                        entry.push_back(Pair("approved",mc_gState->m_Permissions->FilterApproved(lpEntity,&(pMultiChainFilterEngine->m_Filters[i].m_FilterAddress)) !=0 ));
-                        entry.push_back(Pair("address",pMultiChainFilterEngine->m_Filters[i].m_FilterAddress.ToString()));
+                        entry.push_back(Pair("approved",mc_gState->m_Permissions->FilterApproved(lpEntity,&(pAksyonChainFilterEngine->m_Filters[i].m_FilterAddress)) !=0 ));
+                        entry.push_back(Pair("address",pAksyonChainFilterEngine->m_Filters[i].m_FilterAddress.ToString()));
                     }
                     results.push_back(entry);                                            
                 }
@@ -626,14 +626,14 @@ Value listfilters(const Array& params, uint32_t filter_type)
 
     sort(results.begin(), results.end(), AssetCompareByRef);
         
-    for(int i=0;i<(int)pMultiChainFilterEngine->m_Filters.size();i++)
+    for(int i=0;i<(int)pAksyonChainFilterEngine->m_Filters.size();i++)
     {
         if((filter_list.size() == 0) || 
-           (filter_list.find(*(uint256*)pMultiChainFilterEngine->m_Filters[i].m_Details.GetTxID()) != filter_list.end()) )
+           (filter_list.find(*(uint256*)pAksyonChainFilterEngine->m_Filters[i].m_Details.GetTxID()) != filter_list.end()) )
         {
             Object entry;
 
-            entry=FilterEntry(pMultiChainFilterEngine->m_Filters[i].m_Details.GetTxID(),output_level,filter_type);
+            entry=FilterEntry(pAksyonChainFilterEngine->m_Filters[i].m_Details.GetTxID(),output_level,filter_type);
             if(entry.size()>0)
             {
                 bool take_it=false;
@@ -649,12 +649,12 @@ Value listfilters(const Array& params, uint32_t filter_type)
                 }            
                 if(take_it)
                 {
-                    bool valid=pMultiChainFilterEngine->m_Filters[i].m_CreateError.size() == 0;
+                    bool valid=pAksyonChainFilterEngine->m_Filters[i].m_CreateError.size() == 0;
                     entry.push_back(Pair("compiled",valid));
                     if(check_approval)
                     {
-                        entry.push_back(Pair("approved",mc_gState->m_Permissions->FilterApproved(lpEntity,&(pMultiChainFilterEngine->m_Filters[i].m_FilterAddress)) !=0 ));
-                        entry.push_back(Pair("address",pMultiChainFilterEngine->m_Filters[i].m_FilterAddress.ToString()));
+                        entry.push_back(Pair("approved",mc_gState->m_Permissions->FilterApproved(lpEntity,&(pAksyonChainFilterEngine->m_Filters[i].m_FilterAddress)) !=0 ));
+                        entry.push_back(Pair("address",pAksyonChainFilterEngine->m_Filters[i].m_FilterAddress.ToString()));
                     }
                     results.push_back(entry);                                            
                 }
@@ -849,7 +849,7 @@ Value getfiltertxid(const Array& params, bool fHelp)
     if (fHelp || params.size() != 0)
         mc_ThrowHelpMessage("getfiltertxid");        
     
-    return pMultiChainFilterEngine->m_TxID.ToString();
+    return pAksyonChainFilterEngine->m_TxID.ToString();
 }
 
 Value setfilterparam(const json_spirit::Array& params, bool fHelp)
@@ -873,7 +873,7 @@ Value setfilterparam(const json_spirit::Array& params, bool fHelp)
             {
                 nValue=atoi(params[1].get_str().c_str());
             }
-            pMultiChainFilterEngine->m_Params.m_MaxShownData=nValue;
+            pAksyonChainFilterEngine->m_Params.m_MaxShownData=nValue;
         }
         else
         {
@@ -993,14 +993,14 @@ Value testfilter(const vector <uint160>& entities,string filter_code, Value txpa
     }
     
     mc_Filter *worker=new mc_Filter;
-//    err=pFilterEngine->CreateFilter(filter_code,filter_main_name,pMultiChainFilterEngine->m_CallbackNames[filter_type],worker,strError);
+//    err=pFilterEngine->CreateFilter(filter_code,filter_main_name,pAksyonChainFilterEngine->m_CallbackNames[filter_type],worker,strError);
     string test_code=filter_code;
     if(library_code.size())
     {
         test_code=library_code + MC_FLT_LIBRARY_GLUE + filter_code;
     }
 
-    err=pFilterEngine->CreateFilter(test_code.c_str(),filter_main_name,pMultiChainFilterEngine->m_CallbackNames[filter_type],worker,pMultiChainFilterEngine->GetSendTimeout(), strError);
+    err=pFilterEngine->CreateFilter(test_code.c_str(),filter_main_name,pAksyonChainFilterEngine->m_CallbackNames[filter_type],worker,pAksyonChainFilterEngine->GetSendTimeout(), strError);
     if(err)
     {
         errorCode=RPC_INTERNAL_ERROR;
@@ -1142,7 +1142,7 @@ Value testfilter(const vector <uint160>& entities,string filter_code, Value txpa
                     CCoinsViewCache view(&dummy);
                     CCoinsViewMemPool viewMemPool(pcoinsTip, mempool);
                     view.SetBackend(viewMemPool);
-                    if(!AcceptMultiChainTransaction(tx,view,-1,MC_AMT_NO_FILTERS,reason,NULL,NULL))
+                    if(!AcceptAksyonChainTransaction(tx,view,-1,MC_AMT_NO_FILTERS,reason,NULL,NULL))
                     {
                         errorCode=RPC_TRANSACTION_REJECTED;
                         strFatal="TX will be rejected before filter with the following error: " + reason;
@@ -1153,7 +1153,7 @@ Value testfilter(const vector <uint160>& entities,string filter_code, Value txpa
 
             }
             
-            err=pMultiChainFilterEngine->RunFilterWithCallbackLog(tx,vout,stream_txid,worker,strError,callbacks);
+            err=pAksyonChainFilterEngine->RunFilterWithCallbackLog(tx,vout,stream_txid,worker,strError,callbacks);
             if(err)
             {
                 errorCode=RPC_INTERNAL_ERROR;

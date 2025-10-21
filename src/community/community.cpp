@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "community/community.h"
 
@@ -375,7 +375,7 @@ int mc_EnterpriseFeatures::ENT_MinWalletDatVersion()
 
 void mc_EnterpriseFeatures::ENT_RPCVerifyEdition(string message) 
 {
-	string error="This feature is only available in MultiChain Enterprise";
+	string error="This feature is only available in AksyonChain Enterprise";
     if(message.size())
     {
         error += ": ";
@@ -407,7 +407,7 @@ void mc_EnterpriseFeatures::ENT_Debug(std::string action,std::string parameter)
 
 void mc_EnterpriseFeatures::LIC_RPCVerifyFeature(uint64_t feature,string message)
 {
-	string error="This feature is only available in MultiChain Enterprise";
+	string error="This feature is only available in AksyonChain Enterprise";
     if(message.size())
     {
         error += ": ";
@@ -418,7 +418,7 @@ void mc_EnterpriseFeatures::LIC_RPCVerifyFeature(uint64_t feature,string message
 
 bool mc_EnterpriseFeatures::LIC_VerifyFeature(uint64_t feature,std::string& reason)
 {
-    reason="This feature is only available in MultiChain Enterprise";
+    reason="This feature is only available in AksyonChain Enterprise";
     return false;
 }
 

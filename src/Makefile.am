@@ -33,7 +33,7 @@ LIBBITCOIN_COMMON=libbitcoin_common.a
 LIBBITCOIN_CLI=libbitcoin_cli.a
 LIBBITCOIN_UTIL=libbitcoin_util.a
 LIBBITCOIN_CRYPTO=crypto/libbitcoin_crypto.a
-LIBBITCOIN_MULTICHAIN=multichain/libbitcoin_multichain.a
+LIBBITCOIN_AKSYONCHAIN=aksyonchain/libbitcoin_aksyonchain.a
 LIBBITCOIN_UNIVALUE=univalue/libbitcoin_univalue.a
 LIBBITCOINQT=qt/libbitcoinqt.a
 LIBSECP256K1=secp256k1/libsecp256k1.la
@@ -48,7 +48,7 @@ $(LIBSECP256K1): $(wildcard secp256k1/src/*) $(wildcard secp256k1/include/*)
 # But to build the less dependent modules first, we manually select their order here:
 EXTRA_LIBRARIES = \
   crypto/libbitcoin_crypto.a \
-  multichain/libbitcoin_multichain.a \
+  aksyonchain/libbitcoin_aksyonchain.a \
   libbitcoin_util.a \
   libbitcoin_common.a \
   univalue/libbitcoin_univalue.a \
@@ -74,13 +74,13 @@ bin_PROGRAMS =
 TESTS =
 
 if BUILD_BITCOIND
-#  bin_PROGRAMS += bitcoind multichaind						# MCHN
-  bin_PROGRAMS += multichaind multichaind-cold					# MCHN
+#  bin_PROGRAMS += bitcoind aksyonchaind						# MCHN
+  bin_PROGRAMS += aksyonchaind aksyonchaind-cold					# MCHN
 endif
 
 if BUILD_BITCOIN_UTILS
-#  bin_PROGRAMS += multichain-util multichain-cli bitcoin-cli bitcoin-tx		# MCHN
-  bin_PROGRAMS += multichain-util multichain-cli 		# MCHN
+#  bin_PROGRAMS += aksyonchain-util aksyonchain-cli bitcoin-cli bitcoin-tx		# MCHN
+  bin_PROGRAMS += aksyonchain-util aksyonchain-cli 		# MCHN
 endif
 
 .PHONY: FORCE
@@ -230,10 +230,10 @@ libbitcoin_server_a_SOURCES = \
   core/init.cpp \
   storage/leveldbwrapper.cpp \
   core/main.cpp \
-  protocol/multichaintx.cpp \
-  protocol/multichainblock.cpp \
+  protocol/aksyonchaintx.cpp \
+  protocol/aksyonchainblock.cpp \
   custom/custom_server.cpp \
-  filters/multichainfilter.cpp \
+  filters/aksyonchainfilter.cpp \
   protocol/relay.cpp \
   protocol/handshake.cpp \
   chain/merkleblock.cpp \
@@ -317,18 +317,18 @@ crypto_libbitcoin_crypto_a_SOURCES = \
 
 
 
-# multichain library
-multichain_libbitcoin_multichain_a_CPPFLAGS = $(BITCOIN_CONFIG_INCLUDES)
-multichain_libbitcoin_multichain_a_SOURCES = \
+# aksyonchain library
+aksyonchain_libbitcoin_aksyonchain_a_CPPFLAGS = $(BITCOIN_CONFIG_INCLUDES)
+aksyonchain_libbitcoin_aksyonchain_a_SOURCES = \
   utils/utility.cpp \
   utils/systemdependent.cpp \
   utils/tools.cpp \
   utils/utilwrapper.cpp \
   version/version.cpp \
   custom/custom.cpp \
-  custom/custom_multichain.cpp \
+  custom/custom_aksyonchain.cpp \
   chainparams/params.cpp \
-  protocol/multichainscript.cpp \
+  protocol/aksyonchainscript.cpp \
   utils/dbwrapper.cpp \
   wallet/wallettxdb.cpp \
   wallet/chunkdb.cpp \
@@ -411,7 +411,7 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UNIVALUE) \
   $(LIBBITCOIN_WALLET) \
-  $(LIBBITCOIN_MULTICHAIN) \
+  $(LIBBITCOIN_AKSYONCHAIN) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
@@ -421,7 +421,7 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #if ENABLE_WALLET
 #bitcoind_LDADD += libbitcoin_wallet.a
 #endif
-#bitcoind_LDADD += multichain/libbitcoin_multichain.a
+#bitcoind_LDADD += aksyonchain/libbitcoin_aksyonchain.a
 #bitcoind_SOURCES = bitcoind.cpp chainparams/buildgenesis.cpp
 #
 
@@ -437,7 +437,7 @@ endif
 #bitcoin_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBBITCOIN_UTIL) \
-  $(LIBBITCOIN_MULTICHAIN) \
+  $(LIBBITCOIN_AKSYONCHAIN) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
   $(BOOST_LIBS) \
@@ -454,7 +454,7 @@ endif
 #bitcoin_tx_LDADD = \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UNIVALUE) \
-  $(LIBBITCOIN_MULTICHAIN) \
+  $(LIBBITCOIN_AKSYONCHAIN) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
@@ -518,14 +518,14 @@ libbitcoin_v8_a_SOURCES = \
 
 libbitcoin_v8_a_CPPFLAGS = $(BITCOIN_INCLUDES) $(V8_INCLUDE)
 
-# multichaind binary #
-multichaind_LDADD = \
+# aksyonchaind binary #
+aksyonchaind_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UNIVALUE) \
   $(LIBBITCOIN_WALLET) \
   $(LIBBITCOIN_ENTERPRISE) \
-  $(LIBBITCOIN_MULTICHAIN) \
+  $(LIBBITCOIN_AKSYONCHAIN) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
@@ -533,16 +533,16 @@ multichaind_LDADD = \
   $(LIBSECP256K1)
 
 if TARGET_WINDOWS
-  multichaind_LDADD += $(top_builddir)/src/v8_win/build/Release/multichain-v8.lib
+  aksyonchaind_LDADD += $(top_builddir)/src/v8_win/build/Release/aksyonchain-v8.lib
 else
-  multichaind_LDADD += $(LIBBITCOIN_V8)
+  aksyonchaind_LDADD += $(LIBBITCOIN_V8)
 endif
 
 #if ENABLE_WALLET
-#multichaind_LDADD += libbitcoin_wallet.a
+#aksyonchaind_LDADD += libbitcoin_wallet.a
 #endif
-multichaind_SOURCES = \
-    multichain/multichaind.cpp \
+aksyonchaind_SOURCES = \
+    aksyonchain/aksyonchaind.cpp \
     rpc/rpclist.cpp \
     chainparams/buildgenesis.cpp \
     filters/filtercallback.cpp \
@@ -550,26 +550,26 @@ multichaind_SOURCES = \
     json/json_spirit_writer.cpp
 
 if TARGET_WINDOWS
-multichaind_SOURCES += filters/filter_win.cpp multichaind-res.rc
+aksyonchaind_SOURCES += filters/filter_win.cpp aksyonchaind-res.rc
 else
-multichaind_SOURCES += filters/filter.cpp
+aksyonchaind_SOURCES += filters/filter.cpp
 endif
 
-multichaind_LDADD += $(BOOST_LIBS) $(EDITION_LIBS) $(MINIUPNPC_LIBS) $(EVENT_LIBS)
-multichaind_CPPFLAGS = $(BITCOIN_INCLUDES) $(V8_INCLUDE)
-multichaind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) -pthread
+aksyonchaind_LDADD += $(BOOST_LIBS) $(EDITION_LIBS) $(MINIUPNPC_LIBS) $(EVENT_LIBS)
+aksyonchaind_CPPFLAGS = $(BITCOIN_INCLUDES) $(V8_INCLUDE)
+aksyonchaind_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) -pthread
 if !TARGET_WINDOWS
-multichaind_LDFLAGS += $(V8_LIBS)
+aksyonchaind_LDFLAGS += $(V8_LIBS)
 endif
 
-# multichaind-cold binary #
-multichaind_cold_LDADD = \
+# aksyonchaind-cold binary #
+aksyonchaind_cold_LDADD = \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UNIVALUE) \
   $(LIBBITCOIN_WALLET) \
   $(LIBBITCOIN_COMMUNITY) \
-  $(LIBBITCOIN_MULTICHAIN) \
+  $(LIBBITCOIN_AKSYONCHAIN) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
@@ -577,10 +577,10 @@ multichaind_cold_LDADD = \
   $(LIBSECP256K1)
 
 #if ENABLE_WALLET
-#multichaind_cold_LDADD += libbitcoin_wallet.a
+#aksyonchaind_cold_LDADD += libbitcoin_wallet.a
 #endif
-multichaind_cold_SOURCES = \
-    multichain/multichaind-cold.cpp \
+aksyonchaind_cold_SOURCES = \
+    aksyonchain/aksyonchaind-cold.cpp \
     core/init-cold.cpp \
     rpc/rpclist-cold.cpp \
     chainparams/buildgenesis.cpp \
@@ -591,18 +591,18 @@ multichaind_cold_SOURCES = \
 #
 
 if TARGET_WINDOWS
-multichaind_cold_SOURCES += multichaind-cold-res.rc
+aksyonchaind_cold_SOURCES += aksyonchaind-cold-res.rc
 endif
 
-multichaind_cold_LDADD += $(BOOST_LIBS) $(EDITION_LIBS) $(MINIUPNPC_LIBS) $(EVENT_LIBS)
-multichaind_cold_CPPFLAGS = $(BITCOIN_INCLUDES)
-multichaind_cold_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) -pthread
+aksyonchaind_cold_LDADD += $(BOOST_LIBS) $(EDITION_LIBS) $(MINIUPNPC_LIBS) $(EVENT_LIBS)
+aksyonchaind_cold_CPPFLAGS = $(BITCOIN_INCLUDES)
+aksyonchaind_cold_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) -pthread
 
-# multichain-cli binary #
-multichain_cli_LDADD = \
+# aksyonchain-cli binary #
+aksyonchain_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBBITCOIN_UTIL) \
-  $(LIBBITCOIN_MULTICHAIN) \
+  $(LIBBITCOIN_AKSYONCHAIN) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBLEVELDB) \
   $(BOOST_LIBS) \
@@ -610,20 +610,20 @@ multichain_cli_LDADD = \
   $(CRYPTO_LIBS) \
   $(EVENT_LIBS)
 
-multichain_cli_SOURCES =  multichain/multichain-cli.cpp
+aksyonchain_cli_SOURCES =  aksyonchain/aksyonchain-cli.cpp
 
-multichain_cli_CPPFLAGS = $(BITCOIN_INCLUDES)
+aksyonchain_cli_CPPFLAGS = $(BITCOIN_INCLUDES)
 #
 
 if TARGET_WINDOWS
-multichain_cli_SOURCES += multichain-cli-res.rc
+aksyonchain_cli_SOURCES += aksyonchain-cli-res.rc
 endif
-multichain_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+aksyonchain_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
-# multichain-util binary #
-multichain_util_LDADD = \
+# aksyonchain-util binary #
+aksyonchain_util_LDADD = \
   $(LIBBITCOIN_UNIVALUE) \
-  $(LIBBITCOIN_MULTICHAIN) \
+  $(LIBBITCOIN_AKSYONCHAIN) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
@@ -632,14 +632,14 @@ multichain_util_LDADD = \
   $(BOOST_LIBS) \
   $(CRYPTO_LIBS)
 
-multichain_util_SOURCES = multichain/multichain-util.cpp chainparams/buildgenesis.cpp
+aksyonchain_util_SOURCES = aksyonchain/aksyonchain-util.cpp chainparams/buildgenesis.cpp
 
-multichain_util_CPPFLAGS = $(BITCOIN_INCLUDES)
+aksyonchain_util_CPPFLAGS = $(BITCOIN_INCLUDES)
 #
 if TARGET_WINDOWS
-multichain_util_SOURCES += multichain-util-res.rc
+aksyonchain_util_SOURCES += aksyonchain-util-res.rc
 endif
-multichain_util_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+aksyonchain_util_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 
 # MCHN END
@@ -663,9 +663,9 @@ libbitcoinconsensus_la_SOURCES = \
   chainparams/buildgenesis.cpp \
   version/version.cpp \
   custom/custom.cpp \
-  custom/custom_multichain.cpp \
+  custom/custom_aksyonchain.cpp \
   chainparams/chainparams.cpp \
-  protocol/multichainscript.cpp \
+  protocol/aksyonchainscript.cpp \
   utils/dbwrapper.cpp \
   wallet/wallettxdb.cpp \
   wallet/chunkdb.cpp \

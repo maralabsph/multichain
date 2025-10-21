@@ -64,11 +64,11 @@ def process_bin_files(platform):
 
 
 def get_options():
-    mc_path_default = str(Path.home() / "multichain")
+    mc_path_default = str(Path.home() / "aksyonchain")
     parser = ArgumentParser(description="Build v8_data.lib from .bin and .dat files")
     parser.add_argument("-v", "--verbose", action="store_true", help="print debug messages to log")
-    parser.add_argument("-m", "--multichain", metavar="DIR", default=mc_path_default,
-                        help="MultiChain path prefix (default: %(default)s)")
+    parser.add_argument("-m", "--aksyonchain", metavar="DIR", default=mc_path_default,
+                        help="AksyonChain path prefix (default: %(default)s)")
     parser.add_argument("-o", "--platform", default=sys.platform,
                         help="override platform definition (default: %(default)s)")
 
@@ -77,11 +77,11 @@ def get_options():
     if options.verbose:
         logger.setLevel(logging.DEBUG)
 
-    if not Path(options.multichain).exists():
-        parser.error("{!r}: MultiChain path does not exist".format(options.multichain))
+    if not Path(options.aksyonchain).exists():
+        parser.error("{!r}: AksyonChain path does not exist".format(options.aksyonchain))
 
     logger.info("{} - {}".format(logger.name, parser.description))
-    logger.info("  Path:     {}".format(options.multichain))
+    logger.info("  Path:     {}".format(options.aksyonchain))
     logger.info("  Platform: {}".format(options.platform))
 
     return options
@@ -90,7 +90,7 @@ def get_options():
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s %(levelname)-7s %(message)s")
     options = get_options()
-    os.chdir(str(Path(options.multichain) / "v8build" / "v8" / "out.gn" / "x64.release"))
+    os.chdir(str(Path(options.aksyonchain) / "v8build" / "v8" / "out.gn" / "x64.release"))
     process_bin_files(options.platform)
     return 0
 

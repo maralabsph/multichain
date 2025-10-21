@@ -1,15 +1,15 @@
 # Windows Build Notes (on Windows and Ubuntu 16.04, x64)
 
-Building MultiChain for Windows requires working with two separate development environments:
+Building AksyonChain for Windows requires working with two separate development environments:
 
--   Visual Studio 2017 on Native Windows (for building Google's V8 JavaScript engine and a V8 service DLL for MultiChain)
--   GCC MinGW cross compiler on Linux (for building the MultiChain project)
+-   Visual Studio 2017 on Native Windows (for building Google's V8 JavaScript engine and a V8 service DLL for AksyonChain)
+-   GCC MinGW cross compiler on Linux (for building the AksyonChain project)
 
 In different stages of the build, artifacts from one environment need to be available to the other environment. If possible, sharing a single physical file system is most helpful. Otherwise, files need to be copied between the two file systems (e.g. *scp* on Linux, *pscp* from Putty or WinSCP on Windows).
 
 The ideal system combination is WSL (Windows Subsystem for Linux) on Windows 10 (Creator edition or later). Search for "Ubuntu" in the Microsoft Store.
 
-The reminder of these instructions assumes that the the environment variable `MULTICHAIN_HOME` is the root folder of MultiChain. Variables on Windows are referenced by `%VAR%`, and on Linux by `$VAR` or `${VAR}`.
+The reminder of these instructions assumes that the the environment variable `AKSYONCHAIN_HOME` is the root folder of AksyonChain. Variables on Windows are referenced by `%VAR%`, and on Linux by `$VAR` or `${VAR}`.
 
 ## Prerequisites on Windows
 
@@ -55,56 +55,56 @@ Press <enter> to keep the current choice[*], or type selection number:
 
 On Linux:
 
--   In the location where you want to build MultiChain:
+-   In the location where you want to build AksyonChain:
 
-        git clone https://github.com/MultiChain/multichain.git
-        cd multichain
-        export MULTICHAIN_HOME=$(pwd)
+        git clone https://github.com/AksyonChain/aksyonchain.git
+        cd aksyonchain
+        export AKSYONCHAIN_HOME=$(pwd)
 
 ### Prepare a build area on the *Windows* machine
 
 On Windows:
 
--   In the location where you want to build MultiChain:
+-   In the location where you want to build AksyonChain:
 
-        git clone https://github.com/MultiChain/multichain.git
-        cd multichain
-        set MULTICHAIN_HOME=%CD%
+        git clone https://github.com/AksyonChain/aksyonchain.git
+        cd aksyonchain
+        set AKSYONCHAIN_HOME=%CD%
 
 ### Prepare to download or build V8
 
 On Windows:
 
-        cd %MULTICHAIN_HOME%
+        cd %AKSYONCHAIN_HOME%
         mkdir v8build
         cd v8build
 
     
-You can use pre-built headers and binaries of Google's V8 JavaScript engine by downloading and expanding [windows-v8.zip](https://github.com/MultiChain/multichain-binaries/raw/master/windows-v8.zip) in the current directory (and skip the rest of this section).
+You can use pre-built headers and binaries of Google's V8 JavaScript engine by downloading and expanding [windows-v8.zip](https://github.com/AksyonChain/aksyonchain-binaries/raw/master/windows-v8.zip) in the current directory (and skip the rest of this section).
 
 If, on the other hand, you prefer to build the V8 component yourself, please perform the following:
 
 -   Follow the instructions in [V8_win.md](V8_win.md) to fetch, configure and build Google's V8 JavaScript engine.
 
--   To facilitate building an additional library required by MultiChain, copy the following files to the Linux machine, in the same relative folder:
+-   To facilitate building an additional library required by AksyonChain, copy the following files to the Linux machine, in the same relative folder:
 
-        %MULTICHAIN_HOME%\v8build\v8\out.gn\x64.release\*.bin -> $MULTICHAIN_HOME/v8build/v8/out.gn/x64.release
-        %MULTICHAIN_HOME%\v8build\v8\out.gn\x64.release\*.dat -> $MULTICHAIN_HOME/v8build/v8/out.gn/x64.release
+        %AKSYONCHAIN_HOME%\v8build\v8\out.gn\x64.release\*.bin -> $AKSYONCHAIN_HOME/v8build/v8/out.gn/x64.release
+        %AKSYONCHAIN_HOME%\v8build\v8\out.gn\x64.release\*.dat -> $AKSYONCHAIN_HOME/v8build/v8/out.gn/x64.release
 
 On Linux:
 
-        export RELEASE_HOME=$MULTICHAIN_HOME/v8build/v8/out.gn/x64.release
+        export RELEASE_HOME=$AKSYONCHAIN_HOME/v8build/v8/out.gn/x64.release
         cd $RELEASE
         mkdir obj
-        python $MULTICHAIN_HOME/depends/v8_data_lib.py -m $MULTICHAIN_HOME -o win32
+        python $AKSYONCHAIN_HOME/depends/v8_data_lib.py -m $AKSYONCHAIN_HOME -o win32
 
--   Copy `obj/v8_data.lib` to `%MULTICHAIN_HOME%\v8build\v8\out.gn\x64.release\obj` on Windows.
+-   Copy `obj/v8_data.lib` to `%AKSYONCHAIN_HOME%\v8build\v8\out.gn\x64.release\obj` on Windows.
 
-### Build V8 MultiChain additional library
+### Build V8 AksyonChain additional library
 
 On Windows:
 
-            cd %MULTICHAIN_HOME%\src\v8_win
+            cd %AKSYONCHAIN_HOME%\src\v8_win
             mkdir build
             cd build
             cmake -G "Visual Studio 15 2017 Win64" ..
@@ -113,20 +113,20 @@ On Windows:
 
             cmake -DBOOST_ROOT=C:\local\boost_1_65_1 -G "Visual Studio 15 2017 Win64" ..
             
--   Build the MultiChain V8 service DLL
+-   Build the AksyonChain V8 service DLL
 
             cmake --build . --config Release --target spdlog
             cmake --build . --config Release
 
 
--   Copy `%MULTICHAIN_HOME%\src\v8_win\build\Release\multichain_v8.lib` to `$MULTICHAIN_HOME/src/v8_win/build/Release` on Linux.
--   Copy `%MULTICHAIN_HOME%\src\v8_win\build\Release\multichain_v8.dll` to `%MULTICHAIN_HOME%\src` (on local Windows).
+-   Copy `%AKSYONCHAIN_HOME%\src\v8_win\build\Release\aksyonchain_v8.lib` to `$AKSYONCHAIN_HOME/src/v8_win/build/Release` on Linux.
+-   Copy `%AKSYONCHAIN_HOME%\src\v8_win\build\Release\aksyonchain_v8.dll` to `%AKSYONCHAIN_HOME%\src` (on local Windows).
 
-### Build MultiChain and test that it is alive
+### Build AksyonChain and test that it is alive
 
 On Linux:
 
-        cd $MULTICHAIN_HOME
+        cd $AKSYONCHAIN_HOME
         ./autogen.sh
         cd depends
         make HOST=x86_64-w64-mingw32
@@ -134,13 +134,13 @@ On Linux:
         ./configure --prefix=$(pwd)/depends/x86_64-w64-mingw32 --enable-cxx --disable-shared --enable-static --with-pic
         make
 
--   This will build `multichaind.exe`, `multichain-cli.exe` and `multitchain-util.exe` in the `src` directory[<sup>1</sup>](#f1).
--   Copy `src/multichaind.exe`, `src/multichain-cli.exe` and `src/multitchain-util.exe` to `%MULTICHAIN_HOME%\src` on Windows.
+-   This will build `aksyonchaind.exe`, `aksyonchain-cli.exe` and `multitchain-util.exe` in the `src` directory[<sup>1</sup>](#f1).
+-   Copy `src/aksyonchaind.exe`, `src/aksyonchain-cli.exe` and `src/multitchain-util.exe` to `%AKSYONCHAIN_HOME%\src` on Windows.
 
 On Windows:
 
-        cd %MULTICHAIN_HOME%
-        src\multichaind.exe --help
+        cd %AKSYONCHAIN_HOME%
+        src\aksyonchaind.exe --help
 
 -   If all went well, you should see the expected help text from the program.
 

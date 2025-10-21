@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 unsigned char null_entity[MC_PLS_SIZE_ENTITY];
 unsigned char upgrade_entity[MC_PLS_SIZE_ENTITY];
@@ -1255,7 +1255,7 @@ int mc_Permissions::IsApprovedInternal(const void* lpUpgrade, int check_current_
 
 int mc_Permissions::CanConnectInternal(const void* lpEntity,const void* lpAddress,int with_implicit)
 {
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return MC_PTP_CONNECT;
     }
@@ -1320,7 +1320,7 @@ int mc_Permissions::CanSend(const void* lpEntity,const void* lpAddress)
     int result;
     mc_MempoolPermissionRow row;
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return MC_PTP_SEND;
     }
@@ -1385,7 +1385,7 @@ int mc_Permissions::CanReceive(const void* lpEntity,const void* lpAddress)
     int result;
     mc_MempoolPermissionRow row;
 
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return MC_PTP_RECEIVE;
     }
@@ -1440,7 +1440,7 @@ int mc_Permissions::CanWrite(const void* lpEntity,const void* lpAddress)
     int result;
     mc_MempoolPermissionRow row;
 
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1476,7 +1476,7 @@ int mc_Permissions::CanRead(const void* lpEntity,const void* lpAddress)
 {
     int result;
 
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1501,7 +1501,7 @@ int mc_Permissions::FilterApproved(const void* lpEntity,const void* lpAddress)
 {
     int result;
 
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1538,7 +1538,7 @@ int mc_Permissions::DetailsFlag(const void* lpEntity,uint32_t flag)
     int result;
     unsigned char address[MC_PLS_SIZE_ADDRESS];
 
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return 0;
     }
@@ -1696,7 +1696,7 @@ int mc_Permissions::CanMine(const void* lpEntity,const void* lpAddress)
     int result;    
     int32_t last;
         
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return MC_PTP_MINE;
     }
@@ -1773,7 +1773,7 @@ int mc_Permissions::CanMineBlock(const void* lpAddress,uint32_t block)
 //    int diversity;
     uint32_t last;
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return MC_PTP_MINE;
     }
@@ -1924,7 +1924,7 @@ int mc_Permissions::CanMineBlockOnFork(const void* lpAddress,uint32_t block,uint
     uint32_t last;
     int result;
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
         return MC_PTP_MINE;
     }

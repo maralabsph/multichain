@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_DEFINE_H
-#define	MULTICHAIN_DEFINE_H
+#ifndef AKSYONCHAIN_DEFINE_H
+#define	AKSYONCHAIN_DEFINE_H
 
 #include <stdio.h>
 #include <time.h>
@@ -72,5 +72,5 @@
 #define MC_PRM_NETWORK_NAME_MAX_SIZE    32
 #define MC_PRM_MAX_THREADS              256
 
-#endif	/* MULTICHAIN_DEFINE_H */
+#endif	/* AKSYONCHAIN_DEFINE_H */
 

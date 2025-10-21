@@ -1,7 +1,7 @@
 // Copyright (c) 2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "utils/allocators.h"
 #include "structs/base58.h"
@@ -17,7 +17,7 @@
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/static_visitor.hpp>
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 
 /** All alphanumeric characters except for "0", "I", "O", and "l" */

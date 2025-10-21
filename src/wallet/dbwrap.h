@@ -1,14 +1,14 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 
-#ifndef MULTICHAIN_DBWRAP_H
-#define MULTICHAIN_DBWRAP_H
+#ifndef AKSYONCHAIN_DBWRAP_H
+#define AKSYONCHAIN_DBWRAP_H
 
 #include "utils/util.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "version/clientversion.h"
 #include "utils/serialize.h"
 #include "utils/streams.h"
@@ -208,5 +208,5 @@ public:
 
 
 
-#endif /* MULTICHAIN_DBWRAP_H */
+#endif /* AKSYONCHAIN_DBWRAP_H */
 

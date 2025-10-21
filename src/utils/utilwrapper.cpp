@@ -1,9 +1,9 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "crypto/sha256.h"
 #include "structs/base58.h"
 
@@ -332,16 +332,16 @@ int64_t mc_Params::HasOption(const char* strArg)
 
 boost::filesystem::path mc_GetDefaultDataDir()
 {
-    // Windows < Vista: C:\Documents and Settings\Username\Application Data\MultiChain
-    // Windows >= Vista: C:\Users\Username\AppData\Roaming\MultiChain
-    // Mac and Unix: ~/.multichain
+    // Windows < Vista: C:\Documents and Settings\Username\Application Data\AksyonChain
+    // Windows >= Vista: C:\Users\Username\AppData\Roaming\AksyonChain
+    // Mac and Unix: ~/.aksyonchain
 #ifdef WIN32
     // Windows
     if(mc_gState->m_SessionFlags & MC_SSF_COLD)
     {
-        return GetSpecialFolderPath(CSIDL_APPDATA) / "MultiChainCold";
+        return GetSpecialFolderPath(CSIDL_APPDATA) / "AksyonChainCold";
     }
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "MultiChain";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "AksyonChain";
 #else
     // Mac and Unix
     boost::filesystem::path pathRet;
@@ -353,9 +353,9 @@ boost::filesystem::path mc_GetDefaultDataDir()
     
     if(mc_gState->m_SessionFlags & MC_SSF_COLD)
     {
-        return pathRet / ".multichain-cold";        
+        return pathRet / ".aksyonchain-cold";
     }
-    return pathRet / ".multichain";
+    return pathRet / ".aksyonchain";
 #endif
 }
 
@@ -429,7 +429,7 @@ void mc_CheckDataDirInConfFile()
     mc_MapStringString *mapConfig;
     
     mapConfig=new mc_MapStringString;
-    if(mc_ReadGeneralConfigFile(mapConfig,NULL,"multichain",".conf") == 0)
+    if(mc_ReadGeneralConfigFile(mapConfig,NULL,"aksyonchain",".conf") == 0)
     {
         if(mapConfig->Get("datadir") != NULL)
         {
@@ -659,7 +659,7 @@ size_t mc_ReadFileToBuffer(FILE *fHan,char **lpptr)
 
 boost::filesystem::path mc_GetConfigFile(const char *network_name,const char *file_name,const char *extension)
 {
-    string fileName="multichain";
+    string fileName="aksyonchain";
     if(file_name)
     {
         fileName = file_name;
@@ -796,7 +796,7 @@ int mc_ReadConfigFile(
 int mc_Params::ReadConfig(const char *network_name)
 {
     mc_ReadConfigFile(mc_GetConfigFile(network_name,"setruntimeparam",".conf"),&mapArgs, &mapMultiArgs,"-");    
-    mc_ReadConfigFile(mc_GetConfigFile(network_name,"multichain",".conf"),&mapArgs, &mapMultiArgs,"-");    
+    mc_ReadConfigFile(mc_GetConfigFile(network_name,"aksyonchain",".conf"),&mapArgs, &mapMultiArgs,"-");
     return mc_ReadConfigFile(mc_GetConfigFile(NULL,NULL,".conf"),&mapArgs, &mapMultiArgs,"-");    
 }
 
@@ -892,7 +892,7 @@ int mc_BuildDescription(int build, char *desc)
 }
 
 
-int mc_MultichainParams::SetProtocolGlobals()
+int mc_AksyonchainParams::SetProtocolGlobals()
 {
     MCP_ALLOW_ARBITRARY_OUTPUTS=1; 
     if(mc_gState->m_Features->FixedDestinationExtraction() != 0)
@@ -911,15 +911,15 @@ int mc_MultichainParams::SetProtocolGlobals()
     return MC_ERR_NOERROR;
 }
 
-int mc_MultichainParams::SetGlobals()
+int mc_AksyonchainParams::SetGlobals()
 {
-    m_IsProtocolMultiChain=1;
+    m_IsProtocolAksyonChain=1;
     void *ptr=GetParam("chainprotocol",NULL);
     if(ptr)
     {
-        if(strcmp((char*)ptr,"multichain"))
+        if(strcmp((char*)ptr,"aksyonchain"))
         {
-            m_IsProtocolMultiChain=0;
+            m_IsProtocolAksyonChain=0;
         }
     }
     m_ProtocolVersion=ProtocolVersion();
@@ -1054,13 +1054,13 @@ void mc_SHA256::DoubleHash(const void *lpSalt,int salt_size,const void *lpData,i
 }
 
 
-int mc_MultichainParams::Import(const char *name,const char *source_address)
+int mc_AksyonchainParams::Import(const char *name,const char *source_address)
 {
     
     return MC_ERR_NOERROR;
 }
 
-std::string MultichainServerAddress(bool check_external_ip)
+std::string AksyonchainServerAddress(bool check_external_ip)
 {
     string result=string(mc_gState->m_NetworkParams->Name());
     unsigned char *ptr;

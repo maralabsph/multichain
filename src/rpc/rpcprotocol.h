@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef BITCOIN_RPCPROTOCOL_H
 #define BITCOIN_RPCPROTOCOL_H
@@ -77,7 +77,7 @@ enum RPCErrorCode
     RPC_WALLET_ENCRYPTION_FAILED    = -16, //! Failed to encrypt the wallet
     RPC_WALLET_ALREADY_UNLOCKED     = -17, //! Wallet is already unlocked
     
-    //! MultiChain specific errors
+    //! AksyonChain specific errors
     
     RPC_NOT_ALLOWED                 = -701,  //! Given action is not allowed in current database state 
     RPC_NOT_SUPPORTED               = -702,  //! API not supported
@@ -118,6 +118,6 @@ std::string JSONRPCRequest(const std::string& strMethod, const json_spirit::Arra
 json_spirit::Object JSONRPCReplyObj(const json_spirit::Value& result, const json_spirit::Value& error, const json_spirit::Value& id);
 std::string JSONRPCReply(const json_spirit::Value& result, const json_spirit::Value& error, const json_spirit::Value& id);
 json_spirit::Object JSONRPCError(int code, const std::string& message);
-std::string FormatFullMultiChainVersion();
+std::string FormatFullAksyonChainVersion();
 
 #endif // BITCOIN_RPCPROTOCOL_H

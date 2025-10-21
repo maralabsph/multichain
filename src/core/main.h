@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef BITCOIN_MAIN_H
 #define BITCOIN_MAIN_H
@@ -22,7 +22,7 @@
 #include "script/script.h"
 #include "script/sigcache.h"
 #include "script/standard.h"
-#include "filters/multichainfilter.h"
+#include "filters/aksyonchainfilter.h"
 #include "utils/sync.h"
 #include "utils/tinyformat.h"
 #include "chain/txmempool.h"
@@ -178,7 +178,7 @@ static const uint64_t nMinDiskSpace = 52428800;
 
 
 
-bool AcceptMultiChainTransaction(const CTransaction& tx, 
+bool AcceptAksyonChainTransaction(const CTransaction& tx,
                                  const CCoinsViewCache &inputs,
                                  int offset,
                                  uint32_t flags,
@@ -186,7 +186,7 @@ bool AcceptMultiChainTransaction(const CTransaction& tx,
                                  int64_t *mandatory_fee_out,     
                                  uint32_t *replay);
 
-std::string MultichainServerAddress(bool check_external_ip);
+std::string AksyonchainServerAddress(bool check_external_ip);
 void ClearMemPools();
 std::string SetLastBlock(uint256 hash);
 std::string SetLastBlock(uint256 hash,bool *fNotFound);

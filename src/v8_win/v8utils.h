@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #ifndef V8UTILS_H_
 #define V8UTILS_H_
@@ -55,7 +55,7 @@ inline v8::Local<v8::String> String2V8(v8::Isolate *isolate, std::string str)
 }
 
 /**
- * Get a directory for multichain temporary files.
+ * Get a directory for aksyonchain temporary files.
  */
 inline fs::path GetTemporaryPidDirectory()
 {

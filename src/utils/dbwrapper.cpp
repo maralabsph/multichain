@@ -1,11 +1,11 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 //#include "utils/declare.h"
 //#include "utils/dbwrapper.h"
 
 #include "leveldb/include/leveldb/c.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 int cs_Database::Zero()
 {

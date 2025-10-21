@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "chainparams/globals.h"
 #include "utils/random.h"
 #include "utils/util.h"
@@ -21,8 +21,8 @@ int main(int argc, char* argv[])
     
     RandomInit();    
     
-    mc_MultichainParams* params;
-    mc_MultichainParams* paramsOld;
+    mc_AksyonchainParams* params;
+    mc_AksyonchainParams* paramsOld;
     mc_gState=new mc_State;
      
     mc_gState->m_Params->Parse(argc, argv, MC_ETP_UTIL);
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     
     mc_ExpandDataDirParam();
     
-    printf("\nMultiChain %s Utilities (latest protocol %d)\n\n",mc_BuildDescription(mc_gState->GetNumericVersion()).c_str(),mc_gState->GetProtocolVersion());
+    printf("\nAksyonChain %s Utilities (latest protocol %d)\n\n",mc_BuildDescription(mc_gState->GetNumericVersion()).c_str(),mc_gState->GetProtocolVersion());
              
     err=MC_ERR_OPERATION_NOT_SUPPORTED;
      
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
         {
             if(mc_gState->m_Params->m_NumArguments>1)
             {
-                params=new mc_MultichainParams;
+                params=new mc_AksyonchainParams;
                 
                 err=MC_ERR_NOERROR;
                 
@@ -83,8 +83,8 @@ int main(int argc, char* argv[])
                 { 
                     printf("Blockchain parameter set was successfully generated.\n");
                     mc_GetFullFileName(mc_gState->m_Params->m_Arguments[1],"params", ".dat",MC_FOM_RELATIVE_TO_DATADIR,fileName);
-                    printf("You can edit it in %s before running multichaind for the first time.\n\n",fileName);
-                    printf("To generate blockchain please run \"multichaind %s -daemon\".\n",params->Name());
+                    printf("You can edit it in %s before running aksyonchaind for the first time.\n\n",fileName);
+                    printf("To generate blockchain please run \"aksyonchaind %s -daemon\".\n",params->Name());
                 }                
                 else
                 {
@@ -97,8 +97,8 @@ int main(int argc, char* argv[])
         {
             if(mc_gState->m_Params->m_NumArguments>2)
             {
-                params=new mc_MultichainParams;
-                paramsOld=new mc_MultichainParams;
+                params=new mc_AksyonchainParams;
+                paramsOld=new mc_AksyonchainParams;
 
                 
                 isSetDataDirArg=mc_GetDataDirArg(DataDirArg);
@@ -145,8 +145,8 @@ int main(int argc, char* argv[])
                     
                     printf("Blockchain parameter set was successfully cloned.\n");
                     mc_GetFullFileName(mc_gState->m_Params->m_Arguments[2],"params", ".dat",MC_FOM_RELATIVE_TO_DATADIR,fileName);
-                    printf("You can edit it in %s before running multichaind for the first time.\n\n",fileName);
-                    printf("To generate blockchain please run \"multichaind %s -daemon\".\n",params->Name());
+                    printf("You can edit it in %s before running aksyonchaind for the first time.\n\n",fileName);
+                    printf("To generate blockchain please run \"aksyonchaind %s -daemon\".\n",params->Name());
                 }                
                 else
                 {
@@ -197,10 +197,10 @@ int main(int argc, char* argv[])
     {
         mc_GetFullFileName("<blockchain-name>","params", ".dat",MC_FOM_RELATIVE_TO_DATADIR,fileName);
         printf("Usage:\n");
-        printf("  multichain-util create <blockchain-name>  ( <protocol-version> = %d ) [options]        Creates new multichain configuration file %s with default parameters\n",
+        printf("  aksyonchain-util create <blockchain-name>  ( <protocol-version> = %d ) [options]        Creates new aksyonchain configuration file %s with default parameters\n",
                 mc_gState->GetProtocolVersion(),fileName);
         mc_GetFullFileName("<new-blockchain-name>","params", ".dat",MC_FOM_RELATIVE_TO_DATADIR,fileName);
-        printf("  multichain-util clone <old-blockchain-name> <new-blockchain-name> [options]               Creates new multichain configuration file %s copying parameters\n",fileName);
+        printf("  aksyonchain-util clone <old-blockchain-name> <new-blockchain-name> [options]               Creates new aksyonchain configuration file %s copying parameters\n",fileName);
         
         isSetDataDirArg=mc_GetDataDirArg(DataDirArg);
         if(isSetDataDirArg)

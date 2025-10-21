@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2016 The Bitcoin developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "core/main.h"
 
@@ -27,7 +27,7 @@
 #include "keys/pubkey.h"
 #include "keys/key.h"
 #include "wallet/wallet.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "community/community.h"
 #include "wallet/wallettxs.h"
 #include "script/script.h"
@@ -37,7 +37,7 @@
 extern mc_WalletTxs* pwalletTxsMain;
 extern mc_RelayManager* pRelayManager;
 extern mc_FilterEngine* pFilterEngine;
-extern mc_MultiChainFilterEngine* pMultiChainFilterEngine;
+extern mc_AksyonChainFilterEngine* pAksyonChainFilterEngine;
 
 /* MCHN END */
 
@@ -51,7 +51,7 @@ extern mc_MultiChainFilterEngine* pMultiChainFilterEngine;
 using namespace boost;
 using namespace std;
 
-bool Is_MultiChainLicenseTokenTransfer(const CTransaction& tx);
+bool Is_AksyonChainLicenseTokenTransfer(const CTransaction& tx);
 bool ExtractDestinationScriptValid(const CScript& scriptPubKey, CTxDestination& addressRet);
 bool AcceptAssetTransfers(const CTransaction& tx, const CCoinsViewCache &inputs, string& reason);
 bool AcceptAssetGenesis(const CTransaction &tx,int offset,bool accept,string& reason);
@@ -63,18 +63,18 @@ bool VerifyBlockSignatureType(CBlock *block);
 bool VerifyBlockSignature(CBlock *block,bool force);
 bool VerifyBlockMiner(CBlock *block,CBlockIndex* pindexNew);
 bool CheckBlockPermissions(const CBlock& block,CBlockIndex* prev_block,unsigned char *lpMinerAddress);
-bool ProcessMultichainRelay(CNode* pfrom, CDataStream& vRecv, CValidationState &state);
-bool ProcessMultichainVerack(CNode* pfrom, CDataStream& vRecv,bool fIsVerackack,bool *disconnect_flag);
-bool PushMultiChainVerack(CNode* pfrom, bool fIsVerackack);
-bool MultichainNode_CanConnect(CNode *pnode);
-bool MultichainNode_DisconnectRemote(CNode *pnode);
-bool MultichainNode_DisconnectLocal(CNode *pnode);
-bool MultichainNode_RespondToGetData(CNode *pnode);
-bool MultichainNode_SendInv(CNode *pnode);
-bool MultichainNode_AcceptData(CNode *pnode);
-bool MultichainNode_IgnoreIncoming(CNode *pnode);
-bool MultichainNode_IsLocal(CNode *pnode);
-bool MultichainNode_CollectChunks();
+bool ProcessAksyonchainRelay(CNode* pfrom, CDataStream& vRecv, CValidationState &state);
+bool ProcessAksyonchainVerack(CNode* pfrom, CDataStream& vRecv,bool fIsVerackack,bool *disconnect_flag);
+bool PushAksyonChainVerack(CNode* pfrom, bool fIsVerackack);
+bool AksyonchainNode_CanConnect(CNode *pnode);
+bool AksyonchainNode_DisconnectRemote(CNode *pnode);
+bool AksyonchainNode_DisconnectLocal(CNode *pnode);
+bool AksyonchainNode_RespondToGetData(CNode *pnode);
+bool AksyonchainNode_SendInv(CNode *pnode);
+bool AksyonchainNode_AcceptData(CNode *pnode);
+bool AksyonchainNode_IgnoreIncoming(CNode *pnode);
+bool AksyonchainNode_IsLocal(CNode *pnode);
+bool AksyonchainNode_CollectChunks();
 bool IsTxBanned(uint256 txid);
 int CreateUpgradeLists(int current_height,vector<mc_UpgradedParameter> *vParams,vector<mc_UpgradeStatus> *vUpgrades);
 void SetRPCNewTxFlag();
@@ -152,7 +152,7 @@ set<uint256> setBlockTransactions[MC_TXSET_BLOCKS];
 /** Constant stuff for coinbase transactions we create: */
 CScript COINBASE_FLAGS;
 
-const string strMessageMagic = "MultiChain Signed Message:\n";
+const string strMessageMagic = "AksyonChain Signed Message:\n";
 
 // Internal stuff
 namespace {
@@ -167,7 +167,7 @@ namespace {
             
 /* MCHN START */
             // Prefer chains we mined long time ago 
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
             {
                 if((pa->nCanMine > 0) && (pb->nCanMine == 0)) return false;
                 if((pa->nCanMine == 0) && (pb->nCanMine > 0)) return true;
@@ -369,7 +369,7 @@ map<NodeId, CNodeState> mapNodeState;
 
 /* MCHN START */
 
-int SetUpgradedParamValue(const mc_OneMultichainParam *param,int64_t value)
+int SetUpgradedParamValue(const mc_OneAksyonchainParam *param,int64_t value)
 {
     if(mc_gState->m_Features->ParameterUpgrades() == 0)
     {
@@ -395,7 +395,7 @@ int SetUpgradedParamValue(const mc_OneMultichainParam *param,int64_t value)
     if(strcmp(param->m_Name,"targetblocktime") == 0)
     {
         MCP_TARGET_BLOCK_TIME=value;
-        SetMultiChainParam("targetblocktime",value);
+        SetAksyonChainParam("targetblocktime",value);
     }   
     
     if(strcmp(param->m_Name,"maxstdtxsize") == 0)
@@ -492,7 +492,7 @@ int SetUpgradedParamValue(const mc_OneMultichainParam *param,int64_t value)
     return MC_ERR_NOERROR;
 }
 
-int MultichainNode_ApplyUpgrades(int current_height)
+int AksyonchainNode_ApplyUpgrades(int current_height)
 {
     vector<mc_UpgradedParameter> vParams;
     int err=MC_ERR_NOERROR;
@@ -519,10 +519,10 @@ int MultichainNode_ApplyUpgrades(int current_height)
             }
         }
     }
-    SetMultiChainParams();            
-    if(pMultiChainFilterEngine)                                                 // Added from version 20012. 
+    SetAksyonChainParams();
+    if(pAksyonChainFilterEngine)                                                 // Added from version 20012.
     {
-        pMultiChainFilterEngine->SetCallbackNames();
+        pAksyonChainFilterEngine->SetCallbackNames();
     }
     mc_gState->m_ProtocolVersionToUpgrade=mc_gState->m_NetworkParams->m_ProtocolVersion;
     
@@ -555,7 +555,7 @@ int MultichainNode_ApplyUpgrades(int current_height)
 }
 
 
-void MultichainNode_UpdateBlockByHeightList(CBlockIndex *pindex)
+void AksyonchainNode_UpdateBlockByHeightList(CBlockIndex *pindex)
 {
     if(pindex->nHeight < 0)
     {
@@ -617,7 +617,7 @@ bool PushMempoolToInv(CNode *pnode)
     return true;
 }
 
-bool MultichainNode_IsBlockChainSynced(CNode *pnode)
+bool AksyonchainNode_IsBlockChainSynced(CNode *pnode)
 {
     if(pnode->fSyncedOnce)
     {
@@ -1635,7 +1635,7 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState &state, const CTransa
 /* MCHN START */    
     bool check_for_dust=true;
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         check_for_dust=false;
     }
@@ -1868,10 +1868,10 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState &state, const CTransa
         int permissions_from,permissions_to;
         permissions_from=mc_gState->m_Permissions->m_MempoolPermissions->GetCount();
         
-        if(!AcceptMultiChainTransaction(tx,view,-1,MC_AMT_DEFAULT,reason, &mandatory_fee, &replay))
+        if(!AcceptAksyonChainTransaction(tx,view,-1,MC_AMT_DEFAULT,reason, &mandatory_fee, &replay))
         {
             return state.DoS(0,
-                             error("AcceptToMemoryPool: : AcceptMultiChainTransaction failed %s : %s", hash.ToString(),reason),
+                             error("AcceptToMemoryPool: : AcceptAksyonChainTransaction failed %s : %s", hash.ToString(),reason),
                              REJECT_NONSTANDARD, reason);
         }
         
@@ -1906,7 +1906,7 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState &state, const CTransa
         {
             reason=strprintf("Wallet error %d",err);
             return state.DoS(0,
-                             error("AcceptToMemoryPool: : AcceptMultiChainTransaction failed %s : %s", hash.ToString(),reason),
+                             error("AcceptToMemoryPool: : AcceptAksyonChainTransaction failed %s : %s", hash.ToString(),reason),
                              REJECT_INVALID, reason);            
         }
         err=MC_ERR_NOERROR;
@@ -2320,7 +2320,7 @@ bool CheckInputs(const CTransaction& tx, CValidationState &state, const CCoinsVi
         CAmount nValueIn = 0;
         CAmount nFees = 0;
         int async_count=0;
-        bool fIsLicenseTokenTransfer=Is_MultiChainLicenseTokenTransfer(tx);
+        bool fIsLicenseTokenTransfer=Is_AksyonChainLicenseTokenTransfer(tx);
         
         vector <unsigned int> vSendPermissionFlags;
         
@@ -2655,9 +2655,9 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     {
         mc_gState->m_Permissions->ClearMemPool();
         mc_gState->m_Assets->ClearMemPool();
-        if(pMultiChainFilterEngine)
+        if(pAksyonChainFilterEngine)
         {
-            pMultiChainFilterEngine->Reset(pindex->nHeight-1,1);
+            pAksyonChainFilterEngine->Reset(pindex->nHeight-1,1);
         }
     }
 /* MCHN END */        
@@ -2671,7 +2671,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
         {
             const CTransaction &tx = block.vtx[i];
             string reason;
-            if(!AcceptMultiChainTransaction(tx,view,offset,MC_AMT_DEFAULT,reason,NULL,NULL))
+            if(!AcceptAksyonChainTransaction(tx,view,offset,MC_AMT_DEFAULT,reason,NULL,NULL))
             {
                 return state.DoS(100, error(reason.c_str()),
                              REJECT_INVALID, "bad-transaction");            
@@ -2679,7 +2679,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
 //                unsigned char *root_stream_name;
             int root_stream_name_size;
             mc_gState->m_NetworkParams->GetParam("rootstreamname",&root_stream_name_size);        
-            if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+            if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
             {
                 root_stream_name_size=0;
             }    
@@ -2733,7 +2733,7 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
     fScriptChecks &= !fJustCheck;                                               // When miner checks the blocks before submission 
                                                                                 // signature verification can fail because of lost send permission
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
 /* MCHN END */        
 
@@ -2833,10 +2833,10 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
             string reason;
             if(!fJustCheck)
             {
-                if(!AcceptMultiChainTransaction(tx,view,offset,MC_AMT_DEFAULT,reason,NULL,NULL))
+                if(!AcceptAksyonChainTransaction(tx,view,offset,MC_AMT_DEFAULT,reason,NULL,NULL))
                 {
                     return state.DoS(0,
-                                     error("ConnectBlock: : AcceptMultiChainTransaction failed %s : %s", tx.GetHash().ToString(),reason),
+                                     error("ConnectBlock: : AcceptAksyonChainTransaction failed %s : %s", tx.GetHash().ToString(),reason),
                                      REJECT_INVALID, reason);
                 }
             }
@@ -2864,10 +2864,10 @@ bool ConnectBlock(const CBlock& block, CValidationState& state, CBlockIndex* pin
             string reason;
             if(!fJustCheck)
             {
-                if(!AcceptMultiChainTransaction(tx,view,coinbase_offset,MC_AMT_DEFAULT,reason,NULL,NULL))
+                if(!AcceptAksyonChainTransaction(tx,view,coinbase_offset,MC_AMT_DEFAULT,reason,NULL,NULL))
                 {
                     return state.DoS(0,
-                                     error("ConnectBlock: : AcceptMultiChainTransaction failed %s : %s", tx.GetHash().ToString(),reason),
+                                     error("ConnectBlock: : AcceptAksyonChainTransaction failed %s : %s", tx.GetHash().ToString(),reason),
                                      REJECT_INVALID, reason);
 //                    return false;       
                 }
@@ -3120,12 +3120,12 @@ bool static DisconnectTip(CValidationState &state) {
     if(fDebug)LogPrint("mcblockperf","mchn-block-perf: Rolling back permission and asset databases\n");
     mc_gState->m_Permissions->RollBack(old_height-1);
     mc_gState->m_Assets->RollBack(old_height-1);
-    if(pMultiChainFilterEngine)
+    if(pAksyonChainFilterEngine)
     {
-        pMultiChainFilterEngine->Reset(old_height-1,0);
+        pAksyonChainFilterEngine->Reset(old_height-1,0);
     }
     
-    MultichainNode_ApplyUpgrades(old_height-1);        
+    AksyonchainNode_ApplyUpgrades(old_height-1);
     if(mc_gState->m_WalletMode & MC_WMD_TXS)
     {
         if(fDebug)LogPrint("mcblockperf","mchn-block-perf: Rolling back wallet             (%s)\n",pwalletTxsMain->Summary());
@@ -3203,9 +3203,9 @@ bool static ConnectTip(CValidationState &state, CBlockIndex *pindexNew, CBlock *
     int64_t nTime3;
     if(fDebug)LogPrint("bench", "  - Load block from disk: %.2fms [%.2fs]\n", (nTime2 - nTime1) * 0.001, nTimeReadFromDisk * 0.000001);
 /*    
-    if(pMultiChainFilterEngine)
+    if(pAksyonChainFilterEngine)
     {
-        pMultiChainFilterEngine->Reset(pindexNew->nHeight-1,1);
+        pAksyonChainFilterEngine->Reset(pindexNew->nHeight-1,1);
     }
  */ 
     if(pindexNew->nHeight == 0)
@@ -3221,14 +3221,14 @@ bool static ConnectTip(CValidationState &state, CBlockIndex *pindexNew, CBlock *
         {
             LogPrintf("ERROR: Cannot connect(before) block %s in feeds, error %d\n",pindexNew->GetBlockHash().ToString().c_str(),err);
         }        
-        if(pMultiChainFilterEngine)
+        if(pAksyonChainFilterEngine)
         {
-            pMultiChainFilterEngine->m_CoinsCache=&view;
+            pAksyonChainFilterEngine->m_CoinsCache=&view;
         }
         bool rv = ConnectBlock(*pblock, state, pindexNew, view);        
-        if(pMultiChainFilterEngine)
+        if(pAksyonChainFilterEngine)
         {
-            pMultiChainFilterEngine->m_CoinsCache=NULL;
+            pAksyonChainFilterEngine->m_CoinsCache=NULL;
         }
         if(rv)
         {
@@ -3407,7 +3407,7 @@ bool static ConnectTip(CValidationState &state, CBlockIndex *pindexNew, CBlock *
     // ... and about transactions that got confirmed:
 /* MCHN START */        
     VerifyBlockSignature(pblock,false);
-    MultichainNode_ApplyUpgrades(chainActive.Height());    
+    AksyonchainNode_ApplyUpgrades(chainActive.Height());
 /* MCHN END */    
     
     BOOST_FOREACH(const CTransaction &tx, pblock->vtx) {
@@ -3701,7 +3701,7 @@ static void PruneBlockIndexCandidates() {
 
 void UpdateChainMiningStatus(const CBlock &block,CBlockIndex *pindexNew) 
 {
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         std::vector<unsigned char> vchPubKey=std::vector<unsigned char> (block.vSigner+1, block.vSigner+1+block.vSigner[0]);
         CPubKey pubKeyOut(vchPubKey);
@@ -3847,9 +3847,9 @@ static bool ActivateBestChainStep(CValidationState &state, CBlockIndex *pindexMo
     {
         mc_gState->m_Permissions->ClearMemPool();
         mc_gState->m_Assets->ClearMemPool();
-        if(pMultiChainFilterEngine)
+        if(pAksyonChainFilterEngine)
         {
-            pMultiChainFilterEngine->Reset(chainActive.Height(),0);
+            pAksyonChainFilterEngine->Reset(chainActive.Height(),0);
         }
         
         if(fDebug)LogPrint("mcblockperf","mchn-block-perf: Replaying mempool started\n");
@@ -4457,7 +4457,7 @@ CBlockIndex* AddToBlockIndex(const CBlockHeader& block)
     if (pindexBestHeader == NULL || pindexBestHeader->nChainWork < pindexNew->nChainWork)
         pindexBestHeader = pindexNew;
 
-    MultichainNode_UpdateBlockByHeightList(pindexNew);
+    AksyonchainNode_UpdateBlockByHeightList(pindexNew);
     setDirtyBlockIndex.insert(pindexNew);
 
     return pindexNew;
@@ -4487,7 +4487,7 @@ bool ReceivedBlockTransactions(const CBlock &block, CValidationState& state, CBl
     UpdateChainMiningStatus(block,pindexNew);
 
 /*    
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         std::vector<unsigned char> vchPubKey=std::vector<unsigned char> (block.vSigner+1, block.vSigner+1+block.vSigner[0]);
         CPubKey pubKeyOut(vchPubKey);
@@ -4862,7 +4862,7 @@ bool ContextualCheckBlockHeader(const CBlockHeader& block, CValidationState& sta
             fWaitingForLocked=true;            
         }        
     }
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         const CBlockIndex *pindexFork;
         pindexFork=chainActive.FindFork(pindexPrev);
@@ -5007,7 +5007,7 @@ bool AcceptBlockHeader(const CBlockHeader& block, CValidationState& state, CBloc
         CBlockIndex *pindexTmp=NULL;
         if( ((int)vFirstOnThisHeight.size() <= pindexPrev->nHeight) || (vFirstOnThisHeight[pindexPrev->nHeight] == NULL))
         {
-            MultichainNode_UpdateBlockByHeightList(pindexPrev);
+            AksyonchainNode_UpdateBlockByHeightList(pindexPrev);
         }
         lpNextForPrev=NULL;
         pindexTmp=vFirstOnThisHeight[pindexPrev->nHeight];
@@ -5704,12 +5704,12 @@ bool static LoadBlockIndexDB(std::string& strError)
             LogPrintf("ERROR: Couldn't roll back wallet txs DB to height %d\n",chainActive.Height());                                    
             if(!GetBoolArg("-skipwalletchecks",false) && !GetBoolArg("-rescan", false))
             {
-                strError="Error: The wallet database is inconsistent. Restart MultiChain with -rescan to rebuild the wallet database from the blockchain (can take hours), or with -skipwalletchecks to continue operating anyway";
+                strError="Error: The wallet database is inconsistent. Restart AksyonChain with -rescan to rebuild the wallet database from the blockchain (can take hours), or with -skipwalletchecks to continue operating anyway";
                 return false;
             }
         }
     }
-    MultichainNode_ApplyUpgrades(chainActive.Height());        
+    AksyonchainNode_ApplyUpgrades(chainActive.Height());
     
 /* MCHN END */
     LogPrintf("LoadBlockIndexDB(): hashBestChain=%s height=%d date=%s progress=%f\n",
@@ -5831,15 +5831,15 @@ bool CVerifyDB::VerifyDB(CCoinsView *coinsview, int nCheckLevel, int nCheckDepth
             {
                 LogPrintf("ERROR: Cannot connect(before) block %s in feeds, error %d\n",pindex->GetBlockHash().ToString().c_str(),err);
             }        
-            if(pMultiChainFilterEngine)
+            if(pAksyonChainFilterEngine)
             {
-                pMultiChainFilterEngine->m_CoinsCache=&coins;
+                pAksyonChainFilterEngine->m_CoinsCache=&coins;
             }            
             if (!ConnectBlock(block, state, pindex, coins))
             {
-                if(pMultiChainFilterEngine)
+                if(pAksyonChainFilterEngine)
                 {
-                    pMultiChainFilterEngine->m_CoinsCache=NULL;
+                    pAksyonChainFilterEngine->m_CoinsCache=NULL;
                 }
                 err=pEF->FED_EventBlock(block, state, pindex,"check",true,true);
                 if(err)
@@ -5848,9 +5848,9 @@ bool CVerifyDB::VerifyDB(CCoinsView *coinsview, int nCheckLevel, int nCheckDepth
                 }        
                 return error("VerifyDB() : *** found unconnectable block at %d, hash=%s", pindex->nHeight, pindex->GetBlockHash().ToString());
             }
-            if(pMultiChainFilterEngine)
+            if(pAksyonChainFilterEngine)
             {
-                pMultiChainFilterEngine->m_CoinsCache=NULL;
+                pAksyonChainFilterEngine->m_CoinsCache=NULL;
             }
             err=pEF->FED_EventBlock(block, state, pindex,"check",true,false);
             if(err)
@@ -6123,7 +6123,7 @@ bool ProcessGetData(CNode* pfrom)
     std::deque<CInv>::iterator it = pfrom->vRecvGetData.begin();
 
 /* MCHN START */    
-    if(!MultichainNode_RespondToGetData(pfrom)) 
+    if(!AksyonchainNode_RespondToGetData(pfrom))
     {
         pfrom->vRecvGetData.erase(pfrom->vRecvGetData.begin(), pfrom->vRecvGetData.end());        
         return true;
@@ -6412,10 +6412,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         else
             pfrom->fRelayTxes = true;
 
-        pfrom->nMultiChainServices=0;
+        pfrom->nAksyonChainServices=0;
         if (!vRecv.empty())
         {
-            vRecv >> pfrom->nMultiChainServices;
+            vRecv >> pfrom->nAksyonChainServices;
         }
         
         // Disconnect if we connected to ourself
@@ -6446,7 +6446,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 /* MCHN START */
         pfrom->nVersionNonceReceived=nNonce; 
         pfrom->fVerackackReceived=false;
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {            
             if(GetBoolArg("-bitcoinstylehandshake", false))
             {
@@ -6456,7 +6456,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             }
             else
             {
-                PushMultiChainVerack(pfrom,false);
+                PushAksyonChainVerack(pfrom,false);
             }
         }
         else
@@ -6526,7 +6526,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     {
         pfrom->SetRecvVersion(min(pfrom->nVersion, PROTOCOL_VERSION));
 /* MCHN START */
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             if(vRecv.size() == 0)
             {
@@ -6555,7 +6555,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                 else
                 {
                     bool disconnect_flag=false;
-                    if(!ProcessMultichainVerack(pfrom,vRecv,false,&disconnect_flag))
+                    if(!ProcessAksyonchainVerack(pfrom,vRecv,false,&disconnect_flag))
                     {
                         LogPrintf("mchn: Invalid verack message from peer=%d, disconnecting\n", pfrom->id);
                         pfrom->fDisconnect = true;
@@ -6566,7 +6566,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                     {
                         if(!pfrom->fDisconnect)
                         {
-                            pfrom->fDisconnect = !PushMultiChainVerack(pfrom,true);
+                            pfrom->fDisconnect = !PushAksyonChainVerack(pfrom,true);
                         }
                         else
                         {
@@ -6586,10 +6586,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
     else if (strCommand == "verackack")
     {
-        if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+        if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
         {
             bool disconnect_flag=true;
-            if(!ProcessMultichainVerack(pfrom,vRecv,true,&disconnect_flag))
+            if(!ProcessAksyonchainVerack(pfrom,vRecv,true,&disconnect_flag))
             {
                 pfrom->fDisconnect |= disconnect_flag;
                 if(pfrom->fDisconnect)
@@ -6605,7 +6605,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             }
             else
             {
-                pfrom->fDisconnect |= !PushMultiChainVerack(pfrom,false);       // MCHN |= to avoid setting fDisconnect to false
+                pfrom->fDisconnect |= !PushAksyonChainVerack(pfrom,false);       // MCHN |= to avoid setting fDisconnect to false
             }
             if(pfrom->fDisconnect)
             {
@@ -6746,7 +6746,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                     // not a direct successor.
                     pfrom->PushMessage("getheaders", chainActive.GetLocator(pindexBestHeader), inv.hash);
                     CNodeState *nodestate = State(pfrom->GetId());
-                    if(!MultichainNode_IgnoreIncoming(pfrom))
+                    if(!AksyonchainNode_IgnoreIncoming(pfrom))
                     {
                         if (chainActive.Tip()->GetBlockTime() > GetAdjustedTime() - Params().TargetSpacing() * 20 &&
                             nodestate->nBlocksInFlight < MAX_BLOCKS_IN_TRANSIT_PER_PEER) {
@@ -6771,7 +6771,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             }
         }
 
-        if (!vToFetch.empty() && !MultichainNode_IgnoreIncoming(pfrom))      // MCHN
+        if (!vToFetch.empty() && !AksyonchainNode_IgnoreIncoming(pfrom))      // MCHN
             pfrom->PushMessage("getdata", vToFetch);
         
         pfrom->AddTxsInFlight(vTxsToFetch);
@@ -6891,10 +6891,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     }
 
 
-    else if (strCommand == "tx" && MultichainNode_AcceptData(pfrom))            // MCHN
+    else if (strCommand == "tx" && AksyonchainNode_AcceptData(pfrom))            // MCHN
     {
 /* MCHN START */        
-        if(!MultichainNode_IgnoreIncoming(pfrom) && !pfrom->fDisconnect)
+        if(!AksyonchainNode_IgnoreIncoming(pfrom) && !pfrom->fDisconnect)
         {
 /* MCHN END */        
         vector<uint256> vWorkQueue;
@@ -7152,7 +7152,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         }
     }
                                                                                 // MCHN
-    else if (strCommand == "block" && !fImporting && !fReindex && MultichainNode_AcceptData(pfrom)) // Ignore blocks received while importing
+    else if (strCommand == "block" && !fImporting && !fReindex && AksyonchainNode_AcceptData(pfrom)) // Ignore blocks received while importing
     {
         CBlock block;
         vRecv >> block;
@@ -7172,7 +7172,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         CInv inv(MSG_BLOCK, block.GetHash());
 
 /* MCHN START */        
-        if(!MultichainNode_IgnoreIncoming(pfrom))
+        if(!AksyonchainNode_IgnoreIncoming(pfrom))
         {
 /* MCHN END */        
             
@@ -7280,7 +7280,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     }
 
 
-    else if (strCommand == "mempool" && MultichainNode_SendInv(pfrom))          // MCHN
+    else if (strCommand == "mempool" && AksyonchainNode_SendInv(pfrom))          // MCHN
     {
 //        LOCK2(cs_main, pfrom->cs_filter);
         
@@ -7599,7 +7599,7 @@ bool ProcessMessages(CNode* pfrom)
         
         if(!pfrom->fDisconnect)
         {
-            if(MultichainNode_DisconnectRemote(pfrom))
+            if(AksyonchainNode_DisconnectRemote(pfrom))
             {            
                     pfrom->fDisconnect=true;
                     LogPrintf("mchn: Address %s lost connect permission on peer=%d, diconnecting...\n",CBitcoinAddress(pfrom->kAddrRemote).ToString().c_str(), pfrom->id);            
@@ -7607,7 +7607,7 @@ bool ProcessMessages(CNode* pfrom)
             }
             if(!pfrom->fDisconnect)
             {
-                if(pfrom->fCanConnectLocal && MultichainNode_DisconnectLocal(pfrom))
+                if(pfrom->fCanConnectLocal && AksyonchainNode_DisconnectLocal(pfrom))
                 {
                         pfrom->fDisconnect=true;
                         LogPrintf("mchn: Local address %s lost connect permission. disconnecting peer %d...\n",CBitcoinAddress(pfrom->kAddrLocal).ToString().c_str(), pfrom->id);            
@@ -7753,7 +7753,7 @@ bool ProcessMessages(CNode* pfrom)
         }
         try
         {
-            if(pfrom->fDisconnect || !MultichainNode_DisconnectRemote(pfrom))
+            if(pfrom->fDisconnect || !AksyonchainNode_DisconnectRemote(pfrom))
             {
                 if(fProcessInDataThread)
                 {
@@ -7889,7 +7889,7 @@ bool ProcessDataMessage(CNode* pfrom,CNetMessage& msg)
     bool fRet = false;
     try
     {
-        if(pfrom->fDisconnect || !MultichainNode_DisconnectRemote(pfrom))
+        if(pfrom->fDisconnect || !AksyonchainNode_DisconnectRemote(pfrom))
         {
             fRet = ProcessMessage(pfrom, strCommand, vRecv, msg.nTime);
         }
@@ -8129,7 +8129,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
                             vInv.push_back(inv);
                             if (vInv.size() >= 1000)
                             {
-                                if(MultichainNode_SendInv(pto))                 
+                                if(AksyonchainNode_SendInv(pto))
                                     pto->PushMessage("inv", vInv);
                                 vInv.clear();
                             }
@@ -8146,7 +8146,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
             pto->vInventoryToSend = vInvWait;                
         }
         if (!vInv.empty())
-            if(MultichainNode_SendInv(pto))                                     // MCNN
+            if(AksyonchainNode_SendInv(pto))                                     // MCNN
                 pto->PushMessage("inv", vInv);
         if( (sent_count > 30000) || ( (sent_count > 0) && (pto->vInventoryToSend.size() > 0) ) )
         {
@@ -8166,7 +8166,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
         bool ignore_incoming=false;
         {
             LOCK(cs_main);
-            ignore_incoming=MultichainNode_IgnoreIncoming(pto);
+            ignore_incoming=AksyonchainNode_IgnoreIncoming(pto);
         }
         if(!ignore_incoming)
         {
@@ -8273,14 +8273,14 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
         {
             LOCK(cs_main);
             CNode* seed_node;
-            if(!pto->fSyncedOnce && MultichainNode_IsBlockChainSynced(pto))
+            if(!pto->fSyncedOnce && AksyonchainNode_IsBlockChainSynced(pto))
             {
                 LogPrintf("mchn: Synced with node %d on block %d - requesting mempool\n",pto->id,mc_gState->m_Permissions->m_Block);
                 pto->PushMessage("mempool");
                 seed_node=(CNode*)(mc_gState->m_pSeedNode);
                 if(seed_node == pto)
                 {
-                    if(!MultichainNode_IsLocal(pto))
+                    if(!AksyonchainNode_IsLocal(pto))
                     {
                         LogPrintf("mchn: Synced with seed node on block %d\n",mc_gState->m_Permissions->m_Block);
                         mc_RemoveFile(mc_gState->m_NetworkParams->Name(),"seed",".dat",MC_FOM_RELATIVE_TO_DATADIR);
@@ -8340,11 +8340,11 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
 
             if(pwalletTxsMain->m_ChunkCollector->m_NextTryTimestamp < time_millis_now)
             {
-                if(MultichainNode_CollectChunks())
+                if(AksyonchainNode_CollectChunks())
                 {
-                    MultichainCollectChunks(pwalletTxsMain->m_ChunkCollector);
+                    AksyonchainCollectChunks(pwalletTxsMain->m_ChunkCollector);
                 }                
-                pwalletTxsMain->m_ChunkCollector->m_NextTryTimestamp=time_millis_now+MultichainCollectChunksQueueStats(pwalletTxsMain->m_ChunkCollector);
+                pwalletTxsMain->m_ChunkCollector->m_NextTryTimestamp=time_millis_now+AksyonchainCollectChunksQueueStats(pwalletTxsMain->m_ChunkCollector);
                 
 //                    if(fDebug)LogPrint("chunks", "Chunks to collect: %d\n", still_to_collect);
 //                pwalletTxsMain->m_ChunkCollector->m_NextTryTimestamp=time_millis_now+GetArg("-offchainrequestfreq",MC_CCW_TIMEOUT_BETWEEN_COLLECTS_MILLIS);

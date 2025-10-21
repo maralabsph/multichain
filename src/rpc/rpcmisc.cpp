@@ -2,7 +2,7 @@
 // Copyright (c) 2014-2016 The Bitcoin Core developers
 // Original code was distributed under the MIT software license.
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 #include "structs/base58.h"
 #include "version/clientversion.h"
@@ -23,7 +23,7 @@
 #include <stdint.h>
 
 /* MCHN START */
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "wallet/wallettxs.h"
 std::string BurnAddress(const std::vector<unsigned char>& vchVersion);
 std::string SetBannedTxs(std::string txlist);
@@ -87,7 +87,7 @@ Value getinfo(const Array& params, bool fHelp)
     obj.push_back(Pair("port", GetListenPort()));    
     obj.push_back(Pair("setupblocks", mc_gState->m_NetworkParams->GetInt64Param("setupfirstblocks")));    
     
-    obj.push_back(Pair("nodeaddress", MultichainServerAddress(true) + strprintf(":%d",GetListenPort())));       
+    obj.push_back(Pair("nodeaddress", AksyonchainServerAddress(true) + strprintf(":%d",GetListenPort())));
 
     obj.push_back(Pair("burnaddress", BurnAddress(Params().Base58Prefix(CChainParams::PUBKEY_ADDRESS))));                
     obj.push_back(Pair("incomingpaused", (mc_gState->m_NodePausedState & MC_NPS_INCOMING) ? true : false));                
@@ -522,9 +522,9 @@ Value setruntimeparam(const json_spirit::Array& params, bool fHelp)
     if (fHelp || params.size() != 2)                                            
         throw runtime_error("Help message not found\n");
     
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain() == 0)
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain() == 0)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "This API is supported only if protocol=multichain");                
+        throw JSONRPCError(RPC_NOT_SUPPORTED, "This API is supported only if protocol=aksyonchain");
     }
     
     string param_name=params[0].get_str();
@@ -634,9 +634,9 @@ Value setruntimeparam(const json_spirit::Array& params, bool fHelp)
                 mapArgs ["-" + param_name]=strprintf("%d", nValue);                                
                 if(param_name == "acceptfiltertimeout")
                 {
-                    if(pMultiChainFilterEngine)
+                    if(pAksyonChainFilterEngine)
                     {
-                        pMultiChainFilterEngine->SetTimeout(pMultiChainFilterEngine->GetAcceptTimeout());
+                        pAksyonChainFilterEngine->SetTimeout(pAksyonChainFilterEngine->GetAcceptTimeout());
                     }
                 }
             }
@@ -807,7 +807,7 @@ Value setruntimeparam(const json_spirit::Array& params, bool fHelp)
         throw JSONRPCError(RPC_GENERAL_FILE_ERROR, "Cannot store new parameter value permanently");                                                            
     }
     
-    SetMultiChainRuntimeParams();    
+    SetAksyonChainRuntimeParams();
     
     
     return Value::null;
@@ -1419,7 +1419,7 @@ Value createmultisig(const Array& params, bool fHelp)
 
     
 /* MCHN START */    
-    if(mc_gState->m_NetworkParams->IsProtocolMultichain())
+    if(mc_gState->m_NetworkParams->IsProtocolAksyonchain())
     {
         if((MCP_ALLOW_ARBITRARY_OUTPUTS == 0) || (mc_gState->m_Features->FixedDestinationExtraction() == 0) )
         {

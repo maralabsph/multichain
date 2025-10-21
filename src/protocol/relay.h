@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
 
 #ifndef RELAY_H
@@ -9,7 +9,7 @@
 #include "core/main.h"
 #include "utils/util.h"
 #include "wallet/wallet.h"
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "keys/pubkey.h"
 #include "keys/key.h"
 #include "net/net.h"
@@ -79,7 +79,7 @@ using namespace std;
 struct mc_ChunkCollector;
 
 string mc_MsgTypeStr(uint32_t msg_type);
-bool MultichainRelayResponse(uint32_t msg_type_stored, CNode *pto_stored,
+bool AksyonchainRelayResponse(uint32_t msg_type_stored, CNode *pto_stored,
                              uint32_t msg_type_in, uint32_t  flags, vector<unsigned char>& vPayloadIn,vector<CKeyID>&  vAddrIn,
                              uint32_t* msg_type_response,uint32_t  *flags_response,vector<unsigned char>& vPayloadResponse,vector<CKeyID>&  vAddrResponse,
                              uint32_t* msg_type_relay,uint32_t  *flags_relay,vector<unsigned char>& vPayloadRelay,vector<CKeyID>&  vAddrRelay,

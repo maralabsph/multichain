@@ -1,7 +1,7 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 
 #define MC_DCT_SCRIPT_ALLOC_BUFFER_CHUNK 4096
 #define MC_DCT_SCRIPT_ALLOC_INDEX_CHUNK    16
@@ -16,27 +16,27 @@
 #define MC_DCT_SCRIPT_OP_DROP            0x75
 
 #define MC_DCT_SCRIPT_FREE_DATA_IDENTIFIER     "SPK"
-#define MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER    "spk"
+#define MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER    "spk"
 #define MC_DCT_SCRIPT_IDENTIFIER_LEN 3
 
-#define MC_DCT_SCRIPT_MULTICHAIN_ENTITY_PREFIX 'e'
-#define MC_DCT_SCRIPT_MULTICHAIN_CASHED_SCRIPT_PREFIX 'i'
-#define MC_DCT_SCRIPT_MULTICHAIN_KEY_PREFIX 'k'
-#define MC_DCT_SCRIPT_MULTICHAIN_APPROVE_PREFIX 'a'
-#define MC_DCT_SCRIPT_MULTICHAIN_NEW_ENTITY_PREFIX 'n'
-#define MC_DCT_SCRIPT_MULTICHAIN_UPDATE_ENTITY_PREFIX 'u'
-#define MC_DCT_SCRIPT_MULTICHAIN_PERMISSIONS_PREFIX 'p'
-#define MC_DCT_SCRIPT_MULTICHAIN_BLOCK_SIGNATURE_PREFIX 'b'
-#define MC_DCT_SCRIPT_MULTICHAIN_ASSET_GENESIS_PREFIX 'g'
-#define MC_DCT_SCRIPT_MULTICHAIN_ASSET_QUANTITY_PREFIX 'q'
-#define MC_DCT_SCRIPT_MULTICHAIN_ASSET_DETAILS_PREFIX 'a'
-#define MC_DCT_SCRIPT_MULTICHAIN_ASSET_FOLLOWON_PREFIX 'o'
-#define MC_DCT_SCRIPT_MULTICHAIN_ASSET_TOKEN_PREFIX 't'
-#define MC_DCT_SCRIPT_MULTICHAIN_GENERAL_DETAILS_PREFIX 'c'
-#define MC_DCT_SCRIPT_MULTICHAIN_EXTENDED_DETAILS_PREFIX 'c'
-#define MC_DCT_SCRIPT_MULTICHAIN_DATA_FORMAT_PREFIX 'f'
-#define MC_DCT_SCRIPT_MULTICHAIN_RAW_DATA_PREFIX 'd'
-#define MC_DCT_SCRIPT_MULTICHAIN_INLINE_DETAILS 'l'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_ENTITY_PREFIX 'e'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_CASHED_SCRIPT_PREFIX 'i'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_KEY_PREFIX 'k'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_APPROVE_PREFIX 'a'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_NEW_ENTITY_PREFIX 'n'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_UPDATE_ENTITY_PREFIX 'u'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_PERMISSIONS_PREFIX 'p'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_BLOCK_SIGNATURE_PREFIX 'b'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_GENESIS_PREFIX 'g'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_QUANTITY_PREFIX 'q'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_DETAILS_PREFIX 'a'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_FOLLOWON_PREFIX 'o'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_TOKEN_PREFIX 't'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_GENERAL_DETAILS_PREFIX 'c'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_EXTENDED_DETAILS_PREFIX 'c'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_DATA_FORMAT_PREFIX 'f'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_RAW_DATA_PREFIX 'd'
+#define MC_DCT_SCRIPT_AKSYONCHAIN_INLINE_DETAILS 'l'
 
 #define MC_DCT_SCRIPT_EXTENDED_TYPE_CHUNK_DEF              0xF0
 
@@ -1079,12 +1079,12 @@ int mc_Script::GetPermission(uint32_t *type,uint32_t *from,uint32_t *to,uint32_t
     
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_PERMISSIONS_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_PERMISSIONS_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1111,8 +1111,8 @@ int mc_Script::SetPermission(uint32_t type,uint32_t from,uint32_t to,uint32_t ti
     }
     
     ptr=buf;
-    memcpy(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_PERMISSIONS_PREFIX;
+    memcpy(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_PERMISSIONS_PREFIX;
     
     ptr+=MC_DCT_SCRIPT_IDENTIFIER_LEN+1;
     mc_PutLE(ptr+ 0,&type,4);
@@ -1145,7 +1145,7 @@ int mc_Script::GetBlockSignature(unsigned char* sig,int *sig_size,uint32_t* hash
         return MC_ERR_WRONG_SCRIPT;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_BLOCK_SIGNATURE_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_BLOCK_SIGNATURE_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1209,7 +1209,7 @@ int mc_Script::SetBlockSignature(const unsigned char* sig,int sig_size,uint32_t 
     }
     
     memcpy(buf,MC_DCT_SCRIPT_FREE_DATA_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_BLOCK_SIGNATURE_PREFIX;
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_BLOCK_SIGNATURE_PREFIX;
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1);
     if(err)
@@ -1269,12 +1269,12 @@ int mc_Script::GetAssetGenesis(int64_t *quantity)
     
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_ASSET_GENESIS_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_GENESIS_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1308,8 +1308,8 @@ int mc_Script::SetAssetGenesis(int64_t quantity)
     }
     
     ptr=buf;
-    memcpy(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_ASSET_GENESIS_PREFIX;
+    memcpy(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_GENESIS_PREFIX;
     
     ptr+=MC_DCT_SCRIPT_IDENTIFIER_LEN+1;
     mc_PutLE(ptr+ 0,&quantity,8);
@@ -1353,7 +1353,7 @@ int mc_Script::GetAssetDetails(char* name,int* multiple,unsigned char* script,in
         return MC_ERR_WRONG_SCRIPT;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_ASSET_DETAILS_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_DETAILS_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1407,7 +1407,7 @@ int mc_Script::SetAssetDetails(const char*name,int multiple,const unsigned char*
     }
     
     memcpy(buf,MC_DCT_SCRIPT_FREE_DATA_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_ASSET_DETAILS_PREFIX;
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_DETAILS_PREFIX;
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1);
     if(err)
@@ -1468,7 +1468,7 @@ int mc_Script::GetGeneralDetails(unsigned char* script,int *script_size)
         return MC_ERR_WRONG_SCRIPT;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_GENERAL_DETAILS_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_GENERAL_DETAILS_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1502,7 +1502,7 @@ int mc_Script::SetGeneralDetails(const unsigned char* script,int script_size)
     }
     
     memcpy(buf,MC_DCT_SCRIPT_FREE_DATA_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_GENERAL_DETAILS_PREFIX;
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_GENERAL_DETAILS_PREFIX;
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1);
     if(err)
@@ -1545,7 +1545,7 @@ int mc_Script::GetExtendedDetails(unsigned char **script,size_t *script_size)
         return MC_ERR_WRONG_SCRIPT;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_EXTENDED_DETAILS_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_EXTENDED_DETAILS_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1570,7 +1570,7 @@ int mc_Script::SetExtendedDetails(const unsigned char* script,size_t script_size
     }
     
     memcpy(buf,MC_DCT_SCRIPT_FREE_DATA_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_EXTENDED_DETAILS_PREFIX;
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_EXTENDED_DETAILS_PREFIX;
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1);
     if(err)
@@ -1607,12 +1607,12 @@ int mc_Script::GetApproval(uint32_t *approval,uint32_t *timestamp)
     
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_APPROVE_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_APPROVE_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1637,8 +1637,8 @@ int mc_Script::SetApproval(uint32_t approval,uint32_t timestamp)
     }
     
     ptr=buf;
-    memcpy(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_APPROVE_PREFIX;
+    memcpy(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_APPROVE_PREFIX;
     
     ptr+=MC_DCT_SCRIPT_IDENTIFIER_LEN+1;
     mc_PutLE(ptr+0,&approval,1);
@@ -1670,19 +1670,19 @@ int mc_Script::GetNewEntityType(uint32_t *type,int *update,unsigned char* script
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     ptrEnd=ptr+m_lpCoord[m_CurrentElement*2+1];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
     
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_MULTICHAIN_NEW_ENTITY_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_AKSYONCHAIN_NEW_ENTITY_PREFIX)
     {
         *update=0;
     }
     else
     {
-        if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_MULTICHAIN_UPDATE_ENTITY_PREFIX)
+        if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_AKSYONCHAIN_UPDATE_ENTITY_PREFIX)
         {
             *update=1;
         }
@@ -1729,14 +1729,14 @@ int mc_Script::SetNewEntityType(const uint32_t type,const int update,const unsig
         return err;
     }
     
-    memcpy(buf,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    memcpy(buf,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
     if(update)
     {
-        buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_UPDATE_ENTITY_PREFIX;        
+        buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_UPDATE_ENTITY_PREFIX;
     }
     else
     {
-        buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_NEW_ENTITY_PREFIX;
+        buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_NEW_ENTITY_PREFIX;
     }
     buf[MC_DCT_SCRIPT_IDENTIFIER_LEN+1]=(unsigned char)(type & 0xff);
     
@@ -1781,12 +1781,12 @@ int mc_Script::GetItemKey(unsigned char *key,int *key_size)
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     ptrEnd=ptr+m_lpCoord[m_CurrentElement*2+1];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_KEY_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_KEY_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1819,8 +1819,8 @@ int mc_Script::SetItemKey(const unsigned char* key,int key_size)
         return err;
     }
     
-    memcpy(buf,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_KEY_PREFIX;
+    memcpy(buf,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_KEY_PREFIX;
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1);
     if(err)
@@ -1857,11 +1857,11 @@ int mc_Script::GetEntity(unsigned char *short_txid)
         
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_ENTITY_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_ENTITY_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1883,8 +1883,8 @@ int mc_Script::SetEntity(const unsigned char *short_txid)
         return err;
     }
     
-    memcpy(buf,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_ENTITY_PREFIX;
+    memcpy(buf,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_ENTITY_PREFIX;
     memcpy(buf+MC_DCT_SCRIPT_IDENTIFIER_LEN+1,short_txid,MC_AST_SHORT_TXID_SIZE);
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1+MC_AST_SHORT_TXID_SIZE);
@@ -1912,12 +1912,12 @@ int mc_Script::GetNewEntityType(uint32_t *type)
         
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_NEW_ENTITY_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_NEW_ENTITY_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -1940,8 +1940,8 @@ int mc_Script::SetNewEntityType(const uint32_t type)
         return err;
     }
     
-    memcpy(buf,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_NEW_ENTITY_PREFIX;
+    memcpy(buf,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_NEW_ENTITY_PREFIX;
     buf[MC_DCT_SCRIPT_IDENTIFIER_LEN+1]=(unsigned char)(type & 0xff);
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1+1);
@@ -1972,19 +1972,19 @@ int mc_Script::GetFullRef(unsigned char *ref,uint32_t *script_type)
     
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
 
     *script_type=0;
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_MULTICHAIN_ASSET_FOLLOWON_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_FOLLOWON_PREFIX)
     {
         *script_type=MC_SCR_ASSET_SCRIPT_TYPE_FOLLOWON;
     }
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_MULTICHAIN_ASSET_TOKEN_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_TOKEN_PREFIX)
     {
         *script_type=MC_SCR_ASSET_SCRIPT_TYPE_TOKEN;
     }
@@ -2055,7 +2055,7 @@ int mc_Script::GetAssetQuantities(mc_Buffer *amounts,uint32_t script_type)
     
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -2063,7 +2063,7 @@ int mc_Script::GetAssetQuantities(mc_Buffer *amounts,uint32_t script_type)
     valid_identitfier=0;
     if(script_type & MC_SCR_ASSET_SCRIPT_TYPE_TRANSFER)
     {
-        if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_MULTICHAIN_ASSET_QUANTITY_PREFIX)
+        if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_QUANTITY_PREFIX)
         {
             valid_identitfier=1;
             found_script_type=MC_SCR_ASSET_SCRIPT_TYPE_TRANSFER;
@@ -2072,7 +2072,7 @@ int mc_Script::GetAssetQuantities(mc_Buffer *amounts,uint32_t script_type)
     
     if(script_type & MC_SCR_ASSET_SCRIPT_TYPE_FOLLOWON)
     {
-        if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_MULTICHAIN_ASSET_FOLLOWON_PREFIX)
+        if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_FOLLOWON_PREFIX)
         {
             valid_identitfier=1;
             found_script_type=MC_SCR_ASSET_SCRIPT_TYPE_FOLLOWON;
@@ -2081,7 +2081,7 @@ int mc_Script::GetAssetQuantities(mc_Buffer *amounts,uint32_t script_type)
     
     if(script_type & MC_SCR_ASSET_SCRIPT_TYPE_TOKEN)
     {
-        if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_MULTICHAIN_ASSET_TOKEN_PREFIX)
+        if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] == MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_TOKEN_PREFIX)
         {
             valid_identitfier=1;
             found_script_type=MC_SCR_ASSET_SCRIPT_TYPE_TOKEN;
@@ -2166,18 +2166,18 @@ int mc_Script::SetAssetQuantities(mc_Buffer *amounts,uint32_t script_type)
     }
     
     ptr=buf;
-    memcpy(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    memcpy(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
     
     switch(script_type)
     {
         case MC_SCR_ASSET_SCRIPT_TYPE_TRANSFER:
-            ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_ASSET_QUANTITY_PREFIX;
+            ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_QUANTITY_PREFIX;
             break;
         case MC_SCR_ASSET_SCRIPT_TYPE_FOLLOWON:
-            ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_ASSET_FOLLOWON_PREFIX;
+            ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_FOLLOWON_PREFIX;
             break;
         case MC_SCR_ASSET_SCRIPT_TYPE_TOKEN:
-            ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_ASSET_TOKEN_PREFIX;
+            ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_ASSET_TOKEN_PREFIX;
             break;
         default:
             return MC_ERR_INVALID_PARAMETER_VALUE;
@@ -2227,12 +2227,12 @@ int mc_Script::GetCachedScript(int offset, int *next_offset, int* vin, unsigned 
            
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
 
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_CASHED_SCRIPT_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_CASHED_SCRIPT_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
@@ -2297,9 +2297,9 @@ int mc_Script::SetCachedScript(int offset, int *next_offset, int vin, unsigned c
         }
     
         ptr=buf;
-        memcpy(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+        memcpy(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
 
-        ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_CASHED_SCRIPT_PREFIX;
+        ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_CASHED_SCRIPT_PREFIX;
 
         err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1);
         if(err)
@@ -2358,13 +2358,13 @@ int mc_Script::GetRawData(unsigned char **data,int *size)
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     ptrEnd=ptr+m_lpCoord[m_CurrentElement*2+1];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
     
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_RAW_DATA_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_RAW_DATA_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;            
     }
@@ -2398,12 +2398,12 @@ int mc_Script::GetInlineDetails(unsigned char **data,int *size)
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     ptrEnd=ptr+m_lpCoord[m_CurrentElement*2+1];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
         
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_INLINE_DETAILS)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_INLINE_DETAILS)
     {
         return MC_ERR_WRONG_SCRIPT;            
     }
@@ -2430,8 +2430,8 @@ int mc_Script::SetRawData(const unsigned char *data,const int size)
         return err;
     }
     
-    memcpy(buf,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_RAW_DATA_PREFIX;        
+    memcpy(buf,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_RAW_DATA_PREFIX;
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1);
     if(err)
@@ -2462,8 +2462,8 @@ int mc_Script::SetInlineDetails(const unsigned char *data,const int size)
         return err;
     }
     
-    memcpy(buf,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_INLINE_DETAILS;        
+    memcpy(buf,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_INLINE_DETAILS;
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1);
     if(err)
@@ -2505,13 +2505,13 @@ int mc_Script::GetDataFormat(uint32_t *format)
     
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
     
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_DATA_FORMAT_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_DATA_FORMAT_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;            
     }
@@ -2551,8 +2551,8 @@ int mc_Script::SetDataFormat(const uint32_t format)
         return err;
     }
     
-    memcpy(buf,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_DATA_FORMAT_PREFIX;        
+    memcpy(buf,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_DATA_FORMAT_PREFIX;
     buf[MC_DCT_SCRIPT_IDENTIFIER_LEN+1]=f;
     
     err=SetData(buf,MC_DCT_SCRIPT_IDENTIFIER_LEN+1+1);
@@ -2589,13 +2589,13 @@ int mc_Script::GetChunkDef(uint32_t *format,unsigned char** hashes,int *chunk_co
     ptr=m_lpData+m_lpCoord[m_CurrentElement*2+0];
     ptrEnd=ptr+m_lpCoord[m_CurrentElement*2+1];
     
-    if(memcmp(ptr,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
+    if(memcmp(ptr,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN) != 0)
     {
         return MC_ERR_WRONG_SCRIPT;
     }
     
     
-    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_MULTICHAIN_DATA_FORMAT_PREFIX)
+    if(ptr[MC_DCT_SCRIPT_IDENTIFIER_LEN] != MC_DCT_SCRIPT_AKSYONCHAIN_DATA_FORMAT_PREFIX)
     {
         return MC_ERR_WRONG_SCRIPT;            
     }
@@ -2728,8 +2728,8 @@ int mc_Script::SetChunkDefHeader(const uint32_t format,int chunk_count,uint32_t 
         return err;
     }
     
-    memcpy(buf,MC_DCT_SCRIPT_MULTICHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
-    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_MULTICHAIN_DATA_FORMAT_PREFIX;        
+    memcpy(buf,MC_DCT_SCRIPT_AKSYONCHAIN_IDENTIFIER,MC_DCT_SCRIPT_IDENTIFIER_LEN);
+    buf[MC_DCT_SCRIPT_IDENTIFIER_LEN]=MC_DCT_SCRIPT_AKSYONCHAIN_DATA_FORMAT_PREFIX;
     buf[MC_DCT_SCRIPT_IDENTIFIER_LEN+1]=MC_DCT_SCRIPT_EXTENDED_TYPE_CHUNK_DEF;
     buf[MC_DCT_SCRIPT_IDENTIFIER_LEN+2]=(unsigned char)format;
     if(salt_size > MAX_CHUNK_SALT_SIZE)

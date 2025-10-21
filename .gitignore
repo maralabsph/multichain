@@ -5,14 +5,14 @@ src/bitcoin
 src/bitcoind
 src/bitcoin-cli
 src/bitcoin-tx
-src/multichain-cli
-src/multichain-util
-src/multichaind
-src/multichaind-cold
-src/multichain-cli-wdebug
-src/multichain-util-wdebug
-src/multichaind-wdebug
-src/multichaind-cold-wdebug
+src/aksyonchain-cli
+src/aksyonchain-util
+src/aksyonchaind
+src/aksyonchaind-cold
+src/aksyonchain-cli-wdebug
+src/aksyonchain-util-wdebug
+src/aksyonchaind-wdebug
+src/aksyonchaind-cold-wdebug
 src/test/test_bitcoin
 src/qt/test/test_bitcoin-qt
 

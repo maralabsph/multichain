@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_CHUNKCOLLECTOR_H
-#define MULTICHAIN_CHUNKCOLLECTOR_H
+#ifndef AKSYONCHAIN_CHUNKCOLLECTOR_H
+#define AKSYONCHAIN_CHUNKCOLLECTOR_H
 
 #include "utils/declare.h"
 #include "protocol/relay.h"
@@ -229,8 +229,8 @@ typedef struct mc_ChunkCollector
 } mc_ChunkCollector;
 
 
-int MultichainCollectChunks(mc_ChunkCollector* collector);
-int MultichainCollectChunksQueueStats(mc_ChunkCollector* collector);
+int AksyonchainCollectChunks(mc_ChunkCollector* collector);
+int AksyonchainCollectChunksQueueStats(mc_ChunkCollector* collector);
 
-#endif /* MULTICHAIN_CHUNKCOLLECTOR_H */
+#endif /* AKSYONCHAIN_CHUNKCOLLECTOR_H */
 

@@ -1,10 +1,10 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_COMMUNITY_H
-#define MULTICHAIN_COMMUNITY_H
+#ifndef AKSYONCHAIN_COMMUNITY_H
+#define AKSYONCHAIN_COMMUNITY_H
 
-#include "multichain/multichain.h"
+#include "aksyonchain/aksyonchain.h"
 #include "wallet/wallettxs.h"
 #include "rpc/rpcutils.h"
 
@@ -151,5 +151,5 @@ typedef struct mc_EnterpriseFeatures
     
 } mc_EnterpriseFeatures;
 
-#endif /* MULTICHAIN_COMMUNITY_H */
+#endif /* AKSYONCHAIN_COMMUNITY_H */
 

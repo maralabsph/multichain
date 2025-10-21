@@ -1,8 +1,8 @@
 // Copyright (c) 2014-2019 Coin Sciences Ltd
-// MultiChain code distributed under the GPLv3 license, see COPYING file.
+// AksyonChain code distributed under the GPLv3 license, see COPYING file.
 
-#ifndef MULTICHAIN_DECLARE_H
-#define	MULTICHAIN_DECLARE_H
+#ifndef AKSYONCHAIN_DECLARE_H
+#define	AKSYONCHAIN_DECLARE_H
 
 #include "utils/define.h"
 
@@ -334,5 +334,5 @@ void sprintf_hex(char *hex,const unsigned char *bin,int size);
 #endif
 
 
-#endif	/* MULTICHAIN_DECLARE_H */
+#endif	/* AKSYONCHAIN_DECLARE_H */
 
