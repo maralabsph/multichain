@@ -8,6 +8,7 @@
 #define BITCOIN_INIT_H
 
 #include <string>
+#include <cstdint>
 
 class CWallet;
 struct mc_WalletTxs;

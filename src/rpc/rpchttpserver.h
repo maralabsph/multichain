@@ -7,6 +7,7 @@
 
 #include <string>
 #include <functional>
+#include <cstdint>
 
 static const int DEFAULT_HTTP_THREADS=4;
 static const int DEFAULT_HTTP_WORKQUEUE=16;
