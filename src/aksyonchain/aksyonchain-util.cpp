@@ -43,27 +43,26 @@ int main(int argc, char* argv[])
             if(mc_gState->m_Params->m_NumArguments>1)
             {
                 params=new mc_AksyonchainParams;
-                
+
                 err=MC_ERR_NOERROR;
-                
+
                 version=mc_gState->GetProtocolVersion();
                 if(mc_gState->m_Params->m_NumArguments>2)
-                {                    
+                {
                     v=atoi(mc_gState->m_Params->m_Arguments[2]);
                     if(mc_gState->IsSupported(v))
                     {
-                        version=v;                        
+                        version=v;
                     }
                     else
                     {
-                        fprintf(stderr,"ERROR: Invalid value for protocol version. Valid range: %s\n",mc_SupportedProtocols().c_str());   
+                        fprintf(stderr,"ERROR: Invalid value for protocol version. Valid range: %s\n",mc_SupportedProtocols().c_str());
                         err=MC_ERR_INVALID_PARAMETER_VALUE;
                     }
                 }
-                
+
                 if(err == MC_ERR_NOERROR)
                 {
-//                    err=params->Create(mc_gState->m_Params->m_Arguments[1],version);
                     err=params->Read(mc_gState->m_Params->m_Arguments[1],argc, argv,version);
                 }
                 if(err == MC_ERR_NOERROR)
@@ -73,25 +72,25 @@ int main(int argc, char* argv[])
                 if(err == MC_ERR_NOERROR)
                 {
                     err=params->Write(0);
-                }                
+                }
 
                 if(err == MC_ERR_NOERROR)
                 {
-                    mc_GenerateConfFiles(mc_gState->m_Params->m_Arguments[1]);                
+                    mc_GenerateConfFiles(mc_gState->m_Params->m_Arguments[1]);
                 }
                 if(err == MC_ERR_NOERROR)
-                { 
+                {
                     printf("Blockchain parameter set was successfully generated.\n");
                     mc_GetFullFileName(mc_gState->m_Params->m_Arguments[1],"params", ".dat",MC_FOM_RELATIVE_TO_DATADIR,fileName);
                     printf("You can edit it in %s before running aksyonchaind for the first time.\n\n",fileName);
                     printf("To generate blockchain please run \"aksyonchaind %s -daemon\".\n",params->Name());
-                }                
+                }
                 else
                 {
                     fprintf(stderr,"ERROR: Blockchain parameter set was not generated.\n");
                 }
                 delete params;
-            }    
+            }
         }
         if(strcmp(mc_gState->m_Params->Command(),"clone") == 0)
         {
@@ -157,40 +156,6 @@ int main(int argc, char* argv[])
             }
             err=MC_ERR_NOERROR;
         }
-/*        
-        if(strcmp(mc_gState->m_Params->Command(),"test") == 0)
-        {
-            if(mc_gState->m_Params->m_NumArguments>1)
-            {
-                printf("\n>>>>> Test %s started\n\n",mc_gState->m_Params->m_Arguments[1]);
-                if(strcmp(mc_gState->m_Params->m_Arguments[1],"scenario") == 0)
-                {
-                    if(mc_gState->m_Params->m_NumArguments>2)
-                    {
-                        err=mc_TestScenario(mc_gState->m_Params->m_Arguments[2]);                        
-                    }                    
-                }        
-            }           
-            
-            if(err == MC_ERR_NOERROR)
-            {
-                printf("\n>>>>> Test completed\n\n");
-            }            
-            else
-            {
-                if(err == MC_ERR_OPERATION_NOT_SUPPORTED)                
-                {
-                    printf("\n>>>>> ERROR: Test not found\n\n");                    
-                }
-                else
-                {
-                    printf("\n>>>>> ERROR: Test exited with error code %d\n\n",err);                    
-                }
-            }
-            
-        }
-*/        
-        
     }
     
     if(err == MC_ERR_OPERATION_NOT_SUPPORTED)
