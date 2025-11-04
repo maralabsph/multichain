@@ -6,10 +6,13 @@
 
 
 #include "rpc/rpcwallet.h"
+#include "permissions/permission.h"
 #include "json/json_spirit_ubjson.h"
 #include "json/json_spirit_reader_template.h"
 #include "json/json_spirit_writer_template.h"
 #include "community/community.h"
+
+extern json_spirit::Value listpermissions_operation(const json_spirit::Array& params, bool fHelp);
 
 bool WRPSubKeyEntityFromPublisher(string str,mc_TxEntityStat entStat,mc_TxEntity *entity,bool ignore_unsubscribed,int *errCode,string *strError);
 void TxToJSON(const CTransaction& tx, const uint256 hashBlock, Object& entry);
@@ -899,108 +902,183 @@ exitlbl:
 Value explorerlistaddresses(const json_spirit::Array& params, bool fHelp)
 {
     if (fHelp || params.size() > 4)
-        throw runtime_error("Help message not found\n");
-    
-    if((mc_gState->m_WalletMode & MC_WMD_EXPLORER_MASK) == 0)
+        throw runtime_error(
+            "explorerlistaddresses [addresses] [verbose/all flag] [count] [start]\n"
+            "If the verbose flag is true, each address will include its permission list.");
+
+    if ((mc_gState->m_WalletMode & MC_WMD_EXPLORER_MASK) == 0)
     {
-        throw JSONRPCError(RPC_NOT_SUPPORTED, "Explorer APIs are not enabled. To enable them, please run \"aksyonchaind -explorersupport=1 -rescan\" ");
-    }   
-           
+        throw JSONRPCError(RPC_NOT_SUPPORTED,
+            "Explorer APIs are not enabled. To enable them, please run \"aksyonchaind -explorersupport=1 -rescan\"");
+    }
+
     mc_TxEntity entity;
     mc_TxEntityStat entStat;
     int errCode;
     string strError;
     Value retArray;
-    
 
-    string mode="list";
+    string mode = "list";
+    int flag = 0;
 
-    int flag=0;
-        
-    if (params.size() > 1)    
+    // Optional param: [verbose/all flag]
+    if (params.size() > 1)
     {
-        if(paramtobool_or_flag(params[1],&flag))
+        if (paramtobool_or_flag(params[1], &flag))
         {
-            mode="all";            
+            mode = "all";
         }
     }
-        
-    int count,start;
-    count=2147483647;
-    if (params.size() > 2)    
+
+    int count = 2147483647;
+    if (params.size() > 2)
     {
-        count=paramtoint(params[2],true,0,"Invalid count");
+        count = paramtoint(params[2], true, 0, "Invalid count");
     }
-    start=-count;
-    if (params.size() > 3)    
+
+    int start = -count;
+    if (params.size() > 3)
     {
-        start=paramtoint(params[3],false,0,"Invalid start");
+        start = paramtoint(params[3], false, 0, "Invalid start");
     }
-    
+
     entStat.Zero();
-    entStat.m_Entity.m_EntityType=MC_TET_EXP_TX_PUBLISHER;                
+    entStat.m_Entity.m_EntityType = MC_TET_EXP_TX_PUBLISHER;
     entStat.m_Entity.m_EntityType |= MC_TET_CHAINPOS;
-    
+
     vector<string> inputStrings;
     vector<mc_TxEntity> inputEntities;
-    
-    if(params.size() > 0)
+
+    if (params.size() > 0)
     {
-        inputStrings=ParseStringList(params[0]);
-        if(inputStrings.size() == 0)
+        inputStrings = ParseStringList(params[0]);
+        if (inputStrings.size() == 0)
         {
             return retArray;
         }
     }
-    
+
     pwalletTxsMain->WRPReadLock();
-    if(!pwalletTxsMain->WRPFindEntity(&entStat))
+    if (!pwalletTxsMain->WRPFindEntity(&entStat))
     {
-        errCode=RPC_NOT_SUBSCRIBED;
-        strError="Not subscribed to this service";
+        errCode = RPC_NOT_SUBSCRIBED;
+        strError = "Not subscribed to this service";
         goto exitlbl;
     }
 
-    if( (inputStrings.size() != 1) || (inputStrings[0] != "*") )
+    if ((inputStrings.size() != 1) || (inputStrings[0] != "*"))
     {
-        for(int is=0;is<(int)inputStrings.size();is++)
+        for (int is = 0; is < (int)inputStrings.size(); is++)
         {
-            string str=inputStrings[is];
+            string str = inputStrings[is];
             entity.Zero();
-
-            WRPSubKeyEntityFromExpAddress(str,entStat,&entity,false,&errCode,&strError);
-            if(strError.size())
+            WRPSubKeyEntityFromExpAddress(str, entStat, &entity, false, &errCode, &strError);
+            if (strError.size())
             {
                 goto exitlbl;
             }
             inputEntities.push_back(entity);
-        }        
+        }
     }
-    
-    if(flag == 2)
+
+    if (flag == 2)
     {
         pwalletTxsMain->WRPReadUnLock();
-        
-        if(inputStrings.size())
+
+        if (inputStrings.size())
         {
             return (int)inputStrings.size();
         }
-        
-        return pwalletTxsMain->WRPGetListSize(&entStat.m_Entity,entStat.m_Generation,NULL);
+
+        return pwalletTxsMain->WRPGetListSize(&entStat.m_Entity, entStat.m_Generation, NULL);
     }
-    
-    
-    retArray=explorerlistmap_operation(&(entStat.m_Entity),inputEntities,inputStrings,count,start,mode,&errCode,&strError);        
+
+    // Perform the standard explorer address listing
+    retArray = explorerlistmap_operation(&(entStat.m_Entity), inputEntities, inputStrings, count, start, mode, &errCode, &strError);
 
 exitlbl:
-                
     pwalletTxsMain->WRPReadUnLock();
 
-    if(strError.size())
+    if (strError.size())
     {
-        throw JSONRPCError(errCode, strError);            
+        throw JSONRPCError(errCode, strError);
     }
-    
+
+    // ---------------------------------------------------------------------
+    // INCLUDE PERMISSIONS AUTOMATICALLY WHEN VERBOSE (mode == "all")
+    // ---------------------------------------------------------------------
+
+    // 1. Check the 'mode' variable set at the top of the function.
+    //    This fixes the paramtobool bug and avoids parsing params[1] twice.
+    if (mode == "all" && retArray.type() == array_type)
+    {
+        Array &addrArray = retArray.get_array();
+
+        // If the address list is empty, we're done.
+        if (addrArray.empty())
+        {
+            return retArray;
+        }
+
+        // 2. Prepare parameters for listpermissions
+        Array permParams;
+        permParams.push_back("*");  // All permission types
+
+        // 3. EFFICICIENCY FIX: Only fetch permissions for the addresses we are listing.
+        if ((inputStrings.size() != 1) || (inputStrings[0] != "*"))
+        {
+            // User provided a specific list of addresses
+            permParams.push_back(params[0]);
+        }
+        else
+        {
+            // User is listing all addresses
+            permParams.push_back("*");
+        }
+
+        permParams.push_back(true); // verbose=true
+
+        Value allPermsValue = listpermissions_operation(permParams, false);
+        if (allPermsValue.type() != array_type)
+            throw JSONRPCError(RPC_INTERNAL_ERROR, "listpermissions_operation did not return an array");
+
+        Array allPerms = allPermsValue.get_array();
+
+        // 4. Build map: address -> list of permission objects
+        std::map<std::string, Array> permMap;
+        for (size_t i = 0; i < allPerms.size(); ++i)
+        {
+            const Value &pval = allPerms[i];
+            if (pval.type() != obj_type)
+                continue;
+
+            Object pobj = pval.get_obj();
+            string addr = find_value(pobj, "address").get_str();
+            string type = find_value(pobj, "type").get_str(); // <-- Get the type string
+
+            if (!addr.empty() && !type.empty())
+            {
+                // Now, push only the type string
+                permMap[addr].push_back(type);
+            }
+        }
+
+        // 5. Merge permissions into each address entry
+        for (size_t i = 0; i < addrArray.size(); ++i)
+        {
+            if (addrArray[i].type() != obj_type)
+                continue;
+
+            Object obj = addrArray[i].get_obj();
+            string addr = find_value(obj, "address").get_str();
+
+            // Add the permissions array (it will be empty if none found, which is correct)
+            obj.push_back(Pair("permissions", permMap[addr]));
+
+            addrArray[i] = obj; // Update the array with the modified object
+        }
+    }
+
     return retArray;
 }
 
@@ -1376,8 +1454,8 @@ Value explorerlistaddressstreams(const json_spirit::Array& params, bool fHelp)
     if((mc_gState->m_WalletMode & MC_WMD_EXPLORER_MASK) == 0)
     {
         throw JSONRPCError(RPC_NOT_SUPPORTED, "Explorer APIs are not enabled. To enable them, please run \"aksyonchaind -explorersupport=1 -rescan\" ");
-    }   
-           
+    }
+
     mc_TxEntityStat entStat;
     mc_TxEntity entity;
     int errCode;
@@ -1385,25 +1463,25 @@ Value explorerlistaddressstreams(const json_spirit::Array& params, bool fHelp)
     vector <mc_QueryCondition> conditions;
     Array retArray;
     mc_Buffer *entity_rows=NULL;
-    
+
 
     int count,start;
     bool verbose=false;
-    
+
     int flag=0;
-    
-    if (params.size() > 1)    
+
+    if (params.size() > 1)
     {
         verbose=paramtobool_or_flag(params[1],&flag);
     }
 
     count=10;
-    if (params.size() > 2)    
+    if (params.size() > 2)
     {
         count=paramtoint(params[2],true,0,"Invalid count");
     }
     start=-count;
-    if (params.size() > 3)    
+    if (params.size() > 3)
     {
         start=paramtoint(params[3],false,0,"Invalid start");
     }
@@ -1411,7 +1489,7 @@ Value explorerlistaddressstreams(const json_spirit::Array& params, bool fHelp)
     entStat.Zero();
     entStat.m_Entity.m_EntityType=MC_TET_EXP_ADDRESS_STREAMS_KEY;
     entStat.m_Entity.m_EntityType |= MC_TET_CHAINPOS;
-    
+
     bool fWRPLocked=false;
     int rpc_slot=GetRPCSlot();
     if(rpc_slot < 0)
@@ -1420,7 +1498,7 @@ Value explorerlistaddressstreams(const json_spirit::Array& params, bool fHelp)
         strError="Couldn't find RPC Slot";
         goto exitlbl;
     }
-    
+
     fWRPLocked=true;
     pwalletTxsMain->WRPReadLock();
     if(!pwalletTxsMain->WRPFindEntity(&entStat))
@@ -1435,24 +1513,24 @@ Value explorerlistaddressstreams(const json_spirit::Array& params, bool fHelp)
     {
         goto exitlbl;
     }
-    
+
     entity_rows=mc_gState->m_TmpRPCBuffers[rpc_slot]->m_RpcEntityRows;
     entity_rows->Clear();
-    
+
     if(flag == 2)
     {
         pwalletTxsMain->WRPReadUnLock();
         return pwalletTxsMain->WRPGetListSize(&entity,entStat.m_Generation,NULL);
     }
-    
+
     mc_AdjustStartAndCount(&count,&start,pwalletTxsMain->WRPGetListSize(&entity,entStat.m_Generation,NULL));
-    
+
     WRPCheckWalletError(pwalletTxsMain->WRPGetList(&entity,entStat.m_Generation,start+1,count,entity_rows),entity.m_EntityType,"",&errCode,&strError);
     if(strError.size())
     {
         goto exitlbl;
     }
-    
+
     for(int i=0;i<entity_rows->GetCount();i++)
     {
         mc_TxEntityRow *lpEntTx;
@@ -1461,16 +1539,16 @@ Value explorerlistaddressstreams(const json_spirit::Array& params, bool fHelp)
 
         mc_EntityDetails entity_details;
         mc_gState->m_Assets->FindEntityByShortTxID(&entity_details,lpEntTx->m_TxId);
-        
-        
+
+
         Object entry;
-        
+
         entry=StreamEntry(entity_details.GetTxID(),0x02);
         if(verbose)
         {
             entStat.Zero();
             memcpy(&entStat,entity_details.GetTxID()+MC_AST_SHORT_TXID_OFFSET,MC_AST_SHORT_TXID_SIZE);
-            entStat.m_Entity.m_EntityType=MC_TET_STREAM_PUBLISHER;                
+            entStat.m_Entity.m_EntityType=MC_TET_STREAM_PUBLISHER;
             entStat.m_Entity.m_EntityType |= MC_TET_CHAINPOS;
             if(!pwalletTxsMain->WRPFindEntity(&entStat))
             {
@@ -1485,14 +1563,14 @@ Value explorerlistaddressstreams(const json_spirit::Array& params, bool fHelp)
                 int total,confirmed;
                 total=pwalletTxsMain->WRPGetListSize(&entity,entStat.m_Generation,&confirmed);
                 entry.push_back(Pair("items", total));
-                entry.push_back(Pair("confirmed", confirmed));                
-            }            
+                entry.push_back(Pair("confirmed", confirmed));
+            }
         }
-        retArray.push_back(entry);                                
+        retArray.push_back(entry);
     }
-    
+
 exitlbl:
-                
+
     if(fWRPLocked)
     {
         pwalletTxsMain->WRPReadUnLock();
@@ -1500,10 +1578,10 @@ exitlbl:
 
     if(strError.size())
     {
-        throw JSONRPCError(errCode, strError);            
+        throw JSONRPCError(errCode, strError);
     }
-    
-    
+
+
     return retArray;
 }
 
