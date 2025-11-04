@@ -1064,19 +1064,55 @@ exitlbl:
         }
 
         // 5. Merge permissions into each address entry
+        // We must build a NEW array and NEW objects to guarantee we drop
+        // the stale "permissions" field from explorerlistmap_operation.
+
+        Array cleanAddrArray; // Our new, clean array
+
         for (size_t i = 0; i < addrArray.size(); ++i)
         {
             if (addrArray[i].type() != obj_type)
                 continue;
 
-            Object obj = addrArray[i].get_obj();
-            string addr = find_value(obj, "address").get_str();
+            Object oldObj = addrArray[i].get_obj();
+            Object newObj; // Our new, clean object
 
-            // Add the permissions array (it will be empty if none found, which is correct)
-            obj.push_back(Pair("permissions", permMap[addr]));
+            string addr = ""; // We need to find the address for the permMap
 
-            addrArray[i] = obj; // Update the array with the modified object
+            // Loop over all fields in the old object
+            for (size_t j = 0; j < oldObj.size(); ++j)
+            {
+                const Pair& p = oldObj[j]; // Get the field (Pair)
+
+                // Find and save the address
+                if (p.name_ == "address")
+                {
+                    addr = p.value_.get_str();
+                }
+
+                // Copy every field EXCEPT for the "permissions" field
+                if (p.name_ != "permissions")
+                {
+                    newObj.push_back(p);
+                }
+            }
+
+            // Now, add the new, correct permissions from our permMap
+            if (!addr.empty())
+            {
+                newObj.push_back(Pair("permissions", permMap[addr]));
+            }
+            else
+            {
+                // Fallback in case address wasn't found (should not happen)
+                newObj.push_back(Pair("permissions", Array()));
+            }
+
+            cleanAddrArray.push_back(newObj); // Add our clean object to the new array
         }
+
+        // Replace the old, stale array with our new, clean one
+        retArray = cleanAddrArray;
     }
 
     return retArray;
