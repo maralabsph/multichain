@@ -346,11 +346,7 @@ bool AppInit(int argc, char* argv[])
         case MC_PRM_STATUS_MINIMAL:
             if(mc_gState->GetSeedNode() == NULL)
             {
-                fprintf(stderr,"ERROR: Parameter set for blockchain %s is not complete. \n\n\n",mc_gState->m_Params->NetworkName());  
-                fprintf(stderr,"If you want to create new blockchain please run one of the following:\n\n");
-                fprintf(stderr,"  aksyonchain-util create %s\n",mc_gState->m_Params->NetworkName());
-                fprintf(stderr,"  aksyonchain-util clone <old-blockchain-name> %s\n",mc_gState->m_Params->NetworkName());
-                fprintf(stderr,"\nAnd rerun aksyonchaind %s\n\n\n",mc_gState->m_Params->NetworkName());
+                fprintf(stderr,"ERROR: Parameter set for blockchain %s is not complete. \n\n\n",mc_gState->m_Params->NetworkName());
                 fprintf(stderr,"If you want to connect to existing blockchain please specify seed node:\n\n");
                 fprintf(stderr,"  aksyonchaind %s@<seed-node-ip>\n",mc_gState->m_Params->NetworkName());
                 fprintf(stderr,"  aksyonchaind %s@<seed-node-ip>:<seed-node-port>\n\n\n",mc_gState->m_Params->NetworkName());
@@ -360,16 +356,12 @@ bool AppInit(int argc, char* argv[])
             }
             break;
         case MC_PRM_STATUS_ERROR:
-            fprintf(stderr,"ERROR: Parameter set for blockchain %s has errors. Please run one of the following:\n\n",mc_gState->m_Params->NetworkName());                        
-            fprintf(stderr,"  aksyonchain-util create %s\n",mc_gState->m_Params->NetworkName());
-            fprintf(stderr,"  aksyonchain-util clone <old-blockchain-name> %s\n",mc_gState->m_Params->NetworkName());
-            fprintf(stderr,"\nAnd rerun aksyonchaind %s\n",mc_gState->m_Params->NetworkName());
+            fprintf(stderr,"ERROR: Parameter set for blockchain %s has errors.",mc_gState->m_Params->NetworkName());
             delete pEF;
             delete mc_gState;                
             return false;
         case MC_PRM_STATUS_INVALID:
-            fprintf(stderr,"ERROR: Parameter set for blockchain %s is invalid. You may generate new network using these parameters by running:\n\n",mc_gState->m_Params->NetworkName());                        
-            fprintf(stderr,"  aksyonchain-util clone %s <new-blockchain-name>\n",mc_gState->m_Params->NetworkName());
+            fprintf(stderr,"ERROR: Parameter set for blockchain %s is invalid.",mc_gState->m_Params->NetworkName());
             delete pEF;
             delete mc_gState;                
             return false;
@@ -388,34 +380,6 @@ bool AppInit(int argc, char* argv[])
 
     try
     {
-/*        
-#ifndef WIN32
-        fDaemon = GetBoolArg("-daemon", false);
-        
-        if (fDaemon)
-        {
-            fprintf(stdout, "AksyonChain server starting\n");
-
-            pid_t pid = fork();
-            if (pid < 0)
-            {
-                fprintf(stderr, "Error: fork() returned %d errno %d\n", pid, errno);
-                delete mc_gState;
-                return false;
-            }
-            if (pid > 0) // Parent process, pid is child process id
-            {
-                delete mc_gState;
-                return true;
-            }
-            
-            pid_t sid = setsid();
-            if (sid < 0)
-                fprintf(stderr, "ERROR: setsid() returned %d errno %d\n", sid, errno);
-            
-        }
-#endif
-*/
         SoftSetBoolArg("-server", true);
         detectShutdownThread = new boost::thread(boost::bind(&DetectShutdownThread, &threadGroup));
         nMainThreadID=__US_ThreadID();
@@ -437,9 +401,6 @@ bool AppInit(int argc, char* argv[])
             detectShutdownThread->interrupt();
 
         threadGroup.interrupt_all();
-        // threadGroup.join_all(); was left out intentionally here, because we didn't re-test all of
-        // the startup-failure cases to make sure they don't result in a hang due to some
-        // thread-blocking-waiting-for-another-thread-during-startup case
     }
     if (detectShutdownThread)
     {
