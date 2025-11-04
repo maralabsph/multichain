@@ -346,9 +346,7 @@ bool AppInit(int argc, char* argv[])
         case MC_PRM_STATUS_MINIMAL:
             if(mc_gState->GetSeedNode() == NULL)
             {
-                fprintf(stderr,"ERROR: Parameter set for blockchain %s is not complete. \n\n\n",mc_gState->m_Params->NetworkName());  
-                fprintf(stderr,"If you want to create new blockchain please run one of the following:\n\n");
-                fprintf(stderr,"\nAnd rerun aksyonchaind %s\n\n\n",mc_gState->m_Params->NetworkName());
+                fprintf(stderr,"ERROR: Parameter set for blockchain %s is not complete. \n\n\n",mc_gState->m_Params->NetworkName());
                 fprintf(stderr,"If you want to connect to existing blockchain please specify seed node:\n\n");
                 fprintf(stderr,"  aksyonchaind %s@<seed-node-ip>\n",mc_gState->m_Params->NetworkName());
                 fprintf(stderr,"  aksyonchaind %s@<seed-node-ip>:<seed-node-port>\n\n\n",mc_gState->m_Params->NetworkName());
